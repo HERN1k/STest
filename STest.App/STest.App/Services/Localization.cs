@@ -33,6 +33,14 @@ namespace STest.App.Services
             }
         }
         /// <summary>
+        /// English culture
+        /// </summary>
+        public CultureInfo EnglishCulture { get => m_englishCulture; }
+        /// <summary>
+        /// Ukrainian culture
+        /// </summary>
+        public CultureInfo UkrainianCulture { get => m_ukrainianCulture; }
+        /// <summary>
         /// Event for culture changed
         /// </summary>
         public event EventHandler<CultureChangedEventArgs>? CultureChanged;

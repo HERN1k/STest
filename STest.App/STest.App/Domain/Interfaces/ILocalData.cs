@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Collections.Frozen;
 
 namespace STest.App.Domain.Interfaces
 {
@@ -19,7 +20,12 @@ namespace STest.App.Domain.Interfaces
         /// Get string values by keys
         /// </summary>
         /// <exception cref="ArgumentNullException"></exception>
-        Dictionary<string, string> GetStrings(params string[] keys);
+        FrozenDictionary<string, string> GetStrings(params string[] keys);
+
+        /// <summary>
+        /// Get all values
+        /// </summary>
+        FrozenDictionary<string, string> GetAll();
 
         /// <summary>
         /// Set string value by key

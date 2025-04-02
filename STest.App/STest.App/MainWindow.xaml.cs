@@ -129,6 +129,31 @@ namespace STest.App
         }
 
         /// <summary>
+        /// Navigate to a page
+        /// </summary>
+        public void NavigateTo(Type type)
+        {
+            ArgumentNullException.ThrowIfNull(type, nameof(type));
+
+            if (!typeof(Page).IsAssignableFrom(type))
+            {
+                return;
+            }
+
+            bool isEnqueued = this.DispatcherQueue.TryEnqueue(() =>
+            {
+                try
+                {
+                    RootFrame.Navigate(type);
+                }
+                catch (Exception ex)
+                {
+                    ShowException(ex);
+                }
+            });
+        }
+
+        /// <summary>
         /// The navigation selection changed event
         /// </summary>
         private void NavigationSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)

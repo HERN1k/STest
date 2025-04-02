@@ -120,14 +120,23 @@
   <data name="APP_DISPLAY_NAME_KEY" xml:space="preserve">
     <value>Student Testing Platform</value>
   </data>
+  <data name="COPIED_KEY" xml:space="preserve">
+    <value>Copied</value>
+  </data>
   <data name="EMAIL_KEY" xml:space="preserve">
     <value>Email</value>
+  </data>
+  <data name="ENGLISH_KEY" xml:space="preserve">
+    <value>English</value>
   </data>
   <data name="ERROR_KEY" xml:space="preserve">
     <value>Error</value>
   </data>
   <data name="FAILED_ADD_TASK_TO_UI_THREAD_KEY" xml:space="preserve">
     <value>Failed add task to ui thread</value>
+  </data>
+  <data name="APPLICATION_LANGUAGE_KEY" xml:space="preserve">
+    <value>Application language</value>
   </data>
   <data name="MESSAGE_KEY" xml:space="preserve">
     <value>Message</value>
@@ -147,7 +156,19 @@
   <data name="SEND_KEY" xml:space="preserve">
     <value>Send</value>
   </data>
+  <data name="SETTINGS_KEY" xml:space="preserve">
+    <value>Settings</value>
+  </data>
   <data name="STACK_TRACE_KEY" xml:space="preserve">
     <value>Stack trace</value>
+  </data>
+  <data name="SUCCESS_KEY" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="UKRAINIAN_KEY" xml:space="preserve">
+    <value>Ukrainian</value>
+  </data>
+  <data name="PROFILE_KEY" xml:space="preserve">
+    <value>Profile</value>
   </data>
 </root>

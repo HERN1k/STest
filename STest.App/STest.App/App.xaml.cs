@@ -10,6 +10,9 @@ using STest.App.Domain.Interfaces;
 using STest.App.Services;
 using STest.App.Utilities;
 using STest.App.AppWindows;
+using NLog.Config;
+using NLog;
+using NLog.Extensions.Logging;
 
 namespace STest.App
 {
@@ -19,6 +22,13 @@ namespace STest.App
     public partial class App : Application, IDisposable
     {
         /// <summary>
+        /// <see cref="Utilities.RealTimeLogTarget"/> instance
+        /// </summary>
+        public InMemoryLoggerTarget LoggerTarget 
+        {
+            get => m_loggerTarget ?? throw new InvalidOperationException(Constants.AN_UNEXPECTED_ERROR_OCCURRED);
+        }
+        /// <summary>
         /// <see cref="IServiceProvider"/> instance
         /// </summary>
         public IServiceProvider ServiceProvider
@@ -27,6 +37,10 @@ namespace STest.App
             set => throw new InvalidOperationException("Don't even think about it 😅");
         }
 
+        /// <summary>
+        /// <see cref="Utilities.RealTimeLogTarget"/> instance
+        /// </summary>
+        private readonly InMemoryLoggerTarget m_loggerTarget;
         /// <summary>
         /// <see cref="IServiceProvider"/> instance
         /// </summary>
@@ -59,6 +73,7 @@ namespace STest.App
         {
             this.InitializeComponent();
             SubscribeToEvents();
+            m_loggerTarget = new InMemoryLoggerTarget();
             m_services = ConfigureServices();
             m_logger = GetLogger();
             m_localData = GetLocalData();
@@ -95,25 +110,31 @@ namespace STest.App
         }
 
         /// <summary>
+        /// Reload this the page
+        /// </summary>
+        public void ReloadPage()
+        {
+            var type = new StackTrace()
+                .GetFrame(1)
+                ?.GetMethod()
+                ?.DeclaringType;
+
+            if (type != null && m_window != null)
+            {
+                m_window.NavigateTo(type);
+            }
+        }
+
+        /// <summary>
         /// Configuration <see cref="IServiceProvider"/> instance
         /// </summary>
-        private static ServiceProvider? ConfigureServices()
+        private ServiceProvider? ConfigureServices()
         {
             try
             {
                 var services = new ServiceCollection();
 
-                services.AddLogging(configure =>
-                {
-                    configure.AddDebug();
-#if DEBUG
-                    configure.SetMinimumLevel(LogLevel.Information);
-#else
-                    configure.SetMinimumLevel(LogLevel.Warning);
-#endif
-                    configure.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Error)
-                        .AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Error);
-                });
+                services.AddLogging(BuildLogger);
 
                 services.AddMemoryCache();
 
@@ -131,6 +152,29 @@ namespace STest.App
                 ShowException(ex);
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Build logger
+        /// </summary>
+        private void BuildLogger(ILoggingBuilder builder)
+        {
+            var config = new LoggingConfiguration();
+#if DEBUG
+            config.AddRule(NLog.LogLevel.Debug, NLog.LogLevel.Fatal, m_loggerTarget);
+#else
+            config.AddRule(NLog.LogLevel.Info, NLog.LogLevel.Fatal, realTimeLogTarget);
+#endif
+
+            builder.AddNLog(config);
+            builder.AddDebug();
+#if DEBUG
+            builder.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Information);
+#else
+            builder.SetMinimumLevel(LogLevel.Warning);
+#endif
+            builder.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", Microsoft.Extensions.Logging.LogLevel.Error)
+                .AddFilter("Microsoft.EntityFrameworkCore", Microsoft.Extensions.Logging.LogLevel.Error);
         }
 
         /// <summary>

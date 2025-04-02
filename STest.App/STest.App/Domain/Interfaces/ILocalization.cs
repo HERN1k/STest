@@ -15,6 +15,16 @@ namespace STest.App.Domain.Interfaces
         CultureInfo CurrentCulture { get; }
 
         /// <summary>
+        /// English culture
+        /// </summary>
+        CultureInfo EnglishCulture { get; }
+
+        /// <summary>
+        /// Ukrainian culture
+        /// </summary>
+        CultureInfo UkrainianCulture { get; }
+
+        /// <summary>
         /// Event for culture changed
         /// </summary>
         event EventHandler<CultureChangedEventArgs>? CultureChanged;

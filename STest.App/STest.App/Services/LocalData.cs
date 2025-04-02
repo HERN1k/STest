@@ -8,6 +8,8 @@ using System.Text.Json;
 using System.Collections.Concurrent;
 using System.Text;
 using Microsoft.Extensions.Logging;
+using System.Linq;
+using System.Collections.Frozen;
 
 namespace STest.App.Services
 {
@@ -72,10 +74,10 @@ namespace STest.App.Services
         /// Get string values by keys
         /// </summary>
         /// <exception cref="ArgumentNullException"></exception>
-        public Dictionary<string, string> GetStrings(params string[] keys)
+        public FrozenDictionary<string, string> GetStrings(params string[] keys)
         {
             var result = new Dictionary<string, string>();
-
+            
             lock (m_lock)
             {
                 foreach (string key in keys)
@@ -84,7 +86,18 @@ namespace STest.App.Services
                 }
             }
 
-            return result;
+            return result.ToFrozenDictionary();
+        }
+
+        /// <summary>
+        /// Get all values
+        /// </summary>
+        public FrozenDictionary<string, string> GetAll()
+        {
+            lock (m_lock)
+            {
+                return m_values.ToFrozenDictionary(k => k.Key, v => v.Value);
+            }
         }
 
         /// <summary>

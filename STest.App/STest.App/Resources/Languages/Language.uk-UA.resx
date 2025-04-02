@@ -120,14 +120,23 @@
   <data name="APP_DISPLAY_NAME_KEY" xml:space="preserve">
     <value>Student Testing Platform</value>
   </data>
+  <data name="COPIED_KEY" xml:space="preserve">
+    <value>Скопійовано</value>
+  </data>
   <data name="EMAIL_KEY" xml:space="preserve">
     <value>Пошта</value>
+  </data>
+  <data name="ENGLISH_KEY" xml:space="preserve">
+    <value>Англійська</value>
   </data>
   <data name="ERROR_KEY" xml:space="preserve">
     <value>Помилка</value>
   </data>
   <data name="FAILED_ADD_TASK_TO_UI_THREAD_KEY" xml:space="preserve">
     <value>Не вдалося додати завдання до потоку інтерфейсу</value>
+  </data>
+  <data name="APPLICATION_LANGUAGE_KEY" xml:space="preserve">
+    <value>Мова застосунку</value>
   </data>
   <data name="MESSAGE_KEY" xml:space="preserve">
     <value>Повідомлення</value>
@@ -147,7 +156,19 @@
   <data name="SEND_KEY" xml:space="preserve">
     <value>Відправити</value>
   </data>
+  <data name="SETTINGS_KEY" xml:space="preserve">
+    <value>Налаштування</value>
+  </data>
   <data name="STACK_TRACE_KEY" xml:space="preserve">
     <value>Трасування стека</value>
+  </data>
+  <data name="SUCCESS_KEY" xml:space="preserve">
+    <value>Успіх</value>
+  </data>
+  <data name="UKRAINIAN_KEY" xml:space="preserve">
+    <value>Українська</value>
+  </data>
+  <data name="PROFILE_KEY" xml:space="preserve">
+    <value>Профіль</value>
   </data>
 </root>

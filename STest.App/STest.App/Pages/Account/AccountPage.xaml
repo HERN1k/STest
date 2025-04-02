@@ -9,7 +9,39 @@
     mc:Ignorable="d"
     Background="Transparent">
 
-    <Grid>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <TextBlock 
+                x:Name="TitleText"
+                FontFamily="{StaticResource Montserrat}"
+                Style="{StaticResource TitleTextBlockStyle}"
+                Foreground="{ThemeResource AccentTextFillColorSecondaryBrush}"
+                HorizontalAlignment="Center"
+                Padding="0, 10, 0, 10"
+            />
 
-    </Grid>
+            <StackPanel 
+                Orientation="Horizontal"
+                Margin="50, 35, 0, 0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+            >
+                <PersonPicture 
+                    x:Name="PersonPicture"
+                    Width="75"
+                    Height="75"
+                    VerticalAlignment="Center"
+                    FontFamily="{StaticResource Montserrat}"
+                />
+                <TextBlock 
+                    x:Name="PersonName"
+                    FontFamily="{StaticResource Montserrat}"
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Foreground="{ThemeResource AccentTextFillColorSecondaryBrush}"
+                    VerticalAlignment="Center"
+                    Margin="25, 0, 0, 0"
+                />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
 </Page>

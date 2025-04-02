@@ -72,6 +72,12 @@
     </Page>
   </ItemGroup>
 
+  <ItemGroup>
+    <Page Update="Controls\ConfirmationButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
     <!-- Publish Properties -->
   <PropertyGroup>
     <PublishReadyToRun Condition="'$(Configuration)' == 'Debug'">False</PublishReadyToRun>

@@ -2,6 +2,7 @@ using System;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using STest.App.Domain.Interfaces;
+using STest.App.Services;
 using STest.App.Utilities;
 
 namespace STest.App.Pages.Account
@@ -15,6 +16,10 @@ namespace STest.App.Pages.Account
         /// <see cref="ILocalization"/> instance
         /// </summary>
         private readonly ILocalization m_localization;
+        /// <summary>
+        /// <see cref="ILocalData"/> instance
+        /// </summary>
+        private readonly ILocalData m_localData;
 
         /// <summary>
         /// Constructor
@@ -23,6 +28,7 @@ namespace STest.App.Pages.Account
         {
             this.InitializeComponent();
             m_localization = ServiceHelper.GetService<ILocalization>();
+            m_localData = ServiceHelper.GetService<ILocalData>();
             SubscribeToEvents();
         }
 
@@ -33,6 +39,10 @@ namespace STest.App.Pages.Account
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
+
+            TitleText.Text = m_localization.GetString(Constants.PROFILE_KEY);
+            PersonPicture.DisplayName = m_localData.GetString(Constants.USER_NAME_LOCAL_DATA);
+            PersonName.Text = PersonPicture.DisplayName;
         }
 
         /// <summary>

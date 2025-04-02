@@ -29,8 +29,6 @@ namespace STest.App.Pages.Home
             m_localization = ServiceHelper.GetService<ILocalization>();
             m_localData = ServiceHelper.GetService<ILocalData>();
             SubscribeToEvents();
-
-            TestTextBlock.Text = m_localData.GetString(Constants.EMAIL_LOCAL_DATA);
         }
 
         #region OnNavigated

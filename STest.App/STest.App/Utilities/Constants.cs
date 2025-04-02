@@ -116,6 +116,30 @@ namespace STest.App.Utilities
         /// <see cref="Application"/> message <see cref="string"/>
         /// </summary>
         public const string APP_INITIALIZED = "The application has been initialized";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string ENGLISH_LANGUAGE = "en-US";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string UKRAINIAN_LANGUAGE = "uk-UA";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string RUSSIAN_LANGUAGE = "ru-RU";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string POLISH_LANGUAGE = "pl-PL";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string GERMAN_LANGUAGE = "de-DE";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string HEBREW_LANGUAGE = "he-IL";
 
         /*
             Localization keys
@@ -164,6 +188,34 @@ namespace STest.App.Utilities
         /// <see cref="Localization"/> key <see cref="string"/>
         /// </summary>
         public const string SEND_KEY = nameof(SEND_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string SUCCESS_KEY = nameof(SUCCESS_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string COPIED_KEY = nameof(COPIED_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string SETTINGS_KEY = nameof(SETTINGS_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string APPLICATION_LANGUAGE_KEY = nameof(APPLICATION_LANGUAGE_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string ENGLISH_KEY = nameof(ENGLISH_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string UKRAINIAN_KEY = nameof(UKRAINIAN_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string PROFILE_KEY = nameof(PROFILE_KEY);
 
         /* 
             Local data
@@ -180,5 +232,9 @@ namespace STest.App.Utilities
         /// <see cref="LocalData"/> key <see cref="string"/>
         /// </summary>
         public const string USER_RANK_LOCAL_DATA = nameof(USER_RANK_LOCAL_DATA);
+        /// <summary>
+        /// <see cref="LocalData"/> key <see cref="string"/>
+        /// </summary>
+        public const string USER_NAME_LOCAL_DATA = nameof(USER_NAME_LOCAL_DATA);
     }
 }
