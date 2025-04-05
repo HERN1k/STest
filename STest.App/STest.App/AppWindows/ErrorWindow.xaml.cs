@@ -5,6 +5,7 @@ using STest.App.Domain.Interfaces;
 using Windows.Graphics;
 using Windows.UI;
 using STest.App.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace STest.App.AppWindows
 {
@@ -17,6 +18,10 @@ namespace STest.App.AppWindows
         /// <see cref="IWindowsHelper"/> instance
         /// </summary>
         private readonly IWindowsHelper m_windowsHelper;
+        /// <summary>
+        /// <see cref="ILogger"/> instance
+        /// </summary>
+        private readonly ILogger<ErrorWindow> m_logger;
         /// <summary>
         /// Button foreground color
         /// </summary>
@@ -41,6 +46,7 @@ namespace STest.App.AppWindows
         {
             this.InitializeComponent();
             m_windowsHelper = ServiceHelper.GetService<IWindowsHelper>();
+            m_logger = ServiceHelper.GetLogger<ErrorWindow>();
             SubscribeToEvents();
             Init(message);
         }
@@ -50,51 +56,60 @@ namespace STest.App.AppWindows
         /// </summary>
         private void Init(string? message)
         {
-            if (!string.IsNullOrEmpty(message))
+            try
             {
-                m_exceptionMessage = message;
-            }
-
-            MessageBox.Text = m_exceptionMessage;
-
-            if (m_windowsHelper.IsWindowsVersionAtLeast(10, 0, 19041))
-            {
-#pragma warning disable CA1416
-                this.Title = "Critical Error";
-                TitleBarTextBlock.Text = "Critical Error";
-#pragma warning restore
-            }
-            else
-            {
-                this.Title = "Critical Error";
-                TitleBarTextBlock.Text = "Critical Error";
-            }
-
-            if (AppWindowTitleBar.IsCustomizationSupported())
-            {
-                if (ExtendsContentIntoTitleBar == true)
+                if (!string.IsNullOrEmpty(message))
                 {
-                    this.AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
+                    m_exceptionMessage = message;
                 }
 
-                this.AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+                MessageBox.Text = m_exceptionMessage;
 
-                this.AppWindow.TitleBar.ButtonForegroundColor = m_buttonForegroundColor;
-                this.AppWindow.TitleBar.ButtonBackgroundColor = m_buttonBackgroundColor;
-                this.AppWindow.TitleBar.ButtonHoverForegroundColor = m_buttonForegroundColor;
-                this.AppWindow.TitleBar.ButtonHoverBackgroundColor = m_buttonBackgroundColor;
+                if (m_windowsHelper.IsWindowsVersionAtLeast(10, 0, 19041))
+                {
+#pragma warning disable CA1416
+                    this.Title = "Critical Error";
+                    TitleBarTextBlock.Text = "Critical Error";
+#pragma warning restore
+                }
+                else
+                {
+                    this.Title = "Critical Error";
+                    TitleBarTextBlock.Text = "Critical Error";
+                }
 
-                this.AppWindow.TitleBar.InactiveForegroundColor = m_buttonForegroundColor;
-                this.AppWindow.TitleBar.InactiveBackgroundColor = m_buttonBackgroundColor;
-                this.AppWindow.TitleBar.ButtonInactiveForegroundColor = m_buttonForegroundColor;
-                this.AppWindow.TitleBar.ButtonInactiveBackgroundColor = m_buttonBackgroundColor;
+                if (AppWindowTitleBar.IsCustomizationSupported())
+                {
+                    if (ExtendsContentIntoTitleBar == true)
+                    {
+                        this.AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
+                    }
+
+                    this.AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+
+                    this.AppWindow.TitleBar.ButtonForegroundColor = m_buttonForegroundColor;
+                    this.AppWindow.TitleBar.ButtonBackgroundColor = m_buttonBackgroundColor;
+                    this.AppWindow.TitleBar.ButtonHoverForegroundColor = m_buttonForegroundColor;
+                    this.AppWindow.TitleBar.ButtonHoverBackgroundColor = m_buttonBackgroundColor;
+
+                    this.AppWindow.TitleBar.InactiveForegroundColor = m_buttonForegroundColor;
+                    this.AppWindow.TitleBar.InactiveBackgroundColor = m_buttonBackgroundColor;
+                    this.AppWindow.TitleBar.ButtonInactiveForegroundColor = m_buttonForegroundColor;
+                    this.AppWindow.TitleBar.ButtonInactiveBackgroundColor = m_buttonBackgroundColor;
+                }
+
+                this.AppWindow.Resize(new SizeInt32
+                {
+                    Width = 600,
+                    Height = 720
+                });
+
+                m_logger?.LogInformation("Window \"{Name}\" is activate", nameof(ErrorWindow));
             }
-
-            this.AppWindow.Resize(new SizeInt32
+            catch (Exception ex)
             {
-                Width = 600,
-                Height = 720
-            });
+                m_logger.LogError(ex, "Error initializing ErrorWindow");
+            }
         }
 
         /// <summary>

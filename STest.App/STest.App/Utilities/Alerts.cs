@@ -5,6 +5,10 @@ using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Controls;
 using STest.App.Domain.Interfaces;
 using STest.App.AppWindows;
+using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
+using Microsoft.UI.Xaml;
+using System.Linq;
 
 namespace STest.App.Utilities
 {
@@ -13,6 +17,125 @@ namespace STest.App.Utilities
     /// </summary>
     public static class Alerts
     {
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        static Alerts()
+        {
+            new WindowsSystemDispatcherQueueHelper()
+                .EnsureWindowsSystemDispatcherQueueController();
+        }
+
+        /// <summary>
+        /// Execute the method in the dispatcher queue and in case of an error, reflect it in the UI
+        /// </summary>
+        public static Task<bool> ExecuteOnDispatcherQueueAsync<T>(ILogger<T>? logger, DispatcherAsyncHandler handler) where T : class
+        {
+            if (handler == null)
+            {
+                return Task.FromResult(false);
+            }
+
+            try
+            {
+                var tcs = new TaskCompletionSource<bool>();
+
+                var result = DispatcherQueue.GetForCurrentThread().TryEnqueue(async () =>
+                {
+                    try
+                    {
+                        await handler();
+
+                        tcs.SetResult(true);
+                    }
+                    catch (Exception ex)
+                    {
+                        ex.DispatcherQueueExceptionHendler(logger, tcs);
+                    }
+                });
+
+                if (!result)
+                {
+                    tcs.SetResult(false);
+                }
+
+                return tcs.Task;
+            }
+            catch (Exception ex)
+            {
+                ex.DispatcherQueueExceptionHendler(logger);
+
+                return Task.FromResult(false);
+            }
+        }
+
+        /// <summary>
+        /// Execute the method in the dispatcher queue and in case of an error, reflect it in the UI
+        /// </summary>
+        public static Task<bool> ExecuteOnDispatcherQueueAsync<T>(this Page page, ILogger<T> logger, DispatcherAsyncHandler handler) where T : class
+        {
+            if (handler == null)
+            {
+                return Task.FromResult(false);
+            }
+
+            try
+            {
+                var tcs = new TaskCompletionSource<bool>();
+
+                var result = DispatcherQueue.GetForCurrentThread().TryEnqueue(async () =>
+                {
+                    try
+                    {
+                        await handler();
+
+                        tcs.SetResult(true);
+                    }
+                    catch (Exception ex)
+                    {
+                        ex.DispatcherQueueExceptionHendler(page, logger, tcs);
+                    }
+                });
+
+                if (!result)
+                {
+                    tcs.SetResult(false);
+                }
+
+                return tcs.Task;
+            }
+            catch (Exception ex)
+            {
+                ex.DispatcherQueueExceptionHendler(page, logger);
+
+                return Task.FromResult(false);
+            }
+        }
+
+        /// <summary>
+        /// Show an exception to the UI
+        /// </summary>
+        public static void Show<T>(this Exception exception, Page page, ILogger<T> logger) where T : class
+        {
+            logger.LogError(exception, "An unexpected error occurred: {Message}", exception.Message);
+
+            ShowAlert(
+                page: page, 
+                title: Constants.AN_UNEXPECTED_ERROR_OCCURRED,
+                message: exception.Message,
+                severity: InfoBarSeverity.Error);
+        }
+
+        /// <summary>
+        /// Show an exception to the UI
+        /// </summary>
+        public static void Show<T>(this Exception exception, ILogger<T>? logger) where T : class
+        {
+            logger?.LogError(exception, "An unexpected error occurred: {Message}", exception.Message);
+
+            ShowCriticalErrorWindow(exception);
+        }
+
         /// <summary>
         /// Show an alert to the user
         /// </summary> 
@@ -38,12 +161,6 @@ namespace STest.App.Utilities
                     stack.Children.Add(infoBar);
                 }
             });
-#if DEBUG
-            if (!isEnqueued)
-            {
-                Debug.WriteLine(Constants.FAILED_TO_ADD_TASK_TO_UI_THREAD);
-            }
-#endif
         }
 
         /// <summary>
@@ -158,10 +275,9 @@ namespace STest.App.Utilities
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static void ShowCriticalErrorWindow(string message)
         {
-            var appWindowDispatcherQueue = DispatcherQueue.GetForCurrentThread()
-                ?? throw new InvalidOperationException(Constants.UNABLE_TO_ACCESS_DISPATCHERQUEUE);
+            var dispatcher = DispatcherQueue.GetForCurrentThread();
 
-            appWindowDispatcherQueue.TryEnqueue(() =>
+            dispatcher.TryEnqueue(() =>
             {
                 StringBuilder sb = new();
                 string messageText = string.Concat(
@@ -203,6 +319,56 @@ namespace STest.App.Utilities
 
                 errorWindow.Activate();
             });
+        }
+
+        /// <summary>
+        /// Handle exceptions in the dispatcher queue
+        /// </summary>
+        private static void DispatcherQueueExceptionHendler<T>(this Exception ex, ILogger<T>? logger, TaskCompletionSource<bool>? tcs = null) where T : class
+        {
+            if (Application.Current is App app)
+            {
+                var lastLog = app.LoggerTarget.Logs
+                    .ElementAtOrDefault(^1);
+
+                if ($"An unexpected error occurred: {ex.Message}"
+                        .Equals(lastLog?.FormattedMessage, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    if ((DateTime.Now - lastLog.TimeStamp) < TimeSpan.FromMilliseconds(500))
+                    {
+                        return;
+                    }
+                }
+
+                ex.Show(logger);
+
+                tcs?.SetResult(false);
+            }
+        }
+
+        /// <summary>
+        /// Handle exceptions in the dispatcher queue
+        /// </summary>
+        private static void DispatcherQueueExceptionHendler<T>(this Exception ex, Page page, ILogger<T> logger, TaskCompletionSource<bool>? tcs = null) where T : class
+        {
+            if (Application.Current is App app)
+            {
+                var lastLog = app.LoggerTarget.Logs
+                    .ElementAtOrDefault(^1);
+
+                if ($"An unexpected error occurred: {ex.Message}"
+                        .Equals(lastLog?.FormattedMessage, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    if ((DateTime.Now - lastLog.TimeStamp) < TimeSpan.FromMilliseconds(500))
+                    {
+                        return;
+                    }
+                }
+
+                ex.Show(page, logger);
+
+                tcs?.SetResult(false);
+            }
         }
     }
 }

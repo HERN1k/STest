@@ -1,7 +1,6 @@
 using System;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using System.Diagnostics;
 using WinRT;
 using STest.App.Utilities;
 using STest.App.Domain.Interfaces;
@@ -12,6 +11,7 @@ using Windows.UI;
 using STest.App.Pages.Home;
 using STest.App.Pages.Settings;
 using STest.App.Pages.Account;
+using Microsoft.Extensions.Logging;
 
 namespace STest.App
 {
@@ -21,13 +21,13 @@ namespace STest.App
     public sealed partial class MainWindow : Window, IDisposable
     {
         /// <summary>
-        /// <see cref="IWindowsHelper"/> instance
-        /// </summary>
-        private readonly IWindowsHelper m_windowsHelper;
-        /// <summary>
         /// <see cref="ILocalization"/> instance
         /// </summary>
         private readonly ILocalization m_localization;
+        /// <summary>
+        /// <see cref="ILogger"/> instance
+        /// </summary>
+        private readonly ILogger<MainWindow> m_logger;
         /// <summary>
         /// The Windows system dispatcher queue helper
         /// </summary>
@@ -51,8 +51,8 @@ namespace STest.App
         public MainWindow()
         {
             this.InitializeComponent();
-            m_windowsHelper = ServiceHelper.GetService<IWindowsHelper>();
             m_localization = ServiceHelper.GetService<ILocalization>();
+            m_logger = ServiceHelper.GetLogger<MainWindow>();
             SubscribeToEvents();
             Init();
             TrySetAcrylicBackdrop(useAcrylicThin: false);
@@ -77,35 +77,30 @@ namespace STest.App
         /// </summary>
         private void Init()
         {
-            bool isEnqueued = this.DispatcherQueue.TryEnqueue(() =>
+            try
             {
-                try
+                this.Title = m_localization.GetString(Constants.APP_DISPLAY_NAME_KEY);
+                TitleBarTextBlock.Text = this.Title;
+
+                if (!AppWindowTitleBar.IsCustomizationSupported())
                 {
-                    this.Title = m_localization.GetString(Constants.APP_DISPLAY_NAME_KEY);
-                    TitleBarTextBlock.Text = this.Title;
-
-                    if (!AppWindowTitleBar.IsCustomizationSupported())
-                    {
-                        return;
-                    }
-
-                    if (ExtendsContentIntoTitleBar == true)
-                    {
-                        this.AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
-                    }
-
-                    this.AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-                    this.AppWindow.TitleBar.ButtonBackgroundColor = Color.FromArgb(0, 255, 255, 255);
-                    this.AppWindow.TitleBar.InactiveBackgroundColor = this.AppWindow.TitleBar.ButtonBackgroundColor;
-                    this.AppWindow.TitleBar.ButtonInactiveBackgroundColor = this.AppWindow.TitleBar.ButtonBackgroundColor;
+                    return;
                 }
-                catch (Exception ex)
+
+                if (ExtendsContentIntoTitleBar == true)
                 {
-                    ShowException(ex);
+                    this.AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
                 }
-            });
 
-            EnsureAddedTaskToUIThread(isEnqueued, nameof(Init), m_localization);
+                this.AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+                this.AppWindow.TitleBar.ButtonBackgroundColor = Color.FromArgb(0, 255, 255, 255);
+                this.AppWindow.TitleBar.InactiveBackgroundColor = this.AppWindow.TitleBar.ButtonBackgroundColor;
+                this.AppWindow.TitleBar.ButtonInactiveBackgroundColor = this.AppWindow.TitleBar.ButtonBackgroundColor;
+            }
+            catch (Exception ex)
+            {
+                ex.Show(m_logger);
+            }
         }
 
         /// <summary>
@@ -113,19 +108,16 @@ namespace STest.App
         /// </summary>
         private void NavigateToDefaultPage()
         {
-            bool isEnqueued = this.DispatcherQueue.TryEnqueue(() =>
+            try
             {
-                try
-                {
-                    RootFrame.Navigate(typeof(HomePage));
-                }
-                catch (Exception ex)
-                {
-                    ShowException(ex);
-                }
-            });
+                RootFrame.Navigate(typeof(HomePage));
 
-            EnsureAddedTaskToUIThread(isEnqueued, nameof(NavigateToDefaultPage), m_localization);
+                m_logger.LogInformation("Navigation completed to page: \"{Name}\"", nameof(HomePage));
+            }
+            catch (Exception ex)
+            {
+                ex.Show(m_logger);
+            }
         }
 
         /// <summary>
@@ -133,24 +125,21 @@ namespace STest.App
         /// </summary>
         public void NavigateTo(Type type)
         {
-            ArgumentNullException.ThrowIfNull(type, nameof(type));
-
-            if (!typeof(Page).IsAssignableFrom(type))
+            try
             {
-                return;
+                if (!typeof(Page).IsAssignableFrom(type))
+                {
+                    return;
+                }
+
+                RootFrame.Navigate(type);
+
+                m_logger.LogInformation("Navigation completed to page: \"{Name}\"", type.Name);
             }
-
-            bool isEnqueued = this.DispatcherQueue.TryEnqueue(() =>
+            catch (Exception ex)
             {
-                try
-                {
-                    RootFrame.Navigate(type);
-                }
-                catch (Exception ex)
-                {
-                    ShowException(ex);
-                }
-            });
+                ex.Show(m_logger);
+            }  
         }
 
         /// <summary>
@@ -158,71 +147,42 @@ namespace STest.App
         /// </summary>
         private void NavigationSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
-            bool isEnqueued = this.DispatcherQueue.TryEnqueue(() =>
+            try
             {
-                try
+                if (args.IsSettingsSelected)
                 {
-                    if (args.IsSettingsSelected)
+                    RootFrame.Navigate(typeof(SettingsPage));
+
+                    m_logger.LogInformation("Navigation completed to page: \"{Name}\"", nameof(SettingsPage));
+
+                    return;
+                }
+
+                var selectedItem = args.SelectedItem as NavigationViewItem;
+
+                if (selectedItem != null)
+                {
+                    var tag = selectedItem.Tag as string;
+
+                    switch (tag)
                     {
-                        RootFrame.Navigate(typeof(SettingsPage));
+                        case "Home":
+                            RootFrame.Navigate(typeof(HomePage));
 
-                        return;
-                    }
+                            m_logger.LogInformation("Navigation completed to page: \"{Name}\"", nameof(HomePage));
+                            break;
+                        case "Account":
+                            RootFrame.Navigate(typeof(AccountPage));
 
-                    var selectedItem = args.SelectedItem as NavigationViewItem;
-
-                    if (selectedItem != null)
-                    {
-                        var tag = selectedItem.Tag as string;
-
-                        switch (tag)
-                        {
-                            case "Home":
-                                RootFrame.Navigate(typeof(HomePage));
-                                break;
-                            case "Account":
-                                RootFrame.Navigate(typeof(AccountPage));
-                                break;
-                        }
+                            m_logger.LogInformation("Navigation completed to page: \"{Name}\"", nameof(AccountPage));
+                            break;
                     }
                 }
-                catch (Exception ex)
-                {
-                    ShowException(ex);
-                }
-            });
-
-            EnsureAddedTaskToUIThread(isEnqueued, nameof(NavigationSelectionChanged), m_localization);
-        }
-
-        /// <summary>
-        /// Ensure that a task is added to the UI thread
-        /// </summary>
-        private static void EnsureAddedTaskToUIThread(bool isEnqueued, string method, ILocalization localization)
-        {
-            if (!isEnqueued)
-            {
-#if DEBUG
-                Debug.WriteLine(Constants.FAILED_TO_ADD_TASK_TO_UI_THREAD);
-#endif
-                Alerts.ShowCriticalErrorWindow(
-                    string.Concat(Constants.FAILED_TO_ADD_TASK_TO_UI_THREAD,
-                    "\n\n",
-                    localization.GetString(Constants.METHOD_KEY) ?? Constants.METHOD_KEY,
-                    ": ",
-                    method));
             }
-        }
-
-        /// <summary>
-        /// Show an exception to the user
-        /// </summary>
-        private static void ShowException(Exception ex)
-        {
-#if DEBUG
-            Debug.WriteLine(ex);
-#endif
-            Alerts.ShowCriticalErrorWindow(ex);
+            catch (Exception ex)
+            {
+                ex.Show(m_logger);
+            }
         }
 
         #region Acrylic Backdrop
@@ -231,28 +191,35 @@ namespace STest.App
         /// </summary>
         private void TrySetAcrylicBackdrop(bool useAcrylicThin)
         {
-            if (!DesktopAcrylicController.IsSupported())
+            try
             {
-                return;
+                if (!DesktopAcrylicController.IsSupported())
+                {
+                    return;
+                }
+
+                m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
+                m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
+
+                m_configurationSource = new()
+                {
+                    IsInputActive = true
+                };
+
+                SetConfigurationSourceTheme();
+
+                m_acrylicController = new()
+                {
+                    Kind = useAcrylicThin ? DesktopAcrylicKind.Thin : DesktopAcrylicKind.Base
+                };
+
+                m_acrylicController.AddSystemBackdropTarget(this.As<ICompositionSupportsSystemBackdrop>());
+                m_acrylicController.SetSystemBackdropConfiguration(m_configurationSource);
             }
-
-            m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
-            m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
-
-            m_configurationSource = new()
+            catch (Exception ex)
             {
-                IsInputActive = true
-            };
-
-            SetConfigurationSourceTheme();
-
-            m_acrylicController = new()
-            {
-                Kind = useAcrylicThin ? DesktopAcrylicKind.Thin : DesktopAcrylicKind.Base
-            };
-
-            m_acrylicController.AddSystemBackdropTarget(this.As<ICompositionSupportsSystemBackdrop>());
-            m_acrylicController.SetSystemBackdropConfiguration(m_configurationSource);
+                ex.Show(m_logger);
+            }
         }
 
         /// <summary>
@@ -260,9 +227,16 @@ namespace STest.App
         /// </summary>
         private void OnWindowActivated(object sender, WindowActivatedEventArgs args)
         {
-            if (m_configurationSource != null)
+            try
             {
-                m_configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
+                if (m_configurationSource != null)
+                {
+                    m_configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.Show(m_logger);
             }
         }
 
@@ -271,13 +245,20 @@ namespace STest.App
         /// </summary>
         private void OnWindowClosed(object sender, WindowEventArgs args)
         {
-            if (m_acrylicController != null)
+            try
             {
-                m_acrylicController.Dispose();
-                m_acrylicController = null;
+                if (m_acrylicController != null)
+                {
+                    m_acrylicController.Dispose();
+                    m_acrylicController = null;
+                }
+                this.Activated -= OnWindowActivated;
+                m_configurationSource = null;
             }
-            this.Activated -= OnWindowActivated;
-            m_configurationSource = null;
+            catch (Exception ex)
+            {
+                ex.Show(m_logger);
+            }
         }
 
         /// <summary>
@@ -285,22 +266,29 @@ namespace STest.App
         /// </summary>
         private void SetConfigurationSourceTheme()
         {
-            if (m_configurationSource == null)
+            try
             {
-                return;
-            }
+                if (m_configurationSource == null)
+                {
+                    return;
+                }
 
-            switch (((FrameworkElement)this.Content).ActualTheme)
+                switch (((FrameworkElement)this.Content).ActualTheme)
+                {
+                    case ElementTheme.Dark:
+                        m_configurationSource.Theme = SystemBackdropTheme.Dark;
+                        break;
+                    case ElementTheme.Light:
+                        m_configurationSource.Theme = SystemBackdropTheme.Light;
+                        break;
+                    case ElementTheme.Default:
+                        m_configurationSource.Theme = SystemBackdropTheme.Default;
+                        break;
+                }
+            }
+            catch (Exception ex)
             {
-                case ElementTheme.Dark:
-                    m_configurationSource.Theme = SystemBackdropTheme.Dark;
-                    break;
-                case ElementTheme.Light:
-                    m_configurationSource.Theme = SystemBackdropTheme.Light;
-                    break;
-                case ElementTheme.Default:
-                    m_configurationSource.Theme = SystemBackdropTheme.Default;
-                    break;
+                ex.Show(m_logger);
             }
         }
         #endregion

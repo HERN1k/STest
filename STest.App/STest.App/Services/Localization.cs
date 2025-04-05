@@ -91,6 +91,7 @@ namespace STest.App.Services
             m_englishCulture = new("en-US");
             m_ukrainianCulture = new("uk-UA");
             m_currentCulture = GetPreferredLanguage();
+            m_logger.LogInformation("Preferred language {Name}", m_currentCulture.EnglishName);
         }
 
         /// <summary>
@@ -99,9 +100,28 @@ namespace STest.App.Services
         /// <exception cref="ArgumentNullException"></exception>
         public string GetString(string key, CultureInfo? culture = null)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(key, nameof(key));
+            if (string.IsNullOrEmpty(key))
+            {
+                return string.Empty;
+            }
 
-            return m_resourceManager.GetString(key, culture ?? CurrentCulture) ?? string.Empty;
+            try
+            {
+                string? result = m_resourceManager.GetString(key, culture ?? CurrentCulture);
+
+                if (string.IsNullOrEmpty(result))
+                {
+                    return key;
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                m_logger.LogError(ex, "{Message}", ex.Message);
+
+                return key;
+            }
         }
 
         /// <summary>
@@ -111,67 +131,73 @@ namespace STest.App.Services
         /// <exception cref="TimeoutException"></exception>
         public bool ChangeCulture(string cultureCode)
         {
-            if (!string.IsNullOrEmpty(cultureCode))
+            try
             {
-                if (!cultureCode.Equals(m_englishCulture.Name, StringComparison.OrdinalIgnoreCase) &&
-                    !cultureCode.Equals(m_ukrainianCulture.Name, StringComparison.OrdinalIgnoreCase))
+                if (!string.IsNullOrEmpty(cultureCode))
                 {
-                    throw new CultureNotFoundException(Constants.CULTURE_CODE_NOT_FOUND_OR_INVALID);
-                }
-
-                CultureInfo culture;
-                try
-                {
-                    culture = new CultureInfo(cultureCode);
-                }
-                catch (CultureNotFoundException)
-                {
-#if DEBUG
-                    Debug.WriteLine(Constants.CULTURE_CODE_NOT_FOUND_OR_INVALID);
-#endif
-                    m_logger.LogWarning(Constants.CULTURE_CODE_NOT_FOUND_OR_INVALID);
-                    return false;
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-
-                lock (m_lockObj)
-                {
-                    ApplicationLanguages.PrimaryLanguageOverride = culture.Name;
-
-                    Windows.ApplicationModel.Resources.Core.ResourceContext
-                        .GetForViewIndependentUse()
-                        .Reset();
-
-                    Thread.CurrentThread.CurrentCulture = culture;
-                    Thread.CurrentThread.CurrentUICulture = culture;
-                    CultureInfo.CurrentCulture = culture;
-                    CultureInfo.CurrentUICulture = culture;
-                }
-
-                var retries = 0;
-                const int maxRetries = 10;
-                do
-                {
-                    Thread.Sleep(50);
-
-                    retries++;
-                    if (retries >= maxRetries)
+                    if (!cultureCode.Equals(m_englishCulture.Name, StringComparison.OrdinalIgnoreCase) &&
+                        !cultureCode.Equals(m_ukrainianCulture.Name, StringComparison.OrdinalIgnoreCase))
                     {
-                        throw new TimeoutException(Constants.FAILED_TO_LOAD_RESOURCES_FOR_NEW_CULTURE);
+                        throw new CultureNotFoundException(Constants.CULTURE_CODE_NOT_FOUND_OR_INVALID);
                     }
+
+                    CultureInfo culture;
+                    try
+                    {
+                        culture = new CultureInfo(cultureCode);
+                    }
+                    catch (CultureNotFoundException)
+                    {
+                        m_logger.LogWarning(Constants.CULTURE_CODE_NOT_FOUND_OR_INVALID);
+                        return false;
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+
+                    lock (m_lockObj)
+                    {
+                        ApplicationLanguages.PrimaryLanguageOverride = culture.Name;
+
+                        Windows.ApplicationModel.Resources.Core.ResourceContext
+                            .GetForViewIndependentUse()
+                            .Reset();
+
+                        Thread.CurrentThread.CurrentCulture = culture;
+                        Thread.CurrentThread.CurrentUICulture = culture;
+                        CultureInfo.CurrentCulture = culture;
+                        CultureInfo.CurrentUICulture = culture;
+                    }
+
+                    var retries = 0;
+                    const int maxRetries = 10;
+                    do
+                    {
+                        Thread.Sleep(50);
+
+                        retries++;
+                        if (retries >= maxRetries)
+                        {
+                            throw new TimeoutException(Constants.FAILED_TO_LOAD_RESOURCES_FOR_NEW_CULTURE);
+                        }
+                    }
+                    while (string.IsNullOrEmpty(GetString(Constants.APP_DISPLAY_NAME_KEY, culture)));
+
+                    CurrentCulture = culture;
+                    m_localData.SetString(Constants.PREFERRED_LANGUAGE_LOCAL_DATA, culture.Name);
+
+                    return true;
                 }
-                while (string.IsNullOrEmpty(GetString(Constants.APP_DISPLAY_NAME_KEY, culture)));
 
-                CurrentCulture = culture;
-                m_localData.SetString(Constants.PREFERRED_LANGUAGE_LOCAL_DATA, culture.Name);
-
-                return true;
+                return false;
             }
+            catch (Exception ex)
+            {
+                m_logger.LogError(ex, "{Message}", ex.Message);
 
-            return false;
+                return false;
+            }
         }
 
         /// <summary>
@@ -181,22 +207,18 @@ namespace STest.App.Services
         {
             var temp = Volatile.Read(ref CultureChanged);
 
+            m_logger.LogInformation("Language changed on {Name}", args.CurrentCulture.EnglishName);
+
             temp?.Invoke(this, args);
         }
 
         /// <summary>
         /// Event arguments for culture changed
         /// </summary>
-        public sealed class CultureChangedEventArgs
+        public sealed class CultureChangedEventArgs(CultureInfo currentCulture)
         {
-            public CultureInfo CurrentCulture { get; }
-
-#pragma warning disable IDE0290
-            public CultureChangedEventArgs(CultureInfo currentCulture)
-#pragma warning restore
-            {
-                CurrentCulture = currentCulture ?? throw new ArgumentNullException(nameof(currentCulture));
-            }
+            public CultureInfo CurrentCulture { get; } = currentCulture 
+                ?? throw new ArgumentNullException(nameof(currentCulture));
         }
 
         /// <summary>
@@ -205,54 +227,63 @@ namespace STest.App.Services
         /// <exception cref="CultureNotFoundException"></exception>
         private CultureInfo GetPreferredLanguage()
         {
-            var preferredLanguage = m_localData.GetString(Constants.PREFERRED_LANGUAGE_LOCAL_DATA);
-
-            if (!string.IsNullOrEmpty(preferredLanguage))
+            try
             {
-                if (!preferredLanguage.Equals(m_englishCulture.Name, StringComparison.OrdinalIgnoreCase) &&
-                    !preferredLanguage.Equals(m_ukrainianCulture.Name, StringComparison.OrdinalIgnoreCase))
+                var preferredLanguage = m_localData.GetString(Constants.PREFERRED_LANGUAGE_LOCAL_DATA);
+
+                if (!string.IsNullOrEmpty(preferredLanguage))
                 {
-                    throw new CultureNotFoundException(Constants.CULTURE_CODE_NOT_FOUND_OR_INVALID);
+                    if (!preferredLanguage.Equals(m_englishCulture.Name, StringComparison.OrdinalIgnoreCase) &&
+                        !preferredLanguage.Equals(m_ukrainianCulture.Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        throw new CultureNotFoundException(Constants.CULTURE_CODE_NOT_FOUND_OR_INVALID);
+                    }
+
+                    return new CultureInfo(preferredLanguage);
                 }
+
+                var languages = ApplicationLanguages.Languages;
+
+                if (languages.Count == 0)
+                {
+                    m_localData.SetString(Constants.PREFERRED_LANGUAGE_LOCAL_DATA, m_englishCulture.Name);
+
+                    return new CultureInfo(m_englishCulture.Name);
+                }
+
+                foreach (var lang in languages)
+                {
+                    if (string.IsNullOrEmpty(lang))
+                    {
+                        continue;
+                    }
+
+                    if (lang.Equals(m_englishCulture.Name, StringComparison.OrdinalIgnoreCase) ||
+                        lang.Equals(m_ukrainianCulture.Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        preferredLanguage = lang;
+
+                        break;
+                    }
+                }
+
+                if (string.IsNullOrEmpty(preferredLanguage))
+                {
+                    m_localData.SetString(Constants.PREFERRED_LANGUAGE_LOCAL_DATA, m_englishCulture.Name);
+
+                    return new CultureInfo(m_englishCulture.Name);
+                }
+
+                m_localData.SetString(Constants.PREFERRED_LANGUAGE_LOCAL_DATA, preferredLanguage);
 
                 return new CultureInfo(preferredLanguage);
             }
-
-            var languages = ApplicationLanguages.Languages;
-
-            if (languages.Count == 0)
+            catch (Exception ex)
             {
-                m_localData.SetString(Constants.PREFERRED_LANGUAGE_LOCAL_DATA, m_englishCulture.Name);
+                m_logger.LogError(ex, "{Message}", ex.Message);
 
                 return new CultureInfo(m_englishCulture.Name);
             }
-
-            foreach (var lang in languages)
-            {
-                if (string.IsNullOrEmpty(lang))
-                {
-                    continue;
-                }
-
-                if (lang.Equals(m_englishCulture.Name, StringComparison.OrdinalIgnoreCase) ||
-                    lang.Equals(m_ukrainianCulture.Name, StringComparison.OrdinalIgnoreCase))
-                {
-                    preferredLanguage = lang;
-
-                    break;
-                }
-            }
-
-            if (string.IsNullOrEmpty(preferredLanguage))
-            {
-                m_localData.SetString(Constants.PREFERRED_LANGUAGE_LOCAL_DATA, m_englishCulture.Name);
-
-                return new CultureInfo(m_englishCulture.Name);
-            }
-
-            m_localData.SetString(Constants.PREFERRED_LANGUAGE_LOCAL_DATA, preferredLanguage);
-
-            return new CultureInfo(preferredLanguage);
         }
 
         #region Disposing

@@ -9,6 +9,8 @@ using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Composition;
 using Windows.UI;
 using Windows.Graphics;
+using Microsoft.Extensions.Logging;
+using STest.App.Pages.Home;
 
 namespace STest.App.AppWindows
 {
@@ -25,6 +27,10 @@ namespace STest.App.AppWindows
         /// <see cref="ILocalData"/> instance
         /// </summary>
         private readonly ILocalData m_localData;
+        /// <summary>
+        /// <see cref="ILogger"/> instance
+        /// </summary>
+        private readonly ILogger<LoginWindow> m_logger;
         /// <summary>
         /// The Windows system dispatcher queue helper
         /// </summary>
@@ -50,6 +56,7 @@ namespace STest.App.AppWindows
             this.InitializeComponent();
             m_localization = ServiceHelper.GetService<ILocalization>();
             m_localData = ServiceHelper.GetService<ILocalData>();
+            m_logger = ServiceHelper.GetLogger<LoginWindow>();
             SubscribeToEvents();
             Init();
             TrySetAcrylicBackdrop(useAcrylicThin: false);
@@ -61,12 +68,19 @@ namespace STest.App.AppWindows
         /// <exception cref="ArgumentNullException"></exception>
         private void ButtonSendClick(object sender, RoutedEventArgs e)
         {
-            var app = Application.Current as App 
-                ?? throw new ArgumentNullException(nameof(Application.Current));
+            try
+            {
+                var app = Application.Current as App
+                    ?? throw new ArgumentNullException(nameof(Application.Current));
 
-            m_localData.SetString(Constants.EMAIL_LOCAL_DATA, EmailInput.Text); 
+                m_localData.SetString(Constants.EMAIL_LOCAL_DATA, EmailInput.Text);
 
-            app.ActivateMainWindow();
+                app.ActivateMainWindow();
+            }
+            catch (Exception ex)
+            {
+                ex.Show(m_logger);
+            }
         }
 
         /// <summary>
@@ -86,75 +100,40 @@ namespace STest.App.AppWindows
         /// </summary>
         private void Init()
         {
-            bool isEnqueued = this.DispatcherQueue.TryEnqueue(() =>
+            try
             {
-                try
+                EmailTitle.Text = m_localization.GetString(Constants.EMAIL_KEY);
+                PasswordTitle.Text = m_localization.GetString(Constants.PASSWORD_KEY);
+                SendButton.Content = m_localization.GetString(Constants.SEND_KEY);
+
+                this.Title = m_localization.GetString(Constants.APP_DISPLAY_NAME_KEY);
+                TitleBarTextBlock.Text = this.Title;
+
+                if (!AppWindowTitleBar.IsCustomizationSupported())
                 {
-                    EmailTitle.Text = m_localization.GetString(Constants.EMAIL_KEY);
-                    PasswordTitle.Text = m_localization.GetString(Constants.PASSWORD_KEY);
-                    SendButton.Content = m_localization.GetString(Constants.SEND_KEY);
-
-                    this.Title = m_localization.GetString(Constants.APP_DISPLAY_NAME_KEY);
-                    TitleBarTextBlock.Text = this.Title;
-
-                    if (!AppWindowTitleBar.IsCustomizationSupported())
-                    {
-                        return;
-                    }
-
-                    if (ExtendsContentIntoTitleBar == true)
-                    {
-                        this.AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
-                    }
-
-                    this.AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-                    this.AppWindow.TitleBar.ButtonBackgroundColor = Color.FromArgb(0, 255, 255, 255);
-                    this.AppWindow.TitleBar.InactiveBackgroundColor = this.AppWindow.TitleBar.ButtonBackgroundColor;
-                    this.AppWindow.TitleBar.ButtonInactiveBackgroundColor = this.AppWindow.TitleBar.ButtonBackgroundColor;
-
-                    this.AppWindow.Resize(new SizeInt32
-                    {
-                        Width = 600,
-                        Height = 500
-                    });
+                    return;
                 }
-                catch (Exception ex)
+
+                if (ExtendsContentIntoTitleBar == true)
                 {
-                    ShowException(ex);
+                    this.AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
                 }
-            });
 
-            EnsureAddedTaskToUIThread(isEnqueued, nameof(Init), m_localization);
-        }
+                this.AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+                this.AppWindow.TitleBar.ButtonBackgroundColor = Color.FromArgb(0, 255, 255, 255);
+                this.AppWindow.TitleBar.InactiveBackgroundColor = this.AppWindow.TitleBar.ButtonBackgroundColor;
+                this.AppWindow.TitleBar.ButtonInactiveBackgroundColor = this.AppWindow.TitleBar.ButtonBackgroundColor;
 
-        /// <summary>
-        /// Ensure that a task is added to the UI thread
-        /// </summary>
-        private static void EnsureAddedTaskToUIThread(bool isEnqueued, string method, ILocalization localization)
-        {
-            if (!isEnqueued)
-            {
-#if DEBUG
-                Debug.WriteLine(Constants.FAILED_TO_ADD_TASK_TO_UI_THREAD);
-#endif
-                Alerts.ShowCriticalErrorWindow(
-                    string.Concat(Constants.FAILED_TO_ADD_TASK_TO_UI_THREAD,
-                    "\n\n",
-                    localization.GetString(Constants.METHOD_KEY) ?? Constants.METHOD_KEY,
-                    ": ",
-                    method));
+                this.AppWindow.Resize(new SizeInt32
+                {
+                    Width = 600,
+                    Height = 500
+                });
             }
-        }
-
-        /// <summary>
-        /// Show an exception
-        /// </summary>
-        private static void ShowException(Exception ex)
-        {
-#if DEBUG
-            Debug.WriteLine(ex);
-#endif
-            Alerts.ShowCriticalErrorWindow(ex);
+            catch (Exception ex)
+            {
+                ex.Show(m_logger);
+            }
         }
 
         #region Acrylic Backdrop
@@ -163,28 +142,35 @@ namespace STest.App.AppWindows
         /// </summary>
         private void TrySetAcrylicBackdrop(bool useAcrylicThin)
         {
-            if (!DesktopAcrylicController.IsSupported())
+            try
             {
-                return;
+                if (!DesktopAcrylicController.IsSupported())
+                {
+                    return;
+                }
+
+                m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
+                m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
+
+                m_configurationSource = new()
+                {
+                    IsInputActive = true
+                };
+
+                SetConfigurationSourceTheme();
+
+                m_acrylicController = new()
+                {
+                    Kind = useAcrylicThin ? DesktopAcrylicKind.Thin : DesktopAcrylicKind.Base
+                };
+
+                m_acrylicController.AddSystemBackdropTarget(this.As<ICompositionSupportsSystemBackdrop>());
+                m_acrylicController.SetSystemBackdropConfiguration(m_configurationSource);
             }
-
-            m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
-            m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
-
-            m_configurationSource = new()
+            catch (Exception ex)
             {
-                IsInputActive = true
-            };
-
-            SetConfigurationSourceTheme();
-
-            m_acrylicController = new()
-            {
-                Kind = useAcrylicThin ? DesktopAcrylicKind.Thin : DesktopAcrylicKind.Base
-            };
-
-            m_acrylicController.AddSystemBackdropTarget(this.As<ICompositionSupportsSystemBackdrop>());
-            m_acrylicController.SetSystemBackdropConfiguration(m_configurationSource);
+                ex.Show(m_logger);
+            }
         }
 
         /// <summary>
@@ -192,9 +178,16 @@ namespace STest.App.AppWindows
         /// </summary>
         private void OnWindowActivated(object sender, WindowActivatedEventArgs args)
         {
-            if (m_configurationSource != null)
+            try
             {
-                m_configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
+                if (m_configurationSource != null)
+                {
+                    m_configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.Show(m_logger);
             }
         }
 

@@ -8,7 +8,6 @@ using System.Text.Json;
 using System.Collections.Concurrent;
 using System.Text;
 using Microsoft.Extensions.Logging;
-using System.Linq;
 using System.Collections.Frozen;
 
 namespace STest.App.Services
@@ -62,11 +61,20 @@ namespace STest.App.Services
         /// <exception cref="ArgumentNullException"></exception>
         public string GetString(string key)
         {
-            ArgumentException.ThrowIfNullOrEmpty(key, nameof(key));
-
-            lock (m_lock)
+            try
             {
-                return m_values.TryGetValue(key, out string? value) ? value : string.Empty;
+                ArgumentException.ThrowIfNullOrEmpty(key, nameof(key));
+
+                lock (m_lock)
+                {
+                    return m_values.TryGetValue(key, out string? value) ? value : string.Empty;
+                }
+            }
+            catch (Exception ex)
+            {
+                m_logger.LogError(ex, "{Message}", ex.Message);
+
+                throw;
             }
         }
 
@@ -76,17 +84,26 @@ namespace STest.App.Services
         /// <exception cref="ArgumentNullException"></exception>
         public FrozenDictionary<string, string> GetStrings(params string[] keys)
         {
-            var result = new Dictionary<string, string>();
-            
-            lock (m_lock)
+            try
             {
-                foreach (string key in keys)
-                {
-                    result.Add(key, m_values.TryGetValue(key, out string? value) ? value : string.Empty);
-                }
-            }
+                var result = new Dictionary<string, string>();
 
-            return result.ToFrozenDictionary();
+                lock (m_lock)
+                {
+                    foreach (string key in keys)
+                    {
+                        result.Add(key, m_values.TryGetValue(key, out string? value) ? value : string.Empty);
+                    }
+                }
+
+                return result.ToFrozenDictionary();
+            }
+            catch (Exception ex)
+            {
+                m_logger.LogError(ex, "{Message}", ex.Message);
+
+                throw;
+            }
         }
 
         /// <summary>
@@ -108,14 +125,23 @@ namespace STest.App.Services
         /// <exception cref="IOException"></exception>
         public bool SetString(string key, string value)
         {
-            ArgumentException.ThrowIfNullOrEmpty(value, nameof(value));
-            ArgumentException.ThrowIfNullOrEmpty(value, nameof(value));
-
-            lock (m_lock)
+            try
             {
-                m_values.AddOrUpdate(key, value, (_, _) => value);
+                ArgumentException.ThrowIfNullOrEmpty(value, nameof(value));
+                ArgumentException.ThrowIfNullOrEmpty(value, nameof(value));
 
-                return UpdateValues();
+                lock (m_lock)
+                {
+                    m_values.AddOrUpdate(key, value, (_, _) => value);
+
+                    return UpdateValues();
+                }
+            }
+            catch (Exception ex)
+            {
+                m_logger.LogError(ex, "{Message}", ex.Message);
+
+                throw;
             }
         }
 
@@ -127,16 +153,25 @@ namespace STest.App.Services
         /// <exception cref="IOException"></exception>
         public bool SetStrings(Dictionary<string, string> data)
         {
-            ArgumentNullException.ThrowIfNull(data, nameof(data));
-
-            lock (m_lock)
+            try
             {
-                foreach (KeyValuePair<string, string> pair in data)
-                {
-                    m_values.AddOrUpdate(pair.Key, pair.Value, (_, _) => pair.Value);
-                }
+                ArgumentNullException.ThrowIfNull(data, nameof(data));
 
-                return UpdateValues();
+                lock (m_lock)
+                {
+                    foreach (KeyValuePair<string, string> pair in data)
+                    {
+                        m_values.AddOrUpdate(pair.Key, pair.Value, (_, _) => pair.Value);
+                    }
+
+                    return UpdateValues();
+                }
+            }
+            catch (Exception ex)
+            {
+                m_logger.LogError(ex, "{Message}", ex.Message);
+
+                throw;
             }
         }
 
@@ -147,13 +182,22 @@ namespace STest.App.Services
         /// <exception cref="IOException"></exception>
         public bool RemoveString(string key)
         {
-            ArgumentException.ThrowIfNullOrEmpty(key, nameof(key));
-
-            lock (m_lock)
+            try
             {
-                m_values.TryRemove(key, out _);
+                ArgumentException.ThrowIfNullOrEmpty(key, nameof(key));
 
-                return UpdateValues();
+                lock (m_lock)
+                {
+                    m_values.TryRemove(key, out _);
+
+                    return UpdateValues();
+                }
+            }
+            catch (Exception ex)
+            {
+                m_logger.LogError(ex, "{Message}", ex.Message);
+
+                throw;
             }
         }
 
@@ -164,16 +208,25 @@ namespace STest.App.Services
         /// <exception cref="IOException"></exception>
         public bool RemoveStrings(params string[] keys)
         {
-            ArgumentNullException.ThrowIfNull(keys, nameof(keys));
-
-            lock (m_lock)
+            try
             {
-                foreach (string key in keys)
-                {
-                    m_values.TryRemove(key, out _);
-                }
+                ArgumentNullException.ThrowIfNull(keys, nameof(keys));
 
-                return UpdateValues();
+                lock (m_lock)
+                {
+                    foreach (string key in keys)
+                    {
+                        m_values.TryRemove(key, out _);
+                    }
+
+                    return UpdateValues();
+                }
+            }
+            catch (Exception ex)
+            {
+                m_logger.LogError(ex, "{Message}", ex.Message);
+
+                throw;
             }
         }
 
@@ -228,6 +281,8 @@ namespace STest.App.Services
                 {
                     using var stream = File.Create(m_path);
 
+                    m_logger.LogInformation("The local data storage file is created at the \"{path}\"", m_path);
+
                     stream.Write(m_zeroData, 0, m_zeroData.Length);
 
                     stream?.Close();
@@ -238,6 +293,10 @@ namespace STest.App.Services
 
                     throw new IOException(ex.Message, ex);
                 }
+            }
+            else
+            {
+                m_logger.LogInformation("The local data storage file is located at the \"{path}\"", m_path);
             }
         }
 
@@ -274,6 +333,8 @@ namespace STest.App.Services
 
                     stream?.Close();
 
+                    m_logger.LogInformation("The data was updated successfully");
+
                     return true;
                 }
                 catch (Exception ex)
@@ -291,6 +352,7 @@ namespace STest.App.Services
                     {
                         if (ex is IOException)
                         {
+
                             throw;
                         }
 
@@ -320,6 +382,8 @@ namespace STest.App.Services
                     {
                         m_values.TryAdd(property.Name, property.Value.GetString() ?? string.Empty);
                     }
+
+                    m_logger.LogInformation("The data was read successfully");
                 }
                 catch (Exception ex)
                 {
@@ -334,15 +398,24 @@ namespace STest.App.Services
         /// Build zero data "{\n}"
         /// </summary>
         /// <returns></returns>
-        private static byte[] BuildZeroData()
+        private byte[] BuildZeroData()
         {
-            var result = new List<byte>() { 0x7B };
+            try
+            {
+                var result = new List<byte>() { 0x7B };
 
-            result.AddRange(Encoding.UTF8.GetBytes(Environment.NewLine));
+                result.AddRange(Encoding.UTF8.GetBytes(Environment.NewLine));
 
-            result.Add(0x7D);
+                result.Add(0x7D);
 
-            return result.ToArray();
+                return result.ToArray();
+            }
+            catch (Exception ex)
+            {
+                m_logger.LogError(ex, "{Message}", ex.Message);
+
+                throw;
+            }
         }
     }
 }

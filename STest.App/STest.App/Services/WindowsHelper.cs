@@ -3,6 +3,7 @@ using STest.App.Domain.Interfaces;
 using Windows.Networking.Connectivity;
 using Windows.System.Profile;
 using STest.App.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace STest.App.Services
 {
@@ -11,6 +12,10 @@ namespace STest.App.Services
     /// </summary>
     public sealed class WindowsHelper : IWindowsHelper
     {
+        /// <summary>
+        /// Logger
+        /// </summary>
+        private readonly ILogger<WindowsHelper> m_logger;
         /// <summary>
         /// Windows version number
         /// </summary>
@@ -36,21 +41,34 @@ namespace STest.App.Services
         /// Constructor
         /// </summary>
         /// <exception cref="InvalidOperationException"></exception>
-        public WindowsHelper()
+        public WindowsHelper(ILogger<WindowsHelper> logger)
         {
-            string version = AnalyticsInfo.VersionInfo.DeviceFamilyVersion;
+            try
+            {
+                m_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-            if (ulong.TryParse(version, out ulong versionNumber))
-            {
-                m_versionNumber = versionNumber;
-                m_major = (versionNumber & 0xFFFF000000000000L) >> 48;
-                m_minor = (versionNumber & 0x0000FFFF00000000L) >> 32;
-                m_build = (versionNumber & 0x00000000FFFF0000L) >> 16;
-                m_revision = (versionNumber & 0x000000000000FFFFL);
+                string version = AnalyticsInfo.VersionInfo.DeviceFamilyVersion;
+
+                m_logger.LogInformation("Windows version {version}", version);
+
+                if (ulong.TryParse(version, out ulong versionNumber))
+                {
+                    m_versionNumber = versionNumber;
+                    m_major = (versionNumber & 0xFFFF000000000000L) >> 48;
+                    m_minor = (versionNumber & 0x0000FFFF00000000L) >> 32;
+                    m_build = (versionNumber & 0x00000000FFFF0000L) >> 16;
+                    m_revision = (versionNumber & 0x000000000000FFFFL);
+                }
+                else
+                {
+                    throw new InvalidOperationException(Constants.FAILED_TO_RETRIEVE_THE_WINDOWS_VERSION);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                throw new InvalidOperationException(Constants.FAILED_TO_RETRIEVE_THE_WINDOWS_VERSION);
+                Alerts.ShowCriticalErrorWindow(ex);
+
+                throw;
             }
         }
 

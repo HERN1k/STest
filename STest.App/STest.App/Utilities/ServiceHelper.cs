@@ -24,8 +24,17 @@ namespace STest.App.Utilities
         /// <exception cref="ArgumentNullException"></exception>
         public static T GetService<T>() where T : class, IService
         {
-            return (Application.Current as App)?.ServiceProvider.GetService<T>()
-                ?? throw new ArgumentNullException($"Service of type {nameof(IWindowsHelper)[1..]} not found.");
+            try
+            {
+                return (Application.Current as App)?.ServiceProvider.GetService<T>()
+                    ?? throw new ArgumentNullException($"Service of type {nameof(IWindowsHelper)[1..]} not found.");
+            }
+            catch (Exception ex)
+            {
+                Alerts.ShowCriticalErrorWindow(ex);
+
+                throw;
+            }
         }
 
         /// <summary>
@@ -34,8 +43,17 @@ namespace STest.App.Utilities
         /// <exception cref="ArgumentNullException"></exception>
         public static ILogger<T> GetLogger<T>() where T : class
         {
-            return (Application.Current as App)?.ServiceProvider.GetService<ILogger<T>>()
-                ?? throw new ArgumentNullException($"Logger for type {nameof(T)[1..]} not found.");
+            try
+            {
+                return (Application.Current as App)?.ServiceProvider.GetService<ILogger<T>>()
+                    ?? throw new ArgumentNullException($"Logger for type {nameof(T)[1..]} not found.");
+            }
+            catch (Exception ex)
+            {
+                Alerts.ShowCriticalErrorWindow(ex);
+
+                throw;
+            }
         }
     }
 }

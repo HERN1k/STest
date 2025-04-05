@@ -86,13 +86,13 @@ namespace STest.App
         {
             try
             {
-                m_logger?.LogInformation(Constants.APP_INITIALIZED);
-
                 if (m_localData == null)
                 {
                     Current.Exit();
                     return;
                 }
+
+                m_logger?.LogInformation(Constants.APP_INITIALIZED);
 
                 if (!string.IsNullOrEmpty(m_localData.GetString(Constants.EMAIL_LOCAL_DATA)))
                 {
@@ -105,7 +105,7 @@ namespace STest.App
             }
             catch (Exception ex)
             {
-                ShowException(ex);
+                ex.Show(m_logger);
             }
         }
 
@@ -114,14 +114,23 @@ namespace STest.App
         /// </summary>
         public void ReloadPage()
         {
-            var type = new StackTrace()
-                .GetFrame(1)
-                ?.GetMethod()
-                ?.DeclaringType;
-
-            if (type != null && m_window != null)
+            try
             {
-                m_window.NavigateTo(type);
+                var type = new StackTrace()
+                    .GetFrame(1)
+                    ?.GetMethod()
+                    ?.DeclaringType;
+
+                if (type != null && m_window != null)
+                {
+                    m_logger?.LogInformation("Page \"{Name}\" is reload", type.Name);
+
+                    m_window.NavigateTo(type);
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.Show(m_logger);
             }
         }
 
@@ -149,7 +158,8 @@ namespace STest.App
             }
             catch (Exception ex)
             {
-                ShowException(ex);
+                ex.Show(m_logger);
+
                 return null;
             }
         }
@@ -159,22 +169,29 @@ namespace STest.App
         /// </summary>
         private void BuildLogger(ILoggingBuilder builder)
         {
-            var config = new LoggingConfiguration();
+            try
+            {
+                var config = new LoggingConfiguration();
 #if DEBUG
-            config.AddRule(NLog.LogLevel.Debug, NLog.LogLevel.Fatal, m_loggerTarget);
+                config.AddRule(NLog.LogLevel.Debug, NLog.LogLevel.Fatal, m_loggerTarget);
 #else
-            config.AddRule(NLog.LogLevel.Info, NLog.LogLevel.Fatal, realTimeLogTarget);
+                config.AddRule(NLog.LogLevel.Info, NLog.LogLevel.Fatal, realTimeLogTarget);
 #endif
 
-            builder.AddNLog(config);
-            builder.AddDebug();
+                builder.AddNLog(config);
+                builder.AddDebug();
 #if DEBUG
-            builder.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Information);
+                builder.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Information);
 #else
-            builder.SetMinimumLevel(LogLevel.Warning);
+                builder.SetMinimumLevel(LogLevel.Warning);
 #endif
-            builder.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", Microsoft.Extensions.Logging.LogLevel.Error)
-                .AddFilter("Microsoft.EntityFrameworkCore", Microsoft.Extensions.Logging.LogLevel.Error);
+                builder.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", Microsoft.Extensions.Logging.LogLevel.Error)
+                    .AddFilter("Microsoft.EntityFrameworkCore", Microsoft.Extensions.Logging.LogLevel.Error);
+            }
+            catch (Exception ex)
+            {
+                ex.Show(m_logger);
+            }
         }
 
         /// <summary>
@@ -190,7 +207,8 @@ namespace STest.App
             }
             catch (Exception ex)
             {
-                ShowException(ex);
+                ex.Show(m_logger);
+
                 return null;
             }
         }
@@ -208,7 +226,8 @@ namespace STest.App
             }
             catch (Exception ex)
             {
-                ShowException(ex);
+                ex.Show(m_logger);
+
                 return null;
             }
         }
@@ -249,6 +268,7 @@ namespace STest.App
                 }
 
                 m_window.Activate();
+                m_logger?.LogInformation("Window \"{Name}\" is activate", nameof(MainWindow));
 
                 if (m_loginWindow != null)
                 {
@@ -258,7 +278,7 @@ namespace STest.App
             }
             catch (Exception ex)
             {
-                ShowException(ex);
+                ex.Show(m_logger);
             }
         }
 
@@ -289,6 +309,7 @@ namespace STest.App
                 }
 
                 m_loginWindow.Activate();
+                m_logger?.LogInformation("Window \"{Name}\" is activate", nameof(LoginWindow));
 
                 if (m_window != null)
                 {
@@ -298,7 +319,7 @@ namespace STest.App
             }
             catch (Exception ex)
             {
-                ShowException(ex);
+                ex.Show(m_logger);
             }
         }
 
@@ -344,28 +365,6 @@ namespace STest.App
             e.SetObserved();
 
             AppNotificationManager.Default.Show(notification);
-        }
-
-        /// <summary>
-        /// Show exception
-        /// </summary>
-        private static void ShowException(string message)
-        {
-#if DEBUG
-            Debug.WriteLine(string.Concat(Constants.AN_UNEXPECTED_ERROR_OCCURRED, " ", message));
-#endif
-            Alerts.ShowCriticalErrorWindow(message);
-        }
-
-        /// <summary>
-        /// Show exception
-        /// </summary>
-        private static void ShowException(Exception ex)
-        {
-#if DEBUG
-            Debug.WriteLine(ex);
-#endif
-            Alerts.ShowCriticalErrorWindow(ex);
         }
 
         #region Disposing

@@ -56,154 +56,156 @@
             </StackPanel>
         </DataTemplate>
     </Page.Resources>
-    
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel>
-            <TextBlock 
-                x:Name="TitleText"
-                FontFamily="{StaticResource Montserrat}"
-                Style="{StaticResource TitleTextBlockStyle}"
-                Foreground="{ThemeResource AccentTextFillColorSecondaryBrush}"
-                HorizontalAlignment="Center"
-                Padding="0, 10, 0, 10"
-            />
 
-            <StackPanel 
-                Orientation="Horizontal"
-                Margin="50, 35, 0, 0"
-            >
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel>
                 <TextBlock 
-                    x:Name="LanguageText"
-                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    x:Name="TitleText"
+                    FontFamily="{StaticResource Montserrat}"
+                    Style="{StaticResource TitleTextBlockStyle}"
                     Foreground="{ThemeResource AccentTextFillColorSecondaryBrush}"
-                    FontFamily="{StaticResource Montserrat}"
-                    FontWeight="Normal"
-                    VerticalAlignment="Center"
                     HorizontalAlignment="Center"
+                    Padding="0, 10, 0, 10"
                 />
-                <DropDownButton 
-                    x:Name="LanguageDropDown"
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Center"
-                    FontFamily="{StaticResource Montserrat}"
-                    Margin="20, 0, 0, 0"
-                />
-            </StackPanel>
-            
-            <TextBlock 
-                x:Name="VersionText"
-                Style="{StaticResource CaptionTextBlockStyle}"
-                Foreground="{ThemeResource AccentTextFillColorSecondaryBrush}"
-                Opacity="0.5"
-                Margin="50, 35, 0, 0"
-            />
 
-            <Border
-                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                BorderThickness="1"
-                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                CornerRadius="{StaticResource OverlayCornerRadius}"
-                Margin="0, 35, 0, 35"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Width="662"
-            >
-                <StackPanel>
-                    <Border 
-                        Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
-                    >
-                        <StackPanel Orientation="Horizontal">
-                            <FontIcon 
-                                Glyph="&#xEBE8;" 
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Left"
-                                Margin="15"
-                                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                            />
-                            <TextBlock 
-                                Text="Debug dashboard"
-                                Style="{StaticResource SubtitleTextBlockStyle}"
-                                FontFamily="{StaticResource Montserrat}"
-                                FontWeight="Medium"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Left"
-                                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                            />
-                        </StackPanel>
-                    </Border>
-
-                    <Border 
-                        BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
-                        BorderThickness="0, 1, 0, 0"
-                    />
-
-                    <Border 
-                        Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
-                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                        CornerRadius="{StaticResource OverlayCornerRadius}"
-                        BorderThickness="1"
-                        Margin="15, 15, 15, 0"
-                    >
-                        <ListView
-                            x:Name="DebugDashboardList"
-                            ItemTemplate="{StaticResource ContactListViewTemplate}"
-                            MaxHeight="300"
-                            HorizontalAlignment="Center"
-                            Margin="0, 2, 0, 2"
-                        />
-                    </Border>
-
-                    <Border 
-                        Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
-                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                        CornerRadius="{StaticResource OverlayCornerRadius}"
-                        BorderThickness="1"
-                        Margin="15"
-                        MaxHeight="300"
-                    >
-                        <ScrollViewer 
-                            x:Name="DebugDashboardTextScrollViewer"
-                            VerticalScrollBarVisibility="Auto"
-                        >
-                            <RichTextBlock 
-                                x:Name="DebugDashboardText"
-                                FontFamily="Cascadia Code"
-                                TextAlignment="Left"
-                                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                                Margin="15"
-                                LineHeight="25"
-                            />
-                        </ScrollViewer>
-                    </Border>
-
-                    <controls:ConfirmationButton
-                        Click="ClearConsoleButtonClick"
-                        VerticalAlignment="Center"  
+                <StackPanel 
+                    Orientation="Horizontal"
+                    Margin="50, 35, 0, 0"
+                >
+                    <TextBlock 
+                        x:Name="LanguageText"
+                        Style="{StaticResource SubtitleTextBlockStyle}"
+                        Foreground="{ThemeResource AccentTextFillColorSecondaryBrush}"
+                        FontFamily="{StaticResource Montserrat}"
+                        FontWeight="Normal"
+                        VerticalAlignment="Center"
                         HorizontalAlignment="Center"
-                        Padding="15, 7, 15, 7"
-                        Margin="0, 0, 0, 15"
-                    >
-                        <StackPanel Orientation="Horizontal">
-                            <FontIcon 
-                                Glyph="&#xED62;" 
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center"
-                                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                            />
-                            <TextBlock 
-                                Text="Clear console"
-                                ToolTipService.ToolTip="Clear console"
-                                Style="{StaticResource BodyStrongTextBlockStyle}"
-                                FontFamily="{StaticResource Montserrat}"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center"
-                                Margin="15, 0, 0, 0"
-                                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                            />
-                        </StackPanel>
-                    </controls:ConfirmationButton>
+                    />
+                    <DropDownButton 
+                        x:Name="LanguageDropDown"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        FontFamily="{StaticResource Montserrat}"
+                        Margin="20, 0, 0, 0"
+                    />
                 </StackPanel>
-            </Border>
-        </StackPanel>
-    </ScrollViewer>
+            
+                <TextBlock 
+                    x:Name="VersionText"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Foreground="{ThemeResource AccentTextFillColorSecondaryBrush}"
+                    Opacity="0.5"
+                    Margin="50, 35, 0, 0"
+                />
+
+                <Border
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    CornerRadius="{StaticResource OverlayCornerRadius}"
+                    Margin="0, 35, 0, 35"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Width="662"
+                >
+                    <StackPanel>
+                        <Border 
+                            Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                        >
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon 
+                                    Glyph="&#xEBE8;" 
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Left"
+                                    Margin="15"
+                                    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                />
+                                <TextBlock 
+                                    Text="Debug dashboard"
+                                    Style="{StaticResource SubtitleTextBlockStyle}"
+                                    FontFamily="{StaticResource Montserrat}"
+                                    FontWeight="Medium"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Left"
+                                    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                />
+                            </StackPanel>
+                        </Border>
+
+                        <Border 
+                            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                            BorderThickness="0, 1, 0, 0"
+                        />
+
+                        <Border 
+                            Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            CornerRadius="{StaticResource OverlayCornerRadius}"
+                            BorderThickness="1"
+                            Margin="15, 15, 15, 0"
+                        >
+                            <ListView
+                                x:Name="DebugDashboardList"
+                                ItemTemplate="{StaticResource ContactListViewTemplate}"
+                                MaxHeight="300"
+                                HorizontalAlignment="Center"
+                                Margin="0, 2, 0, 2"
+                            />
+                        </Border>
+
+                        <Border 
+                            Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            CornerRadius="{StaticResource OverlayCornerRadius}"
+                            BorderThickness="1"
+                            Margin="15"
+                            MaxHeight="300"
+                        >
+                            <ScrollViewer 
+                                x:Name="DebugDashboardTextScrollViewer"
+                                VerticalScrollBarVisibility="Auto"
+                            >
+                                <RichTextBlock 
+                                    x:Name="DebugDashboardText"
+                                    FontFamily="Cascadia Code"
+                                    TextAlignment="Left"
+                                    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                    Margin="15"
+                                    LineHeight="25"
+                                />
+                            </ScrollViewer>
+                        </Border>
+
+                        <controls:ConfirmationButton
+                            Click="ClearConsoleButtonClick"
+                            VerticalAlignment="Center"  
+                            HorizontalAlignment="Center"
+                            Padding="15, 7, 15, 7"
+                            Margin="0, 0, 0, 15"
+                        >
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon 
+                                    Glyph="&#xED62;" 
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                />
+                                <TextBlock 
+                                    Text="Clear console"
+                                    ToolTipService.ToolTip="Clear console"
+                                    Style="{StaticResource BodyStrongTextBlockStyle}"
+                                    FontFamily="{StaticResource Montserrat}"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                    Margin="15, 0, 0, 0"
+                                    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                />
+                            </StackPanel>
+                        </controls:ConfirmationButton>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
 </Page>

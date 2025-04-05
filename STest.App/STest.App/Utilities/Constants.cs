@@ -15,7 +15,7 @@ namespace STest.App.Utilities
         /// <summary>
         /// <see cref="Exception"/> message <see cref="string"/>
         /// </summary>
-        public const string AN_UNEXPECTED_ERROR_OCCURRED = "An unexpected error occurred: ";
+        public const string AN_UNEXPECTED_ERROR_OCCURRED = "An unexpected error occurred";
         /// <summary>
         /// <see cref="Exception"/> message <see cref="string"/>
         /// </summary>

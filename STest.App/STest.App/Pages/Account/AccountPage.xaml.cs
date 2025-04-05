@@ -1,8 +1,8 @@
 using System;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using STest.App.Domain.Interfaces;
-using STest.App.Services;
 using STest.App.Utilities;
 
 namespace STest.App.Pages.Account
@@ -20,6 +20,10 @@ namespace STest.App.Pages.Account
         /// <see cref="ILocalData"/> instance
         /// </summary>
         private readonly ILocalData m_localData;
+        /// <summary>
+        /// <see cref="ILogger"/> instance
+        /// </summary>
+        private readonly ILogger<AccountPage> m_logger;
 
         /// <summary>
         /// Constructor
@@ -29,7 +33,7 @@ namespace STest.App.Pages.Account
             this.InitializeComponent();
             m_localization = ServiceHelper.GetService<ILocalization>();
             m_localData = ServiceHelper.GetService<ILocalData>();
-            SubscribeToEvents();
+            m_logger = ServiceHelper.GetLogger<AccountPage>();
         }
 
         #region OnNavigated
@@ -38,11 +42,19 @@ namespace STest.App.Pages.Account
         /// </summary>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            base.OnNavigatedTo(e);
+            try
+            {
+                base.OnNavigatedTo(e);
 
-            TitleText.Text = m_localization.GetString(Constants.PROFILE_KEY);
-            PersonPicture.DisplayName = m_localData.GetString(Constants.USER_NAME_LOCAL_DATA);
-            PersonName.Text = PersonPicture.DisplayName;
+                SubscribeToEvents();
+                TitleText.Text = m_localization.GetString(Constants.PROFILE_KEY);
+                PersonPicture.DisplayName = m_localData.GetString(Constants.USER_NAME_LOCAL_DATA);
+                PersonName.Text = PersonPicture.DisplayName;
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
+            }
         }
 
         /// <summary>
@@ -50,7 +62,16 @@ namespace STest.App.Pages.Account
         /// </summary>
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            base.OnNavigatingFrom(e);
+            try
+            {
+                base.OnNavigatingFrom(e);
+
+                UnSubscribeToEvents();
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
+            }
         }
         #endregion
 
@@ -62,32 +83,12 @@ namespace STest.App.Pages.Account
 
         }
 
-        #region Exceptions
         /// <summary>
-        /// Show alert
+        /// Un subscribe to events
         /// </summary>
-        private void EnsureAddedTaskToUIThread(bool isEnqueued)
+        private void UnSubscribeToEvents()
         {
-            if (!isEnqueued)
-            {
-                this.ShowAlert(
-                    title: m_localization.GetString(Constants.ERROR_KEY),
-                    message: m_localization.GetString(Constants.FAILED_ADD_TASK_TO_UI_THREAD_KEY),
-                    InfoBarSeverity.Error);
-            }
-        }
 
-        /// <summary>
-        /// Show exception
-        /// </summary>
-        private void ShowException(Exception ex)
-        {
-#if DEBUG
-            this.ShowAlertExceptionWithTrace(ex, m_localization);
-#else
-            this.ShowAlertException(ex, m_localization);
-#endif
         }
-        #endregion
     }
 }

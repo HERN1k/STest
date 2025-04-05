@@ -17,7 +17,7 @@ using Windows.ApplicationModel.DataTransfer;
 
 namespace STest.App.Pages.Settings
 {
-    [SupportedOSPlatform("windows10.0.17763.0")] // Добавить нормальное логирование 
+    [SupportedOSPlatform("windows10.0.17763.0")]
     public sealed partial class SettingsPage : Page
     {
         /// <summary>
@@ -50,14 +50,21 @@ namespace STest.App.Pages.Settings
         /// </summary>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            base.OnNavigatedTo(e);
+            try
+            {
+                base.OnNavigatedTo(e);
 
-            SubscribeToEvents();
-            TitleText.Text = m_localization.GetString(Constants.SETTINGS_KEY);
-            SetLanguageDropDownTexts();
-            VersionText.Text = GetVersion();
-            DebugDashboardList.ItemsSource = GenerateDebugDashboardItems();
-            SetDebugDashboardText();
+                SubscribeToEvents();
+                TitleText.Text = m_localization.GetString(Constants.SETTINGS_KEY);
+                SetLanguageDropDownTexts();
+                VersionText.Text = GetVersion();
+                DebugDashboardList.ItemsSource = GenerateDebugDashboardItems();
+                SetDebugDashboardText();
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
+            }
         }
 
         /// <summary>
@@ -65,9 +72,16 @@ namespace STest.App.Pages.Settings
         /// </summary>
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            base.OnNavigatingFrom(e);
+            try
+            {
+                base.OnNavigatingFrom(e);
 
-            UnSubscribeToEvents();
+                UnSubscribeToEvents();
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
+            }
         }
         #endregion
 
@@ -240,11 +254,14 @@ namespace STest.App.Pages.Settings
         /// </summary>
         private async void LogEventHandler(object? sender, LogEventInfo args)
         {
-            DebugDashboardText.Blocks.Add(StringExtensions.FormattedLog(args));
+            await this.ExecuteOnDispatcherQueueAsync(m_logger, async () => 
+            {
+                DebugDashboardText.Blocks.Add(StringExtensions.FormattedLog(args));
 
-            await Task.Delay(50);
+                await Task.Delay(50);
 
-            ScrollConsoleToBottom();
+                ScrollConsoleToBottom();
+            });
         }
 
         /// <summary>
@@ -252,7 +269,14 @@ namespace STest.App.Pages.Settings
         /// </summary>
         private void OnLoaded(object sender, RoutedEventArgs args)
         {
-            ScrollConsoleToBottom();
+            try
+            {
+                ScrollConsoleToBottom();
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
+            }
         }
 
         /// <summary>
@@ -260,32 +284,39 @@ namespace STest.App.Pages.Settings
         /// </summary>
         private void LanguageDropDownClick(object sender, RoutedEventArgs args)
         {
-            if (sender is MenuFlyoutItem item)
+            try
             {
-                string culture = item.Tag.ToString() switch
+                if (sender is MenuFlyoutItem item)
                 {
-                    string name when name.Equals(
-                        m_localization.EnglishCulture.Name, 
-                        StringComparison.InvariantCultureIgnoreCase
-                    ) => m_localization.EnglishCulture.Name,
+                    string culture = item.Tag.ToString() switch
+                    {
+                        string name when name.Equals(
+                            m_localization.EnglishCulture.Name,
+                            StringComparison.InvariantCultureIgnoreCase
+                        ) => m_localization.EnglishCulture.Name,
 
-                    string name when name.Equals(
-                        m_localization.UkrainianCulture.Name,
-                        StringComparison.InvariantCultureIgnoreCase
-                    ) => m_localization.UkrainianCulture.Name,
+                        string name when name.Equals(
+                            m_localization.UkrainianCulture.Name,
+                            StringComparison.InvariantCultureIgnoreCase
+                        ) => m_localization.UkrainianCulture.Name,
 
-                    _ => m_localization.EnglishCulture.Name
-                };
+                        _ => m_localization.EnglishCulture.Name
+                    };
 
-                if (culture.Equals(m_localization.CurrentCulture.Name, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return;
+                    if (culture.Equals(m_localization.CurrentCulture.Name, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        return;
+                    }
+
+                    m_localization.ChangeCulture(culture);
+                    LanguageDropDown.Content = item.Text;
+
+                    (Application.Current as App)?.ReloadPage();
                 }
-
-                m_localization.ChangeCulture(culture);
-                LanguageDropDown.Content = item.Text;
-
-                (Application.Current as App)?.ReloadPage();
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
             }
         }
 
@@ -294,15 +325,17 @@ namespace STest.App.Pages.Settings
         /// </summary>
         private void CopyToClipboardButtonClick(object sender, RoutedEventArgs srgs)
         {
-            var package = new DataPackage();
-
-            package.SetText((sender as FrameworkElement)?.Tag.ToString() ?? string.Empty);
-
-            Clipboard.SetContent(package);
-
-            for (int i = 0; i < 50; i++)
+            try
             {
-                m_logger.LogInformation("Copied to clipboard");
+                var package = new DataPackage();
+
+                package.SetText((sender as FrameworkElement)?.Tag.ToString() ?? string.Empty);
+
+                Clipboard.SetContent(package);
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
             }
         }
 
@@ -311,40 +344,19 @@ namespace STest.App.Pages.Settings
         /// </summary>
         private void ClearConsoleButtonClick(object sender, RoutedEventArgs srgs)
         {
-            if (Application.Current is App app)
+            try
             {
-                app.LoggerTarget.Clear();
+                if (Application.Current is App app)
+                {
+                    app.LoggerTarget.Clear();
 
-                DebugDashboardText.Blocks.Clear();
+                    DebugDashboardText.Blocks.Clear();
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
             }
         }
-
-        #region Exceptions
-        /// <summary>
-        /// Show alert
-        /// </summary>
-        private void EnsureAddedTaskToUIThread(bool isEnqueued)
-        {
-            if (!isEnqueued)
-            {
-                this.ShowAlert(
-                    title: m_localization.GetString(Constants.ERROR_KEY),
-                    message: m_localization.GetString(Constants.FAILED_ADD_TASK_TO_UI_THREAD_KEY),
-                    InfoBarSeverity.Error);
-            }
-        }
-
-        /// <summary>
-        /// Show exception
-        /// </summary>
-        private void ShowException(Exception ex)
-        {
-#if DEBUG
-            this.ShowAlertExceptionWithTrace(ex, m_localization);
-#else
-            this.ShowAlertException(ex, m_localization);
-#endif
-        }
-        #endregion
     }
 }

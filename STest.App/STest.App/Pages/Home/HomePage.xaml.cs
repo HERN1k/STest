@@ -1,4 +1,6 @@
 using System;
+
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using STest.App.Domain.Interfaces;
@@ -16,9 +18,9 @@ namespace STest.App.Pages.Home
         /// </summary>
         private readonly ILocalization m_localization;
         /// <summary>
-        /// <see cref="ILocalData"/> instance
+        /// <see cref="ILogger"/> instance
         /// </summary>
-        private readonly ILocalData m_localData;
+        private readonly ILogger<HomePage> m_logger;
 
         /// <summary>
         /// Constructor
@@ -27,8 +29,7 @@ namespace STest.App.Pages.Home
         {
             this.InitializeComponent();
             m_localization = ServiceHelper.GetService<ILocalization>();
-            m_localData = ServiceHelper.GetService<ILocalData>();
-            SubscribeToEvents();
+            m_logger = ServiceHelper.GetLogger<HomePage>();
         }
 
         #region OnNavigated
@@ -37,7 +38,16 @@ namespace STest.App.Pages.Home
         /// </summary>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            base.OnNavigatedTo(e);
+            try
+            {
+                base.OnNavigatedTo(e);
+
+                SubscribeToEvents();
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
+            }
         }
 
         /// <summary>
@@ -45,7 +55,16 @@ namespace STest.App.Pages.Home
         /// </summary>
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            base.OnNavigatingFrom(e);
+            try
+            {
+                base.OnNavigatingFrom(e);
+
+                UnSubscribeToEvents();
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
+            }
         }
         #endregion
 
@@ -57,32 +76,12 @@ namespace STest.App.Pages.Home
 
         }
 
-        #region Exceptions
         /// <summary>
-        /// Show alert
+        /// Un subscribe to events
         /// </summary>
-        private void EnsureAddedTaskToUIThread(bool isEnqueued)
+        private void UnSubscribeToEvents()
         {
-            if (!isEnqueued)
-            {
-                this.ShowAlert(
-                    title: m_localization.GetString(Constants.ERROR_KEY),
-                    message: m_localization.GetString(Constants.FAILED_ADD_TASK_TO_UI_THREAD_KEY),
-                    InfoBarSeverity.Error);
-            }
-        }
 
-        /// <summary>
-        /// Show exception
-        /// </summary>
-        private void ShowException(Exception ex)
-        {
-#if DEBUG
-            this.ShowAlertExceptionWithTrace(ex, m_localization);
-#else
-            this.ShowAlertException(ex, m_localization);
-#endif
         }
-        #endregion
     }
 }
