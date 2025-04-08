@@ -9,6 +9,8 @@ using System.Collections.Concurrent;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using System.Collections.Frozen;
+using System.Linq;
+using System.Collections;
 
 namespace STest.App.Services
 {
@@ -127,7 +129,7 @@ namespace STest.App.Services
         {
             try
             {
-                ArgumentException.ThrowIfNullOrEmpty(value, nameof(value));
+                ArgumentException.ThrowIfNullOrEmpty(key, nameof(key));
                 ArgumentException.ThrowIfNullOrEmpty(value, nameof(value));
 
                 lock (m_lock)

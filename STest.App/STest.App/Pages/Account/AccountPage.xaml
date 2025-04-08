@@ -33,14 +33,30 @@
                     VerticalAlignment="Center"
                     FontFamily="{StaticResource Montserrat}"
                 />
-                <TextBlock 
-                    x:Name="PersonName"
-                    FontFamily="{StaticResource Montserrat}"
-                    Style="{StaticResource TitleTextBlockStyle}"
-                    Foreground="{ThemeResource AccentTextFillColorSecondaryBrush}"
-                    VerticalAlignment="Center"
+                <StackPanel 
+                    Orientation="Horizontal"
                     Margin="25, 0, 0, 0"
-                />
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                >
+                    <TextBlock 
+                        x:Name="PersonName"
+                        FontFamily="{StaticResource Montserrat}"
+                        Style="{StaticResource TitleTextBlockStyle}"
+                        Foreground="{ThemeResource AccentTextFillColorSecondaryBrush}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Left"
+                    />
+                    <TextBlock 
+                        x:Name="PersonRank"
+                        FontFamily="{StaticResource Montserrat}"
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Left"
+                        Margin="20, 0, 0, 0"
+                    />
+                </StackPanel>
             </StackPanel>
         </StackPanel>
     </ScrollViewer>

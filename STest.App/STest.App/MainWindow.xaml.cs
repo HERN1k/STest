@@ -111,8 +111,6 @@ namespace STest.App
             try
             {
                 RootFrame.Navigate(typeof(HomePage));
-
-                m_logger.LogInformation("Navigation completed to page: \"{Name}\"", nameof(HomePage));
             }
             catch (Exception ex)
             {
@@ -133,8 +131,6 @@ namespace STest.App
                 }
 
                 RootFrame.Navigate(type);
-
-                m_logger.LogInformation("Navigation completed to page: \"{Name}\"", type.Name);
             }
             catch (Exception ex)
             {
@@ -153,8 +149,6 @@ namespace STest.App
                 {
                     RootFrame.Navigate(typeof(SettingsPage));
 
-                    m_logger.LogInformation("Navigation completed to page: \"{Name}\"", nameof(SettingsPage));
-
                     return;
                 }
 
@@ -168,13 +162,9 @@ namespace STest.App
                     {
                         case "Home":
                             RootFrame.Navigate(typeof(HomePage));
-
-                            m_logger.LogInformation("Navigation completed to page: \"{Name}\"", nameof(HomePage));
                             break;
                         case "Account":
                             RootFrame.Navigate(typeof(AccountPage));
-
-                            m_logger.LogInformation("Navigation completed to page: \"{Name}\"", nameof(AccountPage));
                             break;
                     }
                 }

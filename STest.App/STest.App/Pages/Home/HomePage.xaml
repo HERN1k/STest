@@ -4,12 +4,48 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:STest.App.Pages.Home"
+    xmlns:entities="using:STLib.Tasks.Text"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="Transparent">
+    <Page.Resources>
+        <DataTemplate 
+            x:Key="HistoryListViewTemplate" 
+            x:DataType="entities:TextTask"
+        >
+            <Border 
+                Background="Gray" 
+                VerticalAlignment="Bottom"
+                Padding="10"
+            >
+                <StackPanel>
+                    <TextBlock 
+                        Text="{x:Bind Question}" 
+                        Foreground="#CCFFFFFF" 
+                        Padding="10" 
+                        Style="{StaticResource SubtitleTextBlockStyle}" 
+                        HorizontalAlignment="Center"
+                    />
+                    <TextBox 
+                        Header="Answer" 
+                        PlaceholderText="{x:Bind TaskID.ToString()}" 
+                    />
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+    </Page.Resources>
 
     <Grid>
-        
+        <StackPanel>
+            <ListView 
+                CompositeMode="SourceOver"
+                Height="180" 
+                x:Name="HistoryList"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                ItemTemplate="{StaticResource HistoryListViewTemplate}"
+            />
+        </StackPanel>
     </Grid>
 </Page>

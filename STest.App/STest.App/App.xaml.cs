@@ -13,6 +13,9 @@ using STest.App.AppWindows;
 using NLog.Config;
 using NLog;
 using NLog.Extensions.Logging;
+using NLog.Targets;
+using System.IO;
+using Windows.Storage;
 
 namespace STest.App
 {
@@ -26,7 +29,7 @@ namespace STest.App
         /// </summary>
         public InMemoryLoggerTarget LoggerTarget 
         {
-            get => m_loggerTarget ?? throw new InvalidOperationException(Constants.AN_UNEXPECTED_ERROR_OCCURRED);
+            get => m_loggerInMemoryTarget ?? throw new InvalidOperationException(Constants.AN_UNEXPECTED_ERROR_OCCURRED);
         }
         /// <summary>
         /// <see cref="IServiceProvider"/> instance
@@ -40,7 +43,7 @@ namespace STest.App
         /// <summary>
         /// <see cref="Utilities.RealTimeLogTarget"/> instance
         /// </summary>
-        private readonly InMemoryLoggerTarget m_loggerTarget;
+        private readonly InMemoryLoggerTarget m_loggerInMemoryTarget;
         /// <summary>
         /// <see cref="IServiceProvider"/> instance
         /// </summary>
@@ -73,7 +76,7 @@ namespace STest.App
         {
             this.InitializeComponent();
             SubscribeToEvents();
-            m_loggerTarget = new InMemoryLoggerTarget();
+            m_loggerInMemoryTarget = new InMemoryLoggerTarget();
             m_services = ConfigureServices();
             m_logger = GetLogger();
             m_localData = GetLocalData();
@@ -94,7 +97,7 @@ namespace STest.App
 
                 m_logger?.LogInformation(Constants.APP_INITIALIZED);
 
-                if (!string.IsNullOrEmpty(m_localData.GetString(Constants.EMAIL_LOCAL_DATA)))
+                if (!string.IsNullOrEmpty(m_localData.GetString(Constants.USER_EMAIL_LOCAL_DATA)))
                 {
                     ActivateMainWindow();
                 }
@@ -172,12 +175,31 @@ namespace STest.App
             try
             {
                 var config = new LoggingConfiguration();
-#if DEBUG
-                config.AddRule(NLog.LogLevel.Debug, NLog.LogLevel.Fatal, m_loggerTarget);
-#else
-                config.AddRule(NLog.LogLevel.Info, NLog.LogLevel.Fatal, realTimeLogTarget);
-#endif
 
+                var consoleTarget = new ColoredConsoleTarget("console")
+                {
+                    Layout = @"${longdate}|${level:uppercase=true}|${logger}|${message:withexception=true}"
+                };
+
+                var fileTarget = new FileTarget("file")
+                {
+                    MaxArchiveDays = 7,
+                    FileName = Path.Combine(ApplicationData.Current.LocalFolder.Path, Constants.APP_LOGS_FILE_NAME),
+                    Layout = @"${longdate}|${level:uppercase=true}|${logger}|${message:withexception=true}"
+                };
+
+                config.AddTarget(m_loggerInMemoryTarget);
+                config.AddTarget(consoleTarget);
+                config.AddTarget(fileTarget);
+#if DEBUG
+                config.AddRule(NLog.LogLevel.Debug, NLog.LogLevel.Fatal, m_loggerInMemoryTarget);
+                config.AddRule(NLog.LogLevel.Debug, NLog.LogLevel.Fatal, consoleTarget);
+                config.AddRule(NLog.LogLevel.Debug, NLog.LogLevel.Fatal, fileTarget);
+#else
+                config.AddRule(NLog.LogLevel.Info, NLog.LogLevel.Fatal, m_loggerInMemoryTarget);
+                config.AddRule(NLog.LogLevel.Info, NLog.LogLevel.Fatal, consoleTarget);
+                config.AddRule(NLog.LogLevel.Info, NLog.LogLevel.Fatal, fileTarget);
+#endif
                 builder.AddNLog(config);
                 builder.AddDebug();
 #if DEBUG

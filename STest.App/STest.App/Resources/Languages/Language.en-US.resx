@@ -123,7 +123,7 @@
   <data name="COPIED_KEY" xml:space="preserve">
     <value>Copied</value>
   </data>
-  <data name="EMAIL_KEY" xml:space="preserve">
+  <data name="USER_EMAIL_KEY" xml:space="preserve">
     <value>Email</value>
   </data>
   <data name="ENGLISH_KEY" xml:space="preserve">
@@ -170,5 +170,14 @@
   </data>
   <data name="PROFILE_KEY" xml:space="preserve">
     <value>Profile</value>
+  </data>
+  <data name="STUDENT_KEY" xml:space="preserve">
+    <value>Student</value>
+  </data>
+  <data name="TEACHER_KEY" xml:space="preserve">
+    <value>Teacher</value>
+  </data>
+  <data name="ADMIN_KEY" xml:space="preserve">
+    <value>Admin</value>
   </data>
 </root>

@@ -129,7 +129,7 @@ namespace STest.App.Utilities
         /// <summary>
         /// Show an exception to the UI
         /// </summary>
-        public static void Show<T>(this Exception exception, ILogger<T>? logger) where T : class
+        public static void Show<T>(this Exception exception, ILogger<T>? logger = null) where T : class
         {
             logger?.LogError(exception, "An unexpected error occurred: {Message}", exception.Message);
 

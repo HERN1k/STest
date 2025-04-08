@@ -123,7 +123,7 @@
   <data name="COPIED_KEY" xml:space="preserve">
     <value>Скопійовано</value>
   </data>
-  <data name="EMAIL_KEY" xml:space="preserve">
+  <data name="USER_EMAIL_KEY" xml:space="preserve">
     <value>Пошта</value>
   </data>
   <data name="ENGLISH_KEY" xml:space="preserve">
@@ -170,5 +170,14 @@
   </data>
   <data name="PROFILE_KEY" xml:space="preserve">
     <value>Профіль</value>
+  </data>
+  <data name="STUDENT_KEY" xml:space="preserve">
+    <value>Студент</value>
+  </data>
+  <data name="TEACHER_KEY" xml:space="preserve">
+    <value>Вчитель</value>
+  </data>
+  <data name="ADMIN_KEY" xml:space="preserve">
+    <value>Admin</value>
   </data>
 </root>

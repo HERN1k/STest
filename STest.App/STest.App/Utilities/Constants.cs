@@ -115,6 +115,10 @@ namespace STest.App.Utilities
         /// <summary>
         /// <see cref="Application"/> message <see cref="string"/>
         /// </summary>
+        public const string APP_LOGS_FILE_NAME = "logs.txt";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
         public const string APP_INITIALIZED = "The application has been initialized";
         /// <summary>
         /// <see cref="Application"/> message <see cref="string"/>
@@ -216,6 +220,18 @@ namespace STest.App.Utilities
         /// <see cref="Localization"/> key <see cref="string"/>
         /// </summary>
         public const string PROFILE_KEY = nameof(PROFILE_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string STUDENT_KEY = nameof(STUDENT_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string TEACHER_KEY = nameof(TEACHER_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string ADMIN_KEY = nameof(ADMIN_KEY);
 
         /* 
             Local data
@@ -227,7 +243,7 @@ namespace STest.App.Utilities
         /// <summary>
         /// <see cref="LocalData"/> key <see cref="string"/>
         /// </summary>
-        public const string EMAIL_LOCAL_DATA = nameof(EMAIL_LOCAL_DATA);
+        public const string USER_EMAIL_LOCAL_DATA = nameof(USER_EMAIL_LOCAL_DATA);
         /// <summary>
         /// <see cref="LocalData"/> key <see cref="string"/>
         /// </summary>

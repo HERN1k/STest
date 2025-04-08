@@ -1,7 +1,6 @@
 using System;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using System.Diagnostics;
 using WinRT;
 using STest.App.Utilities;
 using STest.App.Domain.Interfaces;
@@ -10,7 +9,7 @@ using Microsoft.UI.Composition;
 using Windows.UI;
 using Windows.Graphics;
 using Microsoft.Extensions.Logging;
-using STest.App.Pages.Home;
+using STest.App.Domain.Enums;
 
 namespace STest.App.AppWindows
 {
@@ -73,7 +72,8 @@ namespace STest.App.AppWindows
                 var app = Application.Current as App
                     ?? throw new ArgumentNullException(nameof(Application.Current));
 
-                m_localData.SetString(Constants.EMAIL_LOCAL_DATA, EmailInput.Text);
+                m_localData.SetString(Constants.USER_EMAIL_LOCAL_DATA, EmailInput.Text);
+                m_localData.SetString(Constants.USER_RANK_LOCAL_DATA, UserRank.Student.ToString());
 
                 app.ActivateMainWindow();
             }

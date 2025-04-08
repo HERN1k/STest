@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 
 using NLog;
+using NLog.Config;
 using NLog.Targets;
 
 namespace STest.App.Utilities
@@ -36,6 +37,11 @@ namespace STest.App.Utilities
         /// Logs queue
         /// </summary>
         private readonly ConcurrentQueue<LogEventInfo> m_logs = new();
+
+        public InMemoryLoggerTarget()
+        {
+            this.Name = "InMemoryLogger";
+        }
 
         protected override void Write(LogEventInfo log)
         {

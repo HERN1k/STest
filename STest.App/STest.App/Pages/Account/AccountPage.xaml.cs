@@ -2,6 +2,8 @@ using System;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
+
+using STest.App.Domain.Enums;
 using STest.App.Domain.Interfaces;
 using STest.App.Utilities;
 
@@ -50,6 +52,8 @@ namespace STest.App.Pages.Account
                 TitleText.Text = m_localization.GetString(Constants.PROFILE_KEY);
                 PersonPicture.DisplayName = m_localData.GetString(Constants.USER_NAME_LOCAL_DATA);
                 PersonName.Text = PersonPicture.DisplayName;
+                PersonRank.Text = m_localization.GetString(
+                    m_localData.GetString(Constants.USER_RANK_LOCAL_DATA).ToStringLocalizationKey());
             }
             catch (Exception ex)
             {
