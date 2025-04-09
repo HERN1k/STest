@@ -180,4 +180,7 @@
   <data name="ADMIN_KEY" xml:space="preserve">
     <value>Admin</value>
   </data>
+  <data name="TESTS_CONFIGURATOR_KEY" xml:space="preserve">
+    <value>Конфігуратор тестів</value>
+  </data>
 </root>

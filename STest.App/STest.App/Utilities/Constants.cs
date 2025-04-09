@@ -232,6 +232,10 @@ namespace STest.App.Utilities
         /// <see cref="Localization"/> key <see cref="string"/>
         /// </summary>
         public const string ADMIN_KEY = nameof(ADMIN_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string TESTS_CONFIGURATOR_KEY = nameof(TESTS_CONFIGURATOR_KEY);
 
         /* 
             Local data

@@ -1,42 +1,55 @@
 using System;
+using System.Collections.ObjectModel;
+using System.Runtime.Versioning;
+
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-
-using STest.App.Domain.Enums;
 using STest.App.Domain.Interfaces;
+using STest.App.Pages.Home;
 using STest.App.Utilities;
 
-namespace STest.App.Pages.Account
+using STLib.Core.Testing;
+
+namespace STest.App.Pages.Builder
 {
     /// <summary>
-    /// Account page
+    /// Builder page
     /// </summary>
-    public sealed partial class AccountPage : Page
+    [SupportedOSPlatform("windows10.0.17763.0")]
+    public sealed partial class BuilderPage : Page
     {
+        public ObservableCollection<Test> TestsList { get; set; }
+
         /// <summary>
         /// <see cref="ILocalization"/> instance
         /// </summary>
         private readonly ILocalization m_localization;
         /// <summary>
-        /// <see cref="ILocalData"/> instance
-        /// </summary>
-        private readonly ILocalData m_localData;
-        /// <summary>
         /// <see cref="ILogger"/> instance
         /// </summary>
-        private readonly ILogger<AccountPage> m_logger;
+        private readonly ILogger<HomePage> m_logger;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public AccountPage()
+        public BuilderPage()
         {
             this.InitializeComponent();
             m_localization = ServiceHelper.GetService<ILocalization>();
-            m_localData = ServiceHelper.GetService<ILocalData>();
-            m_logger = ServiceHelper.GetLogger<AccountPage>();
-            DataContext = this;
+            m_logger = ServiceHelper.GetLogger<HomePage>();
+
+            var test = Test.Build(Guid.NewGuid())
+                .AddName("Test")
+                .AddDescription("Description")
+                .AddInstructions("Instructions")
+                .AddTestTime(TimeSpan.FromMinutes(30));
+
+            TestsList = new ObservableCollection<Test>();
+
+            for (int i = 0; i < 20; i++)
+            {
+                TestsList.Add(test);
+            }
+
+            this.DataContext = this;
         }
 
         #region OnNavigated
@@ -50,11 +63,6 @@ namespace STest.App.Pages.Account
                 base.OnNavigatedTo(e);
 
                 SubscribeToEvents();
-                TitleText.Text = m_localization.GetString(Constants.PROFILE_KEY);
-                PersonPicture.DisplayName = m_localData.GetString(Constants.USER_NAME_LOCAL_DATA);
-                PersonName.Text = PersonPicture.DisplayName;
-                PersonRank.Text = m_localization.GetString(
-                    m_localData.GetString(Constants.USER_RANK_LOCAL_DATA).ToStringLocalizationKey());
             }
             catch (Exception ex)
             {

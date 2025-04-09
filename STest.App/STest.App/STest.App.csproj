@@ -13,6 +13,7 @@
   <ItemGroup>
     <None Remove="AppWindows\ErrorWindow.xaml" />
     <None Remove="AppWindows\LoginWindow.xaml" />
+    <None Remove="Pages\Builder\BuilderPage.xaml" />
     <None Remove="Pages\Home\HomePage.xaml" />
     <None Remove="Pages\Settings\SettingsPage.xaml" />
   </ItemGroup>
@@ -78,6 +79,12 @@
 
   <ItemGroup>
     <Page Update="Controls\ConfirmationButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Pages\Builder\BuilderPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

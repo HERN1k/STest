@@ -12,6 +12,8 @@ using STest.App.Pages.Home;
 using STest.App.Pages.Settings;
 using STest.App.Pages.Account;
 using Microsoft.Extensions.Logging;
+using STest.App.Pages.Builder;
+using STest.App.Domain.Enums;
 
 namespace STest.App
 {
@@ -28,6 +30,10 @@ namespace STest.App
         /// <see cref="ILogger"/> instance
         /// </summary>
         private readonly ILogger<MainWindow> m_logger;
+        /// <summary>
+        /// <see cref="ILocalData"/> instance
+        /// </summary>
+        private readonly ILocalData m_localData;
         /// <summary>
         /// The Windows system dispatcher queue helper
         /// </summary>
@@ -53,6 +59,7 @@ namespace STest.App
             this.InitializeComponent();
             m_localization = ServiceHelper.GetService<ILocalization>();
             m_logger = ServiceHelper.GetLogger<MainWindow>();
+            m_localData = ServiceHelper.GetService<ILocalData>();
             SubscribeToEvents();
             Init();
             TrySetAcrylicBackdrop(useAcrylicThin: false);
@@ -96,6 +103,14 @@ namespace STest.App
                 this.AppWindow.TitleBar.ButtonBackgroundColor = Color.FromArgb(0, 255, 255, 255);
                 this.AppWindow.TitleBar.InactiveBackgroundColor = this.AppWindow.TitleBar.ButtonBackgroundColor;
                 this.AppWindow.TitleBar.ButtonInactiveBackgroundColor = this.AppWindow.TitleBar.ButtonBackgroundColor;
+                
+                if (m_localData
+                        .GetString(Constants.USER_RANK_LOCAL_DATA)
+                        .ParseUserRank()
+                        .Equals(UserRank.Teacher))
+                {
+                    BuilderLink.Visibility = Visibility.Visible;
+                }
             }
             catch (Exception ex)
             {
@@ -165,6 +180,9 @@ namespace STest.App
                             break;
                         case "Account":
                             RootFrame.Navigate(typeof(AccountPage));
+                            break;
+                        case "Builder":
+                            RootFrame.Navigate(typeof(BuilderPage)); // добавить логику и отображение
                             break;
                     }
                 }

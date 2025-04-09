@@ -6,12 +6,10 @@ using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Controls;
 using STLib.Tasks.Text;
-using System.IO;
-using System.Text.Json;
-using STLib.Core;
 using STLib.Tasks.TrueFalse;
 using STLib.Tasks.MultipleChoice;
 using STLib.Tasks.Checkboxes;
+using STLib.Core.Testing;
 
 namespace STest.App.Pages.Home
 {
@@ -37,6 +35,7 @@ namespace STest.App.Pages.Home
             this.InitializeComponent();
             m_localization = ServiceHelper.GetService<ILocalization>();
             m_logger = ServiceHelper.GetLogger<HomePage>();
+            DataContext = this;
         }
 
         #region OnNavigated
@@ -51,54 +50,76 @@ namespace STest.App.Pages.Home
 
                 SubscribeToEvents();
 
-                var list = new List<CoreTask>
-                {
-                    TextTask.Build()
-                        .AddName("Name")
-                        .AddQuestion("Question?")
-                        .AddCorrectAnswer("Correct answer"),
+                //var list = new List<CoreTask>
+                //{
+                //    TextTask.Build()
+                //        .AddName("Name")
+                //        .AddQuestion("Question?")
+                //        .AddCorrectAnswer("Correct answer"),
 
-                    TrueFalseTask.Build()
-                        .AddName("Name")
-                        .AddQuestion("Question?")
-                        .AddCorrectAnswer("True"),
+                //    TrueFalseTask.Build()
+                //        .AddName("Name")
+                //        .AddQuestion("Question?")
+                //        .AddCorrectAnswer("True"),
 
-                    MultipleChoiceTask.Build()
-                        .AddName("Name")
-                        .AddQuestion("Question?")
-                        .AddAnswerItem("Answer 1")
-                        .AddAnswerItem("Answer 2")
-                        .AddAnswerItem("Answer 3")
-                        .AddAnswerItem("Answer 4")
-                        .AddCorrectAnswer("Answer 2"),
+                //    MultipleChoiceTask.Build()
+                //        .AddName("Name")
+                //        .AddQuestion("Question?")
+                //        .AddAnswerItem("Answer 1")
+                //        .AddAnswerItem("Answer 2")
+                //        .AddAnswerItem("Answer 3")
+                //        .AddAnswerItem("Answer 4")
+                //        .AddCorrectAnswer("Answer 2"),
 
-                    CheckboxesTask.Build()
-                        .AddName("Name")
-                        .AddQuestion("Question?")
-                        .AddAnswerItem("Answer 1")
-                        .AddAnswerItem("Answer 2")
-                        .AddAnswerItem("Answer 3")
-                        .AddAnswerItem("Answer 4")
-                        .AddCorrectAnswers(new List<string>() 
-                        {
-                            "Answer 2",
-                            "Answer 4"
-                        }),
-                };
+                //    CheckboxesTask.Build()
+                //        .AddName("Name")
+                //        .AddQuestion("Question?")
+                //        .AddAnswerItem("Answer 1")
+                //        .AddAnswerItem("Answer 2")
+                //        .AddAnswerItem("Answer 3")
+                //        .AddAnswerItem("Answer 4")
+                //        .AddCorrectAnswers(new List<string>() 
+                //        {
+                //            "Answer 2",
+                //            "Answer 4"
+                //        }),
+                //};
 
-                var test = Test.Build(Guid.NewGuid())
-                    .AddName("Test")
-                    .AddDescription("Description")
-                    .AddInstructions("Instructions")
-                    .AddTestTime(TimeSpan.FromMinutes(30))
-                    .AddSubject(Guid.NewGuid())
-                    .AddSubject(Guid.NewGuid())
-                    .AddSubject(Guid.NewGuid())
-                    .AddTasks(list);
+                //var test = Test.Build(Guid.NewGuid())
+                //    .AddName("Test")
+                //    .AddDescription("Description")
+                //    .AddInstructions("Instructions")
+                //    .AddTestTime(TimeSpan.FromMinutes(30));
+                
+                //for (int i = 0; i < 50; i++)
+                //{
+                //    test.AddSubject(Guid.NewGuid());
+                //}
 
-                m_logger.LogInformation("Test: {test}", string.Concat(Environment.NewLine, test.SerializeToJson()));
+                //for (int i = 0; i < 100; i++)
+                //{
+                //    test.AddTask(CheckboxesTask.Build()
+                //        .AddName("Name")
+                //        .AddQuestion("Question?")
+                //        .AddAnswerItem("Answer 1")
+                //        .AddAnswerItem("Answer 2")
+                //        .AddAnswerItem("Answer 3")
+                //        .AddAnswerItem("Answer 4")
+                //        .AddCorrectAnswers(new List<string>()
+                //        {
+                //            "Answer 2",
+                //            "Answer 4"
+                //        }));
+                //}
 
-                // Исправить типизацию List<CoreTask> Tasks в Test для сериализации
+                //test.OnDevSave();
+
+                //byte[] bytes = test.SerializeToByteArray();
+
+                //m_logger.LogInformation("{empty}", string.Empty);
+                //m_logger.LogInformation("Test serialized to byte array: {length}", bytes.Length);
+                //m_logger.LogInformation("{empty}", string.Empty);
+                //m_logger.LogInformation("{test}", Test.DeserializeFromByteArray(bytes));
             }
             catch (Exception ex)
             {

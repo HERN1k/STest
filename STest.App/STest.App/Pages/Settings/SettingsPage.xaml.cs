@@ -42,6 +42,7 @@ namespace STest.App.Pages.Settings
             m_localization = ServiceHelper.GetService<ILocalization>();
             m_localData = ServiceHelper.GetService<ILocalData>();
             m_logger = ServiceHelper.GetLogger<SettingsPage>();
+            DataContext = this;
         }
 
         #region OnNavigated

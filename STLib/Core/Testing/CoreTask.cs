@@ -2,11 +2,19 @@
 using System.Text;
 using System.Text.Json.Serialization;
 
-namespace STLib.Core
+namespace STLib.Core.Testing
 {
+    /// <summary>
+    /// Represents an abstract base class for managing core task functionality.
+    /// Provides properties and methods for handling task-related data, such as ID, name, question, and grading.
+    /// </summary>
     public abstract class CoreTask : IComparable, IComparable<CoreTask>, IEquatable<CoreTask>
     {
-        public Guid TaskID 
+        #region Public properties
+        /// <summary>
+        /// Gets the unique identifier for the task.
+        /// </summary>
+        public Guid TaskID
         {
             get => m_taskID;
             private set
@@ -19,6 +27,9 @@ namespace STLib.Core
                 m_taskID = value;
             }
         }
+        /// <summary>
+        /// Gets or sets the name of the task.
+        /// </summary>
         public string Name
         {
             get => m_name;
@@ -42,6 +53,9 @@ namespace STLib.Core
                 m_name = value;
             }
         }
+        /// <summary>
+        /// Gets or sets the question associated with the task.
+        /// </summary>
         public string Question
         {
             get => m_question;
@@ -65,6 +79,9 @@ namespace STLib.Core
                 m_question = value;
             }
         }
+        /// <summary>
+        /// Gets or sets the correct answer for the task.
+        /// </summary>
         public string CorrectAnswer
         {
             get => m_correctAnswer;
@@ -78,6 +95,9 @@ namespace STLib.Core
                 m_correctAnswer = value;
             }
         }
+        /// <summary>
+        /// Gets or sets the answer provided for the task.
+        /// </summary>
         public string Answer
         {
             get => m_answer;
@@ -86,6 +106,9 @@ namespace STLib.Core
                 m_answer = value ?? throw new ArgumentNullException(nameof(Answer));
             }
         }
+        /// <summary>
+        /// Gets the type of the task.
+        /// </summary>
         public TaskType Type
         {
             get => m_type;
@@ -98,17 +121,26 @@ namespace STLib.Core
 
                 m_type = value;
             }
-        }
+        }                                              // Dont change this value
+        /// <summary>
+        /// Gets or sets a value indicating whether the task should be considered for grading.
+        /// </summary>
         public bool Consider
         {
             get => m_consider;
             protected set => m_consider = value;
         }
+        /// <summary>
+        /// Gets or sets a value indicating whether the task has been answered.
+        /// </summary>
         public bool IsAnswered
         {
             get => m_isAnswered;
             protected set => m_isAnswered = value;
         }
+        /// <summary>
+        /// Gets or sets the maximum grade for the task.
+        /// </summary>
         public int MaxGrade
         {
             get => m_maxGrade;
@@ -122,6 +154,9 @@ namespace STLib.Core
                 m_maxGrade = value;
             }
         }
+        /// <summary>
+        /// Gets or sets the grade achieved for the task.
+        /// </summary>
         public int Grade
         {
             get => m_grade;
@@ -135,23 +170,43 @@ namespace STLib.Core
                 m_grade = value;
             }
         }
-        
+        #endregion
+
+        #region Private properties
         private Guid m_taskID = Guid.NewGuid();
         private string m_name = "NULL";
         private string m_question = "NULL";
         private string m_correctAnswer = "NULL";
         private string m_answer = string.Empty;
-        private TaskType m_type = TaskType.Unknown;
+        private TaskType m_type = TaskType.Unknown;                         // Dont change this value
         private bool m_consider = true;
         private bool m_isAnswered = default;
         private int m_maxGrade = 1;
         private int m_grade = default;
+        #endregion
 
+        #region Constructors
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CoreTask"/> class with the specified task type.
+        /// </summary>
+        /// <param name="type">The type of the task.</param>
         protected CoreTask(TaskType type)
         {
             Type = type;
         }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CoreTask"/> class with the specified parameters.
+        /// </summary>
+        /// <param name="taskID">The unique identifier for the task.</param>
+        /// <param name="name">The name of the task.</param>
+        /// <param name="question">The question associated with the task.</param>
+        /// <param name="correctAnswer">The correct answer for the task.</param>
+        /// <param name="answer">The answer provided for the task.</param>
+        /// <param name="type">The type of the task.</param>
+        /// <param name="consider">A value indicating whether the task should be considered for grading.</param>
+        /// <param name="isAnswered">A value indicating whether the task has been answered.</param>
+        /// <param name="maxGrade">The maximum grade for the task.</param>
+        /// <param name="grade">The grade achieved for the task.</param>
         [JsonConstructor]
         protected CoreTask(Guid taskID, string name, string question, string correctAnswer, string answer, TaskType type, bool consider, bool isAnswered, int maxGrade, int grade)
         {
@@ -166,11 +221,24 @@ namespace STLib.Core
             CorrectAnswer = correctAnswer;
             Answer = answer;
         }
+        #endregion
 
+        #region Logic methods
+        /// <summary>
+        /// Abstract method to set the answer for the task.
+        /// </summary>
+        /// <param name="answer">The answer to set.</param>
         public abstract void SetAnswer(string answer);
-
+        /// <summary>
+        /// Abstract method to calculate the grade for the task based on the provided answer.
+        /// </summary>
+        /// <param name="answer">The provided answer.</param>
+        /// <returns>The calculated grade.</returns>
         protected abstract int CalculateGrade(string answer);
-
+        /// <summary>
+        /// Determines whether the task is configured correctly.
+        /// </summary>
+        /// <returns><c>true</c> if the task is correct; otherwise, <c>false</c>.</returns>
         public virtual bool IsCorrectTask()
         {
             if (string.IsNullOrWhiteSpace(m_name) ||
@@ -198,7 +266,10 @@ namespace STLib.Core
 
             return true;
         }
-
+        /// <summary>
+        /// Determines whether the task has been answered correctly.
+        /// </summary>
+        /// <returns><c>true</c> if the task is answered correctly; otherwise, <c>false</c>.</returns>
         public virtual bool IsCorrect()
         {
             if (IsAnswered)
@@ -211,37 +282,57 @@ namespace STLib.Core
 
             return false;
         }
-
+        /// <summary>
+        /// Sets the name of the task.
+        /// </summary>
+        /// <param name="name">The name to set.</param>
         public virtual void SetName(string name)
         {
             Name = name.Trim();
         }
-
+        /// <summary>
+        /// Sets the question associated with the task.
+        /// </summary>
+        /// <param name="question">The question to set.</param>
         public virtual void SetQuestion(string question)
         {
             Question = question.Trim();
         }
-
+        /// <summary>
+        /// Sets the correct answer for the task.
+        /// </summary>
+        /// <param name="correctAnswer">The correct answer to set.</param>
         public virtual void SetCorrectAnswer(string correctAnswer)
         {
             CorrectAnswer = correctAnswer.Trim();
         }
-
+        /// <summary>
+        /// Sets whether the task should be considered for grading.
+        /// </summary>
+        /// <param name="consider">A value indicating whether to consider the task.</param>
         public virtual void SetConsider(bool consider)
         {
             Consider = consider;
         }
-
+        /// <summary>
+        /// Sets the maximum grade for the task.
+        /// </summary>
+        /// <param name="maxGrade">The maximum grade to set.</param>
         public virtual void SetMaxGrade(int maxGrade)
         {
             MaxGrade = maxGrade;
         }
-
+        /// <summary>
+        /// Sets the achieved grade for the task.
+        /// </summary>
+        /// <param name="grade">The grade to set.</param>
         public virtual void SetGrade(int grade)
         {
             Grade = grade;
         }
-
+        /// <summary>
+        /// Resets the task to its initial state.
+        /// </summary>
         public virtual void Reset()
         {
             Answer = string.Empty;
@@ -249,7 +340,10 @@ namespace STLib.Core
             Grade = 0;
 
         }
+        #endregion
 
+        #region Base methods
+        /// <inheritdoc />
         public override bool Equals(object obj)
         {
             if (obj is CoreTask task)
@@ -259,12 +353,12 @@ namespace STLib.Core
 
             return false;
         }
-
+        /// <inheritdoc />
         public bool Equals(CoreTask other)
         {
             return TaskID.Equals(other.TaskID);
         }
-
+        /// <inheritdoc />
         public int CompareTo(object obj)
         {
             if (obj == null)
@@ -279,7 +373,7 @@ namespace STLib.Core
                 throw new ArgumentException("Object is not a CoreTask");
             }
         }
-
+        /// <inheritdoc />
         public int CompareTo(CoreTask other)
         {
             if (other == null)
@@ -289,7 +383,7 @@ namespace STLib.Core
 
             return Grade.CompareTo(other.Grade);
         }
-
+        /// <inheritdoc />
         public override string ToString()
         {
             var sb = new StringBuilder();
@@ -307,10 +401,11 @@ namespace STLib.Core
 
             return sb.ToString();
         }
-
+        /// <inheritdoc />
         public override int GetHashCode()
         {
             return TaskID.GetHashCode();
         }
+        #endregion
     }
 }

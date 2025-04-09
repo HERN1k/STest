@@ -62,6 +62,18 @@
                     IsSelected="True" 
                     Background="Transparent" 
                 />
+                <NavigationViewItem 
+                    x:Name="BuilderLink"
+                    Content="Builder" 
+                    Tag="Builder" 
+                    IsSelected="False" 
+                    Background="Transparent" 
+                    Visibility="Collapsed"
+                >
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xED0E;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
             </NavigationView.MenuItems>
 
             <NavigationView.FooterMenuItems>
