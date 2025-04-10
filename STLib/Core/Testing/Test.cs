@@ -1050,7 +1050,7 @@ namespace STLib.Core.Testing
         /// Converts a UTC date to a local date string in the format "dd:MM:yyyy".
         /// </summary>
         /// <param name="date"></param>
-        public string ToLocalDate(DateTime date) => date.ToLocalTime().ToString("dd:MM:yyyy");
+        public string ToLocalDate(DateTime date) => date.ToLocalTime().ToString("dd.MM.yyyy");
         /// <summary>
         /// Converts a UTC date to a local time string in the format "HH:mm:ss".
         /// </summary>
@@ -1061,6 +1061,39 @@ namespace STLib.Core.Testing
         /// </summary>
         /// <param name="date"></param>
         public string ToLocalDateTime(DateTime date) => date.ToLocalTime().ToString("dd:MM:yyyy HH:mm:ss");
+        /// <summary>
+        /// Trims a string to a specified length and appends ellipsis if the string exceeds that length.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="length"></param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public string TrimToLength(string str, int length = 32)
+        {
+            if (length < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(length), "Length must be greater than 0.");
+            }
+
+            if (string.IsNullOrWhiteSpace(str) || length == 0)
+            {
+                return string.Empty;
+            }
+
+            str = str.Trim();
+
+            if (str.Length <= length)
+            {
+                return str;
+            }
+
+            return string.Create(length + 3, (str), (span, state) =>
+            {
+                state.AsSpan(0, length).CopyTo(span);
+                span[length] = '.';
+                span[length + 1] = '.';
+                span[length + 2] = '.';
+            });
+        }
         #endregion
 
         #region Base methods

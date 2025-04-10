@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+
 using Microsoft.UI.Xaml;
 using STest.App.Services;
 
@@ -236,6 +238,50 @@ namespace STest.App.Utilities
         /// <see cref="Localization"/> key <see cref="string"/>
         /// </summary>
         public const string TESTS_CONFIGURATOR_KEY = nameof(TESTS_CONFIGURATOR_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string LAST_TEST_KEY = nameof(LAST_TEST_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string LIST_OF_RECENT_TESTS_IS_EMPTY_KEY = nameof(LIST_OF_RECENT_TESTS_IS_EMPTY_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string CREATE_NEW_TEST_KEY = nameof(CREATE_NEW_TEST_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string THIS_SHOULD_BE_THE_NAME_KEY = nameof(THIS_SHOULD_BE_THE_NAME_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string THIS_SHOULD_BE_THE_DESCRIPTION_KEY = nameof(THIS_SHOULD_BE_THE_DESCRIPTION_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string THIS_SHOULD_BE_THE_INSTRUCTIONS_KEY = nameof(THIS_SHOULD_BE_THE_INSTRUCTIONS_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string NAME_KEY = nameof(NAME_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string DESCRIPTION_KEY = nameof(DESCRIPTION_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string INSTRUCTIONS_KEY = nameof(INSTRUCTIONS_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string EDITOR_KEY = nameof(EDITOR_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string TEST_TIME_KEY = nameof(TEST_TIME_KEY);
 
         /* 
             Local data

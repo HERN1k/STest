@@ -73,7 +73,8 @@ namespace STest.App.AppWindows
                     ?? throw new ArgumentNullException(nameof(Application.Current));
 
                 m_localData.SetString(Constants.USER_EMAIL_LOCAL_DATA, EmailInput.Text);
-                m_localData.SetString(Constants.USER_RANK_LOCAL_DATA, UserRank.Student.ToString());
+                m_localData.SetString(Constants.USER_RANK_LOCAL_DATA, UserRank.Teacher.ToString());
+                m_localData.SetString(Constants.USER_NAME_LOCAL_DATA, "Pochtalyon Petchkin");
 
                 app.ActivateMainWindow();
             }

@@ -183,4 +183,37 @@
   <data name="TESTS_CONFIGURATOR_KEY" xml:space="preserve">
     <value>Tests configurator</value>
   </data>
+  <data name="LAST_TEST_KEY" xml:space="preserve">
+    <value>Last tests</value>
+  </data>
+  <data name="LIST_OF_RECENT_TESTS_IS_EMPTY_KEY" xml:space="preserve">
+    <value>The list of recent tests is empty</value>
+  </data>
+  <data name="CREATE_NEW_TEST_KEY" xml:space="preserve">
+    <value>Create a new test</value>
+  </data>
+  <data name="THIS_SHOULD_BE_THE_NAME_KEY" xml:space="preserve">
+    <value>This should be the name here</value>
+  </data>
+  <data name="THIS_SHOULD_BE_THE_DESCRIPTION_KEY" xml:space="preserve">
+    <value>There should be a description here</value>
+  </data>
+  <data name="THIS_SHOULD_BE_THE_INSTRUCTIONS_KEY" xml:space="preserve">
+    <value>This should be the instructions here</value>
+  </data>
+  <data name="NAME_KEY" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="DESCRIPTION_KEY" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="INSTRUCTIONS_KEY" xml:space="preserve">
+    <value>Instructions</value>
+  </data>
+  <data name="EDITOR_KEY" xml:space="preserve">
+    <value>Editor</value>
+  </data>
+  <data name="TEST_TIME_KEY" xml:space="preserve">
+    <value>Test time</value>
+  </data>
 </root>

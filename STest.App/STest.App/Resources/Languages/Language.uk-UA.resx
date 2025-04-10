@@ -183,4 +183,37 @@
   <data name="TESTS_CONFIGURATOR_KEY" xml:space="preserve">
     <value>Конфігуратор тестів</value>
   </data>
+  <data name="LAST_TEST_KEY" xml:space="preserve">
+    <value>Останні тести</value>
+  </data>
+  <data name="LIST_OF_RECENT_TESTS_IS_EMPTY_KEY" xml:space="preserve">
+    <value>Список останніх тестів порожній</value>
+  </data>
+  <data name="CREATE_NEW_TEST_KEY" xml:space="preserve">
+    <value>Створити новий тест</value>
+  </data>
+  <data name="THIS_SHOULD_BE_THE_NAME_KEY" xml:space="preserve">
+    <value>Тут повинна бути назва</value>
+  </data>
+  <data name="THIS_SHOULD_BE_THE_DESCRIPTION_KEY" xml:space="preserve">
+    <value>Тут повинен бути опис</value>
+  </data>
+  <data name="THIS_SHOULD_BE_THE_INSTRUCTIONS_KEY" xml:space="preserve">
+    <value>Це повинна бути інструкція</value>
+  </data>
+  <data name="NAME_KEY" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="DESCRIPTION_KEY" xml:space="preserve">
+    <value>Опис</value>
+  </data>
+  <data name="INSTRUCTIONS_KEY" xml:space="preserve">
+    <value>Інструкції</value>
+  </data>
+  <data name="EDITOR_KEY" xml:space="preserve">
+    <value>Редактор</value>
+  </data>
+  <data name="TEST_TIME_KEY" xml:space="preserve">
+    <value>Час тесту</value>
+  </data>
 </root>
