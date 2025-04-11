@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-
 using Microsoft.UI.Xaml;
 using STest.App.Services;
 
@@ -282,6 +280,30 @@ namespace STest.App.Utilities
         /// <see cref="Localization"/> key <see cref="string"/>
         /// </summary>
         public const string TEST_TIME_KEY = nameof(TEST_TIME_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string SAVE_KEY = nameof(SAVE_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string ADD_NEW_TASK_KEY = nameof(ADD_NEW_TASK_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string TEXT_KEY = nameof(TEXT_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string TRUE_FALSE_KEY = nameof(TRUE_FALSE_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string CHECKBOXES_KEY = nameof(CHECKBOXES_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string MULTIPLE_CHOICE_KEY = nameof(MULTIPLE_CHOICE_KEY);
 
         /* 
             Local data

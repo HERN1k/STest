@@ -32,7 +32,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\STLib\STLib.csproj" />
+    <Reference Include="STLib">
+      <HintPath>..\..\..\STLib\bin\Release\netstandard2.1\STLib.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

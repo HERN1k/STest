@@ -10,9 +10,7 @@
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <ResourceDictionary Source="/Controls/ConfirmationButton.xaml" />
             </ResourceDictionary.MergedDictionaries>
-
-            <FontFamily x:Key="MontserratItalic">ms-appx:///Resources/Fonts/Montserrat/Montserrat-Italic-VariableFont_wght.ttf#Montserrat</FontFamily>
-            <FontFamily x:Key="Montserrat">ms-appx:///Resources/Fonts/Montserrat/Montserrat-VariableFont_wght.ttf#Montserrat</FontFamily>
+            
         </ResourceDictionary>
     </Application.Resources>
 </Application>

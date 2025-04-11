@@ -216,4 +216,22 @@
   <data name="TEST_TIME_KEY" xml:space="preserve">
     <value>Test time</value>
   </data>
+  <data name="SAVE_KEY" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="ADD_NEW_TASK_KEY" xml:space="preserve">
+    <value>Add new task</value>
+  </data>
+  <data name="TEXT_KEY" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="TRUE_FALSE_KEY" xml:space="preserve">
+    <value>True / False</value>
+  </data>
+  <data name="CHECKBOXES_KEY" xml:space="preserve">
+    <value>Checkboxes</value>
+  </data>
+  <data name="MULTIPLE_CHOICE_KEY" xml:space="preserve">
+    <value>Multiple choice</value>
+  </data>
 </root>

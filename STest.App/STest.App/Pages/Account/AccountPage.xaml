@@ -13,7 +13,6 @@
         <StackPanel>
             <TextBlock 
                 x:Name="TitleText"
-                FontFamily="{StaticResource Montserrat}"
                 Style="{StaticResource TitleTextBlockStyle}"
                 Foreground="{ThemeResource AccentTextFillColorSecondaryBrush}"
                 HorizontalAlignment="Center"
@@ -31,7 +30,6 @@
                     Width="75"
                     Height="75"
                     VerticalAlignment="Center"
-                    FontFamily="{StaticResource Montserrat}"
                 />
                 <StackPanel 
                     Orientation="Horizontal"
@@ -41,7 +39,6 @@
                 >
                     <TextBlock 
                         x:Name="PersonName"
-                        FontFamily="{StaticResource Montserrat}"
                         Style="{StaticResource TitleTextBlockStyle}"
                         Foreground="{ThemeResource AccentTextFillColorSecondaryBrush}"
                         VerticalAlignment="Center"
@@ -49,7 +46,6 @@
                     />
                     <TextBlock 
                         x:Name="PersonRank"
-                        FontFamily="{StaticResource Montserrat}"
                         Style="{StaticResource BodyTextBlockStyle}"
                         Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}"
                         VerticalAlignment="Center"

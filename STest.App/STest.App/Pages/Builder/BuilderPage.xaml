@@ -5,7 +5,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:STest.App.Pages.Builder"
     xmlns:controls="using:STest.App.Controls"
+    xmlns:taskSelector="using:STest.App.Utilities"
     xmlns:testing="using:STLib.Core.Testing"
+    xmlns:taskText="using:STLib.Tasks.Text"
+    xmlns:taskTrueFalse="using:STLib.Tasks.TrueFalse"
+    xmlns:taskCheckboxes="using:STLib.Tasks.Checkboxes"
+    xmlns:taskMultipleChoice="using:STLib.Tasks.MultipleChoice"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -43,14 +48,12 @@
                 <StackPanel>
                     <TextBlock 
                         Text="{x:Bind TrimToLength(Name, 24)}" 
-                        FontFamily="{StaticResource Montserrat}"
                         Style="{StaticResource BodyStrongTextBlockStyle}"
                         HorizontalAlignment="Left"
                         Margin="0, 0, 0, 5"
                     />
                     <TextBlock 
                         Text="{x:Bind TrimToLength(Description, 32)}" 
-                        FontFamily="{StaticResource Montserrat}"
                         Style="{StaticResource BodyTextBlockStyle}"
                         HorizontalAlignment="Left"
                         Margin="0, 0, 0, 20"
@@ -64,7 +67,6 @@
                             Grid.Column="0"
                             Grid.Row="0"
                             Text="{x:Bind ToLocalDate(LastModified)}" 
-                            FontFamily="{StaticResource Montserrat}"
                             Style="{StaticResource CaptionTextBlockStyle}"
                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                             HorizontalAlignment="Left"
@@ -83,6 +85,37 @@
                 </StackPanel>
             </controls:ConfirmationButton>
         </DataTemplate>
+        <DataTemplate 
+            x:Key="TextTaskTemplate"
+            x:DataType="taskText:TextTask"
+        >
+            <TextBlock Text="{x:Bind Name}" FontSize="18" Margin="5"/>
+        </DataTemplate>
+        <DataTemplate 
+            x:Key="TrueFalseTaskTemplate"
+            x:DataType="taskTrueFalse:TrueFalseTask"
+        >
+            <TextBlock Text="{x:Bind Name}" FontSize="18" Margin="5"/>
+        </DataTemplate>
+        <DataTemplate 
+            x:Key="CheckboxesTaskTemplate"
+            x:DataType="taskCheckboxes:CheckboxesTask"
+        >
+            <TextBlock Text="{x:Bind Name}" FontSize="18" Margin="5"/>
+        </DataTemplate>
+        <DataTemplate 
+            x:Key="MultipleChoiceTaskTemplate"
+            x:DataType="taskMultipleChoice:MultipleChoiceTask"
+        >
+            <TextBlock Text="{x:Bind Name}" FontSize="18" Margin="5"/>
+        </DataTemplate>
+        <taskSelector:TaskTemplateSelector 
+            x:Key="TaskTemplateSelector"
+            TextTaskTemplate="{StaticResource TextTaskTemplate}"
+            TrueFalseTaskTemplate="{StaticResource TrueFalseTaskTemplate}"
+            CheckboxesTaskTemplate="{StaticResource CheckboxesTaskTemplate}"
+            MultipleChoiceTaskTemplate="{StaticResource MultipleChoiceTaskTemplate}"
+        />
     </Page.Resources>
     
     <Grid>
@@ -124,14 +157,12 @@
                     <StackPanel>
                         <TextBlock 
                             x:Name="EmptyTestsListTitle"
-                            FontFamily="{StaticResource Montserrat}"
                             Style="{StaticResource BodyStrongTextBlockStyle}"
                             HorizontalAlignment="Left"
                             Margin="0, 0, 0, 5"
                         />
                         <TextBlock 
                             x:Name="EmptyTestsListDescription"
-                            FontFamily="{StaticResource Montserrat}"
                             Style="{StaticResource BodyTextBlockStyle}"
                             HorizontalAlignment="Left"
                             Margin="0, 0, 0, 20"
@@ -171,44 +202,159 @@
                     <StackPanel>
                         <TextBlock 
                             x:Name="TestsBuilderTitle"
-                            FontFamily="{StaticResource Montserrat}"
                             Style="{StaticResource TitleTextBlockStyle}"
                             Foreground="{ThemeResource AccentTextFillColorSecondaryBrush}"
                             HorizontalAlignment="Center"
                         />
                         <TextBox 
                             x:Name="TestsBuilderName"
-                            FontFamily="{StaticResource Montserrat}"
-                            HorizontalAlignment="Left"
+                            HorizontalAlignment="Center"
                             Margin="0, 0, 0, 20"
-                            Width="250"
+                            Width="500"
+                            TextChanged="TestNameChanged"
                         />
                         <TextBox 
                             x:Name="TestsBuilderDescription"
-                            FontFamily="{StaticResource Montserrat}"
-                            HorizontalAlignment="Left"
+                            HorizontalAlignment="Center"
                             Margin="0, 0, 0, 20"
-                            Width="250"
+                            Width="500"
+                            TextChanged="TestDescriptionChanged"
                         />
                         <RichEditBox 
                             x:Name="TestsBuilderInstructions"
                             Width="500" 
                             MinHeight="100"
-                            FontFamily="{StaticResource Montserrat}"
-                            HorizontalAlignment="Left"
+                            HorizontalAlignment="Center"
                             Margin="0, 0, 0, 20"
+                            TextChanged="TestInstructionsChanged"
                         />
                         <TimePicker 
                             x:Name="TestsBuilderTime"
                             ClockIdentifier="24HourClock" 
-                            HorizontalAlignment="Left"
-                            Margin="0, 0, 0, 20"
+                            HorizontalAlignment="Center"
+                            TimeChanged="TestTestTimeChanged"
+                        />
+                        <!--Добавить добавление людей-->
+                        <Border 
+                            Margin="15"
+                            BorderBrush="{StaticResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="0, 0, 0, 1"
                         />
 
+                        <ListView
+                            ItemsSource="{x:Bind TasksList}"
+                            ItemTemplateSelector="{StaticResource TaskTemplateSelector}"
+                            HorizontalAlignment="Center"
+                        />
 
+                        <Button 
+                            Margin="0, 15, 0, 0"
+                            Padding="40,7.5"
+                            HorizontalAlignment="Center"
+                        >
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon 
+                                    Glyph="&#xE78B;" 
+                                    Margin="0, 0, 10, 0"
+                                    FontSize="18"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                />
+                                <TextBlock 
+                                    x:Name="AddNewTaskButtonText"
+                                    FontWeight="Medium"
+                                    FontSize="14"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                    LineStackingStrategy="BlockLineHeight"
+                                    LineHeight="14"
+                                />
+                            </StackPanel>
+                            <Button.Flyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem 
+                                        x:Name="TextTaskFlyout" 
+                                        Tag="Text" 
+                                        Click="AddNewTaskClick"
+                                    />
+                                    <MenuFlyoutItem 
+                                        x:Name="TrueFalseTaskFlyout" 
+                                        Tag="TrueFalse" 
+                                        Click="AddNewTaskClick"
+                                    />
+                                    <MenuFlyoutItem 
+                                        x:Name="CheckboxesTaskFlyout" 
+                                        Tag="Checkboxes" 
+                                        Click="AddNewTaskClick"
+                                    />
+                                    <MenuFlyoutItem 
+                                        x:Name="MultipleChoiceTaskFlyout" 
+                                        Tag="MultipleChoice" 
+                                        Click="AddNewTaskClick"
+                                    />
+                                </MenuFlyout>
+                            </Button.Flyout>
+                        </Button>
+                        <Border 
+                            Margin="15"
+                            BorderBrush="{StaticResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="0, 0, 0, 1"
+                        />
+                        <StackPanel 
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                        >
+                            <controls:ConfirmationButton 
+                                Margin="0, 0, 7.5, 0"
+                                ToolTipService.ToolTip="Save"
+                                Padding="15,7.5"
+                            >
+                                <StackPanel Orientation="Horizontal">
+                                    <FontIcon 
+                                        Glyph="&#xE74E;" 
+                                        Margin="0, 0, 10, 0"
+                                        FontSize="20"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                    />
+                                    <TextBlock 
+                                        x:Name="SaveButtonText"
+                                        FontWeight="Medium"
+                                        FontSize="16"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        LineStackingStrategy="BlockLineHeight"
+                                        LineHeight="16"
+                                    />
+                                </StackPanel>
+                            </controls:ConfirmationButton>
+                            <controls:ConfirmationButton 
+                                Margin="7.5, 0, 0, 0"
+                                Padding="15,7.5"
+                                ToolTipService.ToolTip="Send"
+                            >
+                                <StackPanel Orientation="Horizontal">
+                                    <FontIcon 
+                                        Glyph="&#xE724;" 
+                                        Margin="0, 0, 10, 0"
+                                        FontSize="18"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                    />
+                                    <TextBlock 
+                                        x:Name="SendButtonText"
+                                        FontWeight="Medium"
+                                        FontSize="16"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        LineStackingStrategy="BlockLineHeight"
+                                        LineHeight="16"
+                                    />
+                                </StackPanel>
+                            </controls:ConfirmationButton>
+                        </StackPanel>
                     </StackPanel>
                 </Border>
-
             </StackPanel>
         </ScrollViewer>
     </Grid>

@@ -216,4 +216,22 @@
   <data name="TEST_TIME_KEY" xml:space="preserve">
     <value>Час тесту</value>
   </data>
+  <data name="SAVE_KEY" xml:space="preserve">
+    <value>Зберегти</value>
+  </data>
+  <data name="ADD_NEW_TASK_KEY" xml:space="preserve">
+    <value>Додати нове завдання</value>
+  </data>
+  <data name="TEXT_KEY" xml:space="preserve">
+    <value>Текст</value>
+  </data>
+  <data name="TRUE_FALSE_KEY" xml:space="preserve">
+    <value>Так / Ні</value>
+  </data>
+  <data name="CHECKBOXES_KEY" xml:space="preserve">
+    <value>Прапорці</value>
+  </data>
+  <data name="MULTIPLE_CHOICE_KEY" xml:space="preserve">
+    <value>Множинний вибір</value>
+  </data>
 </root>

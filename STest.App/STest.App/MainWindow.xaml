@@ -35,7 +35,6 @@
                 Text="Name"
                 Grid.Column="0"
                 Grid.Row="0"
-                FontFamily="{StaticResource Montserrat}"
                 FontWeight="Medium"
                 FontSize="12"
                 CharacterSpacing="25"

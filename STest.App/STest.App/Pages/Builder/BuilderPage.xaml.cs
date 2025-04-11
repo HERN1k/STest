@@ -13,6 +13,10 @@ using STest.App.Domain.Interfaces;
 using STest.App.Pages.Home;
 using STest.App.Utilities;
 using STLib.Core.Testing;
+using STLib.Tasks.Checkboxes;
+using STLib.Tasks.MultipleChoice;
+using STLib.Tasks.Text;
+using STLib.Tasks.TrueFalse;
 
 namespace STest.App.Pages.Builder
 {
@@ -23,11 +27,13 @@ namespace STest.App.Pages.Builder
     public sealed partial class BuilderPage : Page
     {
         public ObservableCollection<Test> TestsList { get; set; }
+        public ObservableCollection<CoreTask> TasksList { get; set; }
 
         private readonly ILocalization m_localization;
         private readonly ILogger<HomePage> m_logger;
         private readonly Storyboard m_fadeInAnimation;
         private readonly Storyboard m_fadeOutAnimation;
+        private Test? m_thisTest;
 
         public BuilderPage()
         {
@@ -37,6 +43,7 @@ namespace STest.App.Pages.Builder
             m_fadeInAnimation = GetStoryboard("FadeInAnimation");
             m_fadeOutAnimation = GetStoryboard("FadeOutAnimation");
             TestsList = new ObservableCollection<Test>();
+            TasksList = new ObservableCollection<CoreTask>();
             this.DataContext = this;
         }
 
@@ -53,6 +60,13 @@ namespace STest.App.Pages.Builder
                 SubscribeToEvents();
                 SetTestListItems();
                 TestsBuilderTitle.Text = m_localization.GetString(Constants.EDITOR_KEY);
+                SaveButtonText.Text = m_localization.GetString(Constants.SAVE_KEY);
+                SendButtonText.Text = m_localization.GetString(Constants.SEND_KEY);
+                AddNewTaskButtonText.Text = m_localization.GetString(Constants.ADD_NEW_TASK_KEY);
+                TextTaskFlyout.Text = m_localization.GetString(Constants.TEXT_KEY);
+                TrueFalseTaskFlyout.Text = m_localization.GetString(Constants.TRUE_FALSE_KEY);
+                CheckboxesTaskFlyout.Text = m_localization.GetString(Constants.CHECKBOXES_KEY);
+                MultipleChoiceTaskFlyout.Text = m_localization.GetString(Constants.MULTIPLE_CHOICE_KEY);
             }
             catch (Exception ex)
             {
@@ -96,7 +110,7 @@ namespace STest.App.Pages.Builder
 
         private async void EmptyTestsListButtonClick(object sender, RoutedEventArgs args)
         {
-            await this.ExecuteOnDispatcherQueueAsync(m_logger, async () => 
+            await this.ExecuteOnDispatcherQueueAsync(m_logger, async () =>
             {
                 var test = Test.Build(Guid.NewGuid()) // USE USER ID
                     .AddName(m_localization.GetString(Constants.THIS_SHOULD_BE_THE_NAME_KEY))
@@ -114,33 +128,195 @@ namespace STest.App.Pages.Builder
             });
         }
 
-        private Storyboard GetStoryboard(string name)
+        #region Builder events
+        private void OpenTestBuilder(Guid testID)
         {
-            if (this.Resources.TryGetValue(name, out var storyboard))
+            m_thisTest = TestsList.FirstOrDefault(t => t.TestID == testID);
+
+            if (m_thisTest == null)
             {
-                return storyboard as Storyboard 
-                    ?? throw new InvalidCastException($"Type \"{name}\" is not storyboard.");
+                throw new ArgumentNullException(nameof(testID), $"Test not found.");
             }
-            else
+
+            ExecuteAnimation(m_fadeInAnimation, TestBuilderBorder);
+            TestBuilderBorder.Visibility = Visibility.Visible;
+
+            TestsBuilderName.Header = CreateHeader(Constants.NAME_KEY);
+            TestsBuilderName.Text = m_thisTest.Name;
+
+            TestsBuilderDescription.Header = CreateHeader(Constants.DESCRIPTION_KEY);
+            TestsBuilderDescription.Text = m_thisTest.Description;
+
+            TestsBuilderInstructions.Header = CreateHeader(Constants.INSTRUCTIONS_KEY);
+            TestsBuilderInstructions.Document.SetText(
+                Microsoft.UI.Text.TextSetOptions.None, m_thisTest.Instructions);
+
+            TestsBuilderTime.Header = CreateHeader(Constants.TEST_TIME_KEY);
+            TestsBuilderTime.Time = m_thisTest.TestTime;
+        }
+
+        private void TestNameChanged(object sender, TextChangedEventArgs args)
+        {
+            ArgumentNullException.ThrowIfNull(m_thisTest, nameof(m_thisTest));
+
+            try
             {
-                throw new InvalidOperationException($"Storyboard with name \"{name}\" not found in resources.");
+                if (sender is TextBox element)
+                {
+                    if (m_thisTest.Name.Equals(element.Text))
+                    {
+                        return;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(element.Text))
+                    {
+                        return;
+                    }
+
+                    m_thisTest.AddName(element.Text);
+                }
+                else
+                {
+                    throw new ArgumentNullException(nameof(sender), $"Sender is not a TextBox.");
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
             }
         }
 
-        private static void ExecuteAnimation(Storyboard storyboard, UIElement element)
+        private void TestDescriptionChanged(object sender, TextChangedEventArgs args)
         {
-            if (storyboard == null || element == null)
-            {
-                return;
-            }
-            
-            for (int i = 0; i < storyboard.Children.Count; i++)
-            {
-                Storyboard.SetTarget(storyboard.Children[i], element);
-            }
+            ArgumentNullException.ThrowIfNull(m_thisTest, nameof(m_thisTest));
 
-            storyboard.Begin();
+            try
+            {
+                if (sender is TextBox element)
+                {
+                    if (m_thisTest.Description.Equals(element.Text))
+                    {
+                        return;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(element.Text))
+                    {
+                        return;
+                    }
+
+                    m_thisTest.AddDescription(element.Text);
+                }
+                else
+                {
+                    throw new ArgumentNullException(nameof(sender), $"Sender is not a TextBox.");
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
+            }
         }
+
+        private void TestInstructionsChanged(object sender, RoutedEventArgs args)
+        {
+            ArgumentNullException.ThrowIfNull(m_thisTest, nameof(m_thisTest));
+
+            try
+            {
+                if (sender is RichEditBox element)
+                {
+                    element.Document.GetText(Microsoft.UI.Text.TextGetOptions.None, out var elementText);
+
+                    elementText = elementText.Remove(elementText.Length - 1);
+
+                    if (m_thisTest.Instructions.Equals(elementText))
+                    {
+                        return;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(elementText))
+                    {
+                        return;
+                    }
+
+                    m_thisTest.AddInstructions(elementText);
+                }
+                else
+                {
+                    throw new ArgumentNullException(nameof(sender), $"Sender is not a RichEditBox.");
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
+            }
+        }
+
+        private void TestTestTimeChanged(object sender, TimePickerValueChangedEventArgs args)
+        {
+            ArgumentNullException.ThrowIfNull(m_thisTest, nameof(m_thisTest));
+
+            try
+            {
+                if (sender is TimePicker element)
+                {
+                    if (m_thisTest.TestTime.Equals(element.Time))
+                    {
+                        return;
+                    }
+
+                    if (element.Time == TimeSpan.Zero)
+                    {
+                        return;
+                    }
+
+                    m_thisTest.AddTestTime(element.Time);
+                }
+                else
+                {
+                    throw new ArgumentNullException(nameof(sender), $"Sender is not a TimePicker.");
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
+            }
+        }
+
+        private void AddNewTaskClick(object sender, RoutedEventArgs args)
+        {
+            if (sender is MenuFlyoutItem element)
+            {
+                var tag = element.Tag.ToString();
+
+                if (string.IsNullOrEmpty(tag))
+                {
+                    return;
+                }
+
+                if (!Enum.TryParse<TaskType>(tag, true, out var type))
+                {
+                    return;
+                }
+
+                switch (type)
+                {
+                    case TaskType.Text:
+                        TasksList.Add(TextTask.Build().AddName("Text"));
+                        break;
+                    case TaskType.TrueFalse:
+                        TasksList.Add(TrueFalseTask.Build().AddName("TrueFalse"));
+                        break;
+                    case TaskType.Checkboxes:
+                        TasksList.Add(CheckboxesTask.Build().AddName("Checkboxes"));
+                        break;
+                    case TaskType.MultipleChoice:
+                        TasksList.Add(MultipleChoiceTask.Build().AddName("MultipleChoice"));
+                        break;
+                }
+            }
+        }
+        #endregion
 
         private void SetTestListItems()
         {
@@ -165,37 +341,42 @@ namespace STest.App.Pages.Builder
             }
         }
 
-        private void OpenTestBuilder(Guid testID)
-        {
-            var test = TestsList.FirstOrDefault(t => t.TestID == testID)
-                ?? throw new Exception($"Test not found.");
-
-            ExecuteAnimation(m_fadeInAnimation, TestBuilderBorder);
-            TestBuilderBorder.Visibility = Visibility.Visible;
-
-            TestsBuilderName.Header = CreateHeader(Constants.NAME_KEY);
-            TestsBuilderName.Text = test.Name;
-
-            TestsBuilderDescription.Header = CreateHeader(Constants.DESCRIPTION_KEY);
-            TestsBuilderDescription.Text = test.Description;
-
-            TestsBuilderInstructions.Header = CreateHeader(Constants.INSTRUCTIONS_KEY);
-            TestsBuilderInstructions.Document.SetText(
-                Microsoft.UI.Text.TextSetOptions.None, test.Instructions);
-
-            TestsBuilderTime.Header = CreateHeader(Constants.TEST_TIME_KEY);
-            TestsBuilderTime.Time = test.TestTime;
-        }
-
         private TextBlock CreateHeader(string localizationKey)
         {
             return new TextBlock()
             {
                 Text = m_localization.GetString(localizationKey),
                 Style = (Style)Application.Current.Resources["SubtitleTextBlockStyle"],
-                FontFamily = (FontFamily)Application.Current.Resources["Montserrat"],
                 Margin = new Thickness(2, 0, 0, 0),
             };
+        }
+
+        private Storyboard GetStoryboard(string name)
+        {
+            if (this.Resources.TryGetValue(name, out var storyboard))
+            {
+                return storyboard as Storyboard
+                    ?? throw new InvalidCastException($"Type \"{name}\" is not storyboard.");
+            }
+            else
+            {
+                throw new InvalidOperationException($"Storyboard with name \"{name}\" not found in resources.");
+            }
+        }
+
+        private static void ExecuteAnimation(Storyboard storyboard, UIElement element)
+        {
+            if (storyboard == null || element == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < storyboard.Children.Count; i++)
+            {
+                Storyboard.SetTarget(storyboard.Children[i], element);
+            }
+
+            storyboard.Begin();
         }
     }
 }

@@ -17,7 +17,6 @@
         <Setter Property="ToolTipService.ToolTip" Value="Confirmation" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
         <Setter Property="FocusVisualMargin" Value="-3" />
