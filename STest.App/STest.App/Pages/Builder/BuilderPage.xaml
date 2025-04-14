@@ -89,7 +89,111 @@
             x:Key="TextTaskTemplate"
             x:DataType="taskText:TextTask"
         >
-            <TextBlock Text="{x:Bind Name}" FontSize="18" Margin="5"/>
+            <Border
+                Margin="0, 0, 0, 7.5"
+                Padding="15"
+                BorderThickness="1"
+                CornerRadius="{StaticResource OverlayCornerRadius}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"
+                Tag="{x:Bind TaskID}"
+            >
+                <StackPanel>
+                    <Grid Tag="HEADER_PANEL">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock 
+                            Grid.Column="0"
+                            Grid.Row="0"
+                            Tag="HEADER_NUMBER"
+                            Style="{StaticResource BodyStrongTextBlockStyle}"
+                            Foreground="{ThemeResource TextFillColorDisabledBrush}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Opacity="0.8"
+                        />
+                        <controls:ConfirmationButton
+                            Grid.Column="1"
+                            Grid.Row="0"
+                            Click="RemoveTaskClick"
+                            Tag="{x:Bind TaskID}" 
+                            ToolTipService.ToolTip="Close"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                        >
+                            <FontIcon 
+                                Glyph="&#xE711;" 
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                FontSize="16"
+                            />
+                        </controls:ConfirmationButton>
+                    </Grid>
+                    <RichEditBox 
+                        Tag="QUESTION"
+                        Width="500" 
+                        MinHeight="100"
+                        HorizontalAlignment="Center"
+                        Margin="0, 0, 0, 15"
+                        TextChanged="TaskQuestionChanged"
+                    />
+                    <RichEditBox 
+                        Tag="CORRECT_ANSWER"
+                        Width="500" 
+                        MinHeight="100"
+                        HorizontalAlignment="Center"
+                        Margin="0, 0, 0, 15"
+                        TextChanged="TaskCorrectAnswerChanged"
+                    />
+                    <StackPanel 
+                        Orientation="Horizontal"
+                        Tag="MAX_GRADE_PANEL"
+                        Margin="0, 0, 0, 15"
+                    >
+                        <TextBlock 
+                            Tag="MAX_GRADE"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            Margin="0, 0, 15, 0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            LineStackingStrategy="BlockLineHeight"
+                        />
+                        <NumberBox
+                            Tag="MAX_GRADE_INPUT"
+                            Value="1"
+                            SpinButtonPlacementMode="Compact"
+                            Minimum="1"
+                            Maximum="100"
+                            SmallChange="1"
+                            LargeChange="10" 
+                            MinWidth="150"
+                            ValueChanged="TaskMaxGradeChanged"
+                        />
+                    </StackPanel>
+                    <StackPanel 
+                        Orientation="Horizontal"
+                        Tag="CONSIDER_IN_THE_ASSESSMENT_PANEL"
+                    >
+                        <TextBlock 
+                            Tag="CONSIDER_IN_THE_ASSESSMENT"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            Margin="0, 0, 15, 0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            LineStackingStrategy="BlockLineHeight"
+                        />
+                        <ToggleSwitch 
+                            Tag="CONSIDER_IN_THE_ASSESSMENT_SWITCHER"
+                            IsOn="True"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Toggled="TaskConsiderToggled"
+                        />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
         </DataTemplate>
         <DataTemplate 
             x:Key="TrueFalseTaskTemplate"
@@ -121,73 +225,95 @@
     <Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
-                <ListView 
-                    ItemsSource="{x:Bind TestsList}"
-                    Margin="15, 15, 0, 0"
-                    SelectionMode="None"
-                    ItemTemplate="{StaticResource TestsListViewTemplate}"
-                    ScrollViewer.HorizontalScrollMode="Enabled"
-                    ScrollViewer.VerticalScrollMode="Disabled"
-                    ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-                    ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                >
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="Margin" Value="0" />
-                            <Setter Property="Padding" Value="0" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                </ListView>
-                <controls:ConfirmationButton 
-                    x:Name="EmptyTestsListButton"
-                    Click="EmptyTestsListButtonClick"
-                    Margin="15, 0, 8, 15"
-                    Padding="15"
-                    ToolTipService.ToolTip="Create new test"
-                    BorderThickness="1"
-                    CornerRadius="{StaticResource OverlayCornerRadius}"
-                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                    Visibility="Collapsed"
-                >
-                    <StackPanel>
-                        <TextBlock 
-                            x:Name="EmptyTestsListTitle"
-                            Style="{StaticResource BodyStrongTextBlockStyle}"
-                            HorizontalAlignment="Left"
-                            Margin="0, 0, 0, 5"
+                <StackPanel Orientation="Horizontal">
+                    <controls:ConfirmationButton 
+                        x:Name="CreateNewTestButton"
+                        Click="CreateNewTestButtonClick"
+                        Margin="15, 15, 7.5, 15"
+                        Padding="15"
+                        Width="120"
+                        VerticalAlignment="Stretch"
+                        ToolTipService.ToolTip="Create new test"
+                        BorderThickness="1"
+                        CornerRadius="{StaticResource OverlayCornerRadius}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        Visibility="Collapsed"
+                    >
+                        <FontIcon 
+                            Glyph="&#xE710;" 
+                            FontSize="24"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
                         />
-                        <TextBlock 
-                            x:Name="EmptyTestsListDescription"
-                            Style="{StaticResource BodyTextBlockStyle}"
-                            HorizontalAlignment="Left"
-                            Margin="0, 0, 0, 20"
-                        />
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <FontIcon 
-                                Grid.Column="1"
-                                Grid.Row="0"
-                                Glyph="&#xE8A7;" 
-                                FontSize="14"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
+                    </controls:ConfirmationButton>
+                    <ListView 
+                        ItemsSource="{x:Bind TestsList}"
+                        Margin="7.5, 15, 0, 0"
+                        SelectionMode="None"
+                        ItemTemplate="{StaticResource TestsListViewTemplate}"
+                        ScrollViewer.HorizontalScrollMode="Enabled"
+                        ScrollViewer.VerticalScrollMode="Disabled"
+                        ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                        ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                    >
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="Margin" Value="0" />
+                                <Setter Property="Padding" Value="0" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                    </ListView>
+                    <controls:ConfirmationButton 
+                        x:Name="EmptyTestsListButton"
+                        Click="EmptyTestsListButtonClick"
+                        Margin="7.5, 15, 8, 15"
+                        Padding="15"
+                        ToolTipService.ToolTip="Create new test"
+                        BorderThickness="1"
+                        CornerRadius="{StaticResource OverlayCornerRadius}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        Visibility="Collapsed"
+                    >
+                        <StackPanel>
+                            <TextBlock 
+                                x:Name="EmptyTestsListTitle"
+                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                HorizontalAlignment="Left"
+                                Margin="0, 0, 0, 5"
                             />
-                        </Grid>
-                    </StackPanel>
-                </controls:ConfirmationButton>
+                            <TextBlock 
+                                x:Name="EmptyTestsListDescription"
+                                Style="{StaticResource BodyTextBlockStyle}"
+                                HorizontalAlignment="Left"
+                                Margin="0, 0, 0, 20"
+                            />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <FontIcon 
+                                    Grid.Column="1"
+                                    Grid.Row="0"
+                                    Glyph="&#xE8A7;" 
+                                    FontSize="14"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                />
+                            </Grid>
+                        </StackPanel>
+                    </controls:ConfirmationButton>
+                </StackPanel>
                 <Border 
                     Margin="15, 0, 15, 15"
                     BorderBrush="{StaticResource CardStrokeColorDefaultBrush}"
                     BorderThickness="0, 0, 0, 1"
                 />
-
+                
                 <Border 
                     x:Name="TestBuilderBorder"
                     Margin="15, 0, 15, 15"
@@ -240,13 +366,13 @@
                             BorderBrush="{StaticResource CardStrokeColorDefaultBrush}"
                             BorderThickness="0, 0, 0, 1"
                         />
-
                         <ListView
+                            x:Name="TasksListView"
                             ItemsSource="{x:Bind TasksList}"
                             ItemTemplateSelector="{StaticResource TaskTemplateSelector}"
                             HorizontalAlignment="Center"
+                            SelectionMode="None"
                         />
-
                         <Button 
                             Margin="0, 15, 0, 0"
                             Padding="40,7.5"

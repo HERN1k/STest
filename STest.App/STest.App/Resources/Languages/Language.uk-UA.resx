@@ -199,7 +199,7 @@
     <value>Тут повинен бути опис</value>
   </data>
   <data name="THIS_SHOULD_BE_THE_INSTRUCTIONS_KEY" xml:space="preserve">
-    <value>Це повинна бути інструкція</value>
+    <value>Тут повинна бути інструкція</value>
   </data>
   <data name="NAME_KEY" xml:space="preserve">
     <value>Назва</value>
@@ -233,5 +233,29 @@
   </data>
   <data name="MULTIPLE_CHOICE_KEY" xml:space="preserve">
     <value>Множинний вибір</value>
+  </data>
+  <data name="QUESTION_KEY" xml:space="preserve">
+    <value>Питання</value>
+  </data>
+  <data name="THIS_SHOULD_BE_THE_QUESTION_KEY" xml:space="preserve">
+    <value>Тут повинно бути питання</value>
+  </data>
+  <data name="THIS_SHOULD_BE_THE_CORRECT_ANSWER_KEY" xml:space="preserve">
+    <value>Тут повинна бути правильна відповідь</value>
+  </data>
+  <data name="CORRECT_ANSWER_KEY" xml:space="preserve">
+    <value>Правильна відповідь</value>
+  </data>
+  <data name="CONSIDER_IN_THE_ASSESSMENT_KEY" xml:space="preserve">
+    <value>Враховувати в оцінку?</value>
+  </data>
+  <data name="YAS_KEY" xml:space="preserve">
+    <value>Так</value>
+  </data>
+  <data name="NO_KEY" xml:space="preserve">
+    <value>Ні</value>
+  </data>
+  <data name="ASSESSMENT_FOR_CORRECT_ANSWER_KEY" xml:space="preserve">
+    <value>Оцінка за правильну відповідь:</value>
   </data>
 </root>

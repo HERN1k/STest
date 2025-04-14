@@ -144,6 +144,58 @@ namespace STest.App.Utilities
         /// <see cref="Application"/> message <see cref="string"/>
         /// </summary>
         public const string HEBREW_LANGUAGE = "he-IL";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string NULL = nameof(NULL);
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string CURRENT_TEST_IN_BUILDER = nameof(CURRENT_TEST_IN_BUILDER);
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string HEADER_PANEL_TEST_BUILDER_KEY = "HEADER_PANEL";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string HEADER_NUMBER_TEST_BUILDER_KEY = "HEADER_NUMBER";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string HEADER_CLOSE_TEST_BUILDER_KEY = "HEADER_CLOSE";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string QUESTION_TEST_BUILDER_KEY = "QUESTION";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string CORRECT_ANSWER_TEST_BUILDER_KEY = "CORRECT_ANSWER";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string MAX_GRADE_TEST_BUILDER_KEY = "MAX_GRADE";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string MAX_GRADE_PANEL_TEST_BUILDER_KEY = "MAX_GRADE_PANEL";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string MAX_GRADE_INPUT_TEST_BUILDER_KEY = "MAX_GRADE_INPUT";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string CONSIDER_IN_THE_ASSESSMENT_TEST_BUILDER_KEY = "CONSIDER_IN_THE_ASSESSMENT";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string CONSIDER_IN_THE_ASSESSMENT_SWITCHER_TEST_BUILDER_KEY = "CONSIDER_IN_THE_ASSESSMENT_SWITCHER";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string CONSIDER_IN_THE_ASSESSMENT_PANEL_TEST_BUILDER_KEY = "CONSIDER_IN_THE_ASSESSMENT_PANEL";
 
         /*
             Localization keys
@@ -263,6 +315,14 @@ namespace STest.App.Utilities
         /// <summary>
         /// <see cref="Localization"/> key <see cref="string"/>
         /// </summary>
+        public const string THIS_SHOULD_BE_THE_QUESTION_KEY = nameof(THIS_SHOULD_BE_THE_QUESTION_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string THIS_SHOULD_BE_THE_CORRECT_ANSWER_KEY = nameof(THIS_SHOULD_BE_THE_CORRECT_ANSWER_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
         public const string NAME_KEY = nameof(NAME_KEY);
         /// <summary>
         /// <see cref="Localization"/> key <see cref="string"/>
@@ -304,7 +364,31 @@ namespace STest.App.Utilities
         /// <see cref="Localization"/> key <see cref="string"/>
         /// </summary>
         public const string MULTIPLE_CHOICE_KEY = nameof(MULTIPLE_CHOICE_KEY);
-
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string QUESTION_KEY = nameof(QUESTION_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string CORRECT_ANSWER_KEY = nameof(CORRECT_ANSWER_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string CONSIDER_IN_THE_ASSESSMENT_KEY = nameof(CONSIDER_IN_THE_ASSESSMENT_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string YAS_KEY = nameof(YAS_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string NO_KEY = nameof(NO_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string ASSESSMENT_FOR_CORRECT_ANSWER_KEY = nameof(ASSESSMENT_FOR_CORRECT_ANSWER_KEY); 
+        
         /* 
             Local data
          */

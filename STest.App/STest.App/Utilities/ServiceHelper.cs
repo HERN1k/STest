@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using STest.App.Domain.Interfaces;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace STest.App.Utilities
 {
@@ -47,6 +48,25 @@ namespace STest.App.Utilities
             {
                 return (Application.Current as App)?.ServiceProvider.GetService<ILogger<T>>()
                     ?? throw new ArgumentNullException($"Logger for type {nameof(T)[1..]} not found.");
+            }
+            catch (Exception ex)
+            {
+                Alerts.ShowCriticalErrorWindow(ex);
+
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Get a <see cref="IMemoryCache"/> instance
+        /// </summary>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static IMemoryCache GetMemoryCache()
+        {
+            try
+            {
+                return (Application.Current as App)?.ServiceProvider.GetService<IMemoryCache>()
+                    ?? throw new ArgumentNullException($"MemoryCache service not found.");
             }
             catch (Exception ex)
             {
