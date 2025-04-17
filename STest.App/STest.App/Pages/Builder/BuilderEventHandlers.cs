@@ -16,16 +16,27 @@ namespace STest.App.Pages.Builder
 {
     public sealed partial class BuilderPage : Page
     {
-        #region Main
+        #region Main events
+        /// <summary>
+        /// Event handler for the EmptyTestsListButton click event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        /// <exception cref="ApplicationException"></exception>
         private async void EmptyTestsListButtonClick(object sender, RoutedEventArgs args)
         {
             await this.ExecuteOnDispatcherQueueAsync(m_logger, async () =>
             {
-                var test = Test.Build(Guid.NewGuid()) // USE USER ID
+                if (!Guid.TryParse(m_localData.GetString(Constants.USER_ID_LOCAL_DATA), out Guid userID))
+                {
+                    throw new ApplicationException($"User ID not found.");
+                }
+                
+                var test = Test.Build(userID)
                     .AddName(m_localization.GetString(Constants.THIS_SHOULD_BE_THE_NAME_KEY))
                     .AddDescription(m_localization.GetString(Constants.THIS_SHOULD_BE_THE_DESCRIPTION_KEY))
                     .AddInstructions(m_localization.GetString(Constants.THIS_SHOULD_BE_THE_INSTRUCTIONS_KEY))
-                    .AddTestTime(TimeSpan.FromHours(1));
+                    .AddTestTime(TimeSpan.FromMinutes(45));
 
                 await Task.Delay(750);
 
@@ -37,28 +48,51 @@ namespace STest.App.Pages.Builder
                 OpenTestBuilder(test.TestID);
             });
         }
-
-        private void CreateNewTestButtonClick(object sender, RoutedEventArgs args)
+        /// <summary>
+        /// Event handler for the CreateNewTestButton click event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private async void CreateNewTestButtonClick(object sender, RoutedEventArgs args)
         {
             try
             {
-                var test = GetCurrentTest();
-
-                if (test != null)
+                if (!Guid.TryParse(m_localData.GetString(Constants.USER_ID_LOCAL_DATA), out Guid userID))
                 {
-                    test.OnDevSave();
-
-                    // TODO: Send to server
-
-                    m_thisTest = null;
-                    TasksList.Clear();
+                    throw new ApplicationException($"User ID not found.");
                 }
 
-                test = Test.Build(Guid.NewGuid()) // USE USER ID
+                if (m_thisTest != null)
+                {
+                    var dialogResult = await this.ShowDialog(
+                        func: r => r == ContentDialogResult.Primary,
+                        args: new ShowDialogArgs(
+                            title: m_localization.GetString(Constants.ARE_YOU_SURE_KEY),
+                            message: m_localization.GetString(Constants.DATA_WILL_NOT_BE_SAVED_KEY),
+                            okButtonText: m_localization.GetString(Constants.YES_KEY),
+                            cancelButtonText: m_localization.GetString(Constants.CANCEL_KEY)
+                        )
+                    );
+
+                    if (!dialogResult)
+                    {
+                        return;
+                    }
+                }
+
+                if (m_thisTest != null && m_thisTest.IsNew)
+                {
+                    TestsList.Remove(m_thisTest);
+                }
+
+                m_thisTest = null;
+                TasksList.Clear();
+
+                var test = Test.Build(userID)
                     .AddName(m_localization.GetString(Constants.THIS_SHOULD_BE_THE_NAME_KEY))
                     .AddDescription(m_localization.GetString(Constants.THIS_SHOULD_BE_THE_DESCRIPTION_KEY))
                     .AddInstructions(m_localization.GetString(Constants.THIS_SHOULD_BE_THE_INSTRUCTIONS_KEY))
-                    .AddTestTime(TimeSpan.FromHours(1));
+                    .AddTestTime(TimeSpan.FromMinutes(45));
 
                 TestsList.Add(test);
 
@@ -69,7 +103,10 @@ namespace STest.App.Pages.Builder
                 ex.Show(this, m_logger);
             }
         }
-
+        /// <summary>
+        /// Event handler for the TestBuilderCloseButton click event.
+        /// </summary>
+        /// <param name="testID"></param>
         private void OpenTestBuilder(Guid testID)
         {
             try
@@ -108,7 +145,12 @@ namespace STest.App.Pages.Builder
         }
         #endregion
 
-        #region Test builder
+        #region Test builder events
+        /// <summary>
+        /// Event handler for the TestName TextBox text changed event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void TestNameChanged(object sender, TextChangedEventArgs args)
         {
             ArgumentNullException.ThrowIfNull(m_thisTest, nameof(m_thisTest));
@@ -140,7 +182,11 @@ namespace STest.App.Pages.Builder
                 ex.Show(this, m_logger);
             }
         }
-
+        /// <summary>
+        /// Event handler for the TestDescription TextBox text changed event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void TestDescriptionChanged(object sender, TextChangedEventArgs args)
         {
             ArgumentNullException.ThrowIfNull(m_thisTest, nameof(m_thisTest));
@@ -172,7 +218,11 @@ namespace STest.App.Pages.Builder
                 ex.Show(this, m_logger);
             }
         }
-
+        /// <summary>
+        /// Event handler for the TestInstructions RichEditBox text changed event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void TestInstructionsChanged(object sender, RoutedEventArgs args)
         {
             ArgumentNullException.ThrowIfNull(m_thisTest, nameof(m_thisTest));
@@ -208,7 +258,11 @@ namespace STest.App.Pages.Builder
                 ex.Show(this, m_logger);
             }
         }
-
+        /// <summary>
+        /// Event handler for the TestTime TimePicker value changed event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void TestTestTimeChanged(object sender, TimePickerValueChangedEventArgs args)
         {
             ArgumentNullException.ThrowIfNull(m_thisTest, nameof(m_thisTest));
@@ -240,7 +294,11 @@ namespace STest.App.Pages.Builder
                 ex.Show(this, m_logger);
             }
         }
-
+        /// <summary>
+        /// Event handler for the AddNewTask MenuFlyoutItem click event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void AddNewTaskClick(object sender, RoutedEventArgs args)
         {
             try
@@ -281,7 +339,11 @@ namespace STest.App.Pages.Builder
                 ex.Show(this, m_logger);
             }
         }
-
+        /// <summary>
+        /// Event handler for the TasksList collection changed event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void TasksCollectionChanged(object? sender, NotifyCollectionChangedEventArgs args)
         {
             if (args.Action == NotifyCollectionChangedAction.Add)
@@ -293,7 +355,11 @@ namespace STest.App.Pages.Builder
                 TasksListView.LayoutUpdated += OnTasksListLayoutUpdatedReopen;
             }
         }
-
+        /// <summary>
+        /// Event handler for the TasksListView layout updated event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void OnTasksListLayoutUpdated(object? sender, object args)
         {
             try
@@ -309,7 +375,11 @@ namespace STest.App.Pages.Builder
                 ex.Show(this, m_logger);
             }
         }
-
+        /// <summary>
+        /// Event handler for the TasksListView layout updated event when reopening the test builder.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void OnTasksListLayoutUpdatedReopen(object? sender, object args)
         {
             try
@@ -328,7 +398,11 @@ namespace STest.App.Pages.Builder
                 ex.Show(this, m_logger);
             }
         }
-
+        /// <summary>
+        /// Event handler for the RemoveTask Button click event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void RemoveTaskClick(object sender, RoutedEventArgs args)
         {
             try
@@ -371,7 +445,11 @@ namespace STest.App.Pages.Builder
                 ex.Show(this, m_logger);
             }
         }
-
+        /// <summary>
+        /// Event handler for the TaskQuestion RichEditBox text changed event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void TaskQuestionChanged(object sender, RoutedEventArgs args)
         {
             if (m_thisTest == null || sender is not RichEditBox text)
@@ -412,7 +490,11 @@ namespace STest.App.Pages.Builder
                 ex.Show(this, m_logger);
             }
         }
-
+        /// <summary>
+        /// Event handler for the TaskCorrectAnswer RichEditBox text changed event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void TaskCorrectAnswerChanged(object sender, RoutedEventArgs args)
         {
             if (m_thisTest == null || sender is not RichEditBox text)
@@ -453,7 +535,11 @@ namespace STest.App.Pages.Builder
                 ex.Show(this, m_logger);
             }
         }
-
+        /// <summary>
+        /// Event handler for the TaskMaxGrade NumberBox value changed event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void TaskMaxGradeChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
         {
             if (m_thisTest == null)
@@ -487,7 +573,11 @@ namespace STest.App.Pages.Builder
                 ex.Show(this, m_logger);
             }
         }
-
+        /// <summary>
+        /// Event handler for the TaskConsider ToggleSwitch toggled event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void TaskConsiderToggled(object sender, RoutedEventArgs args)
         {
             try
@@ -530,6 +620,480 @@ namespace STest.App.Pages.Builder
             catch (Exception ex)
             {
                 ex.Show(this, m_logger);
+            }
+        }
+        /// <summary>
+        /// Event handler for the CorrectAnswerRadioButton checked event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void CorrectAnswerRadioButtonChecked(object sender, RoutedEventArgs args)
+        {
+            try
+            {
+                if (sender is RadioButton element)
+                {
+                    var tag = element.Tag.ToString();
+
+                    if (string.IsNullOrEmpty(tag))
+                    {
+                        return;
+                    }
+
+                    var border = ((element.Parent as FrameworkElement)
+                        ?.Parent as FrameworkElement)
+                            ?.Parent as Border;
+
+                    if (border == null)
+                    {
+                        return;
+                    }
+
+                    var task = TasksList
+                        .FirstOrDefault(item => item.TaskID.Equals((Guid)border.Tag));
+
+                    if (task is not TrueFalseTask trueFalseTask)
+                    {
+                        return;
+                    }
+
+                    if (tag.Equals(Constants.CORRECT_ANSWER_RADIO_TRUE_TEST_BUILDER_KEY,
+                            StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        trueFalseTask.AddCorrectAnswer(true.ToString());
+                    }
+                    else if (tag.Equals(Constants.CORRECT_ANSWER_RADIO_FALSE_TEST_BUILDER_KEY,
+                            StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        trueFalseTask.AddCorrectAnswer(false.ToString());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
+            }
+        }
+        /// <summary>
+        /// Event handler for the AnswerMultipleChoiceTextBox text changed event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void AnswerMultipleChoiceTextBoxTextChanged(object sender, TextChangedEventArgs args)
+        {
+            try
+            {
+                if (sender is TextBox element)
+                {
+                    Button? button = (element.Parent as StackPanel)?.Children
+                        .OfType<FrameworkElement>()
+                        .FirstOrDefault(item =>
+                            FilterByTag(item, Constants.ADD_ANSWER_ADD_BUTTON_TEST_BUILDER_KEY)) as Button;
+
+                    if (button == null)
+                    {
+                        return;
+                    }
+
+                    if (string.IsNullOrEmpty(element.Text))
+                    {
+                        button.IsEnabled = false;
+                    }
+                    else
+                    {
+                        button.IsEnabled = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
+            }
+        }
+        /// <summary>
+        /// Event handler for the AddAnswerMultipleChoice Button click event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void AddAnswerMultipleChoiceClick(object sender, RoutedEventArgs args)
+        {
+            try
+            {
+                if (sender is Button element)
+                {
+                    var inputPanel = element.Parent as StackPanel;
+                    var mainPanel = inputPanel?.Parent as StackPanel;
+                    var task = (mainPanel?.Parent as Border)?.DataContext as MultipleChoiceTask;
+
+                    ListView? list = mainPanel?.Children
+                        .OfType<FrameworkElement>()
+                        .FirstOrDefault(item =>
+                            FilterByTag(item, Constants.ANSWERS_LIST_TEST_BUILDER_KEY)) as ListView;
+
+                    TextBox? input = inputPanel?.Children
+                        .OfType<FrameworkElement>()
+                        .FirstOrDefault(item =>
+                            FilterByTag(item, Constants.ADD_ANSWER_INPUT_TEST_BUILDER_KEY)) as TextBox;
+
+                    ComboBox? comboBox = mainPanel?.Children
+                        .OfType<FrameworkElement>()
+                        .FirstOrDefault(item =>
+                            FilterByTag(item, Constants.ADD_ANSWER_COMBO_BOX_TEST_BUILDER_KEY)) as ComboBox;
+
+                    if (list != null && inputPanel != null && input != null && comboBox != null && task != null)
+                    {
+                        if (string.IsNullOrEmpty(input.Text))
+                        {
+                            return;
+                        }
+
+                        var listItems = list.ItemsSource as ExtendedObservableCollection<TestBuilderAnswersListViewItem>;
+                        var comboBoxItems = comboBox.ItemsSource as ExtendedObservableCollection<string>;
+
+                        if (listItems == null || comboBoxItems == null)
+                        {
+                            return;
+                        }
+
+                        foreach (var item in listItems)
+                        {
+                            if (input.Text.Equals(item.Text))
+                            {
+                                return;
+                            }
+                        }
+
+                        if (listItems.Count >= 4)
+                        {
+                            return;
+                        }
+
+                        listItems.Add(new TestBuilderAnswersListViewItem(input.Text, task.TaskID));
+
+                        comboBoxItems.Add(input.Text);
+
+                        task.AddAnswerItem(input.Text);
+                        SetCurrentTest();
+
+                        input.Text = string.Empty;
+
+                        if (listItems.Count >= 4)
+                        {
+                            inputPanel.Visibility = Visibility.Collapsed;
+                        }
+                        else
+                        {
+                            inputPanel.Visibility = Visibility.Visible;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
+            }
+        }
+        /// <summary>
+        /// Event handler for the RemoveAnswerMultipleChoice MenuFlyoutItem click event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void RemoveAnswerMultipleChoiceClick(object sender, RoutedEventArgs args)
+        {
+            try
+            {
+                if (sender is MenuFlyoutItem element)
+                {
+                    var item = element.DataContext as TestBuilderAnswersListViewItem;
+
+                    var task = (TasksListView.ItemsSource as ExtendedObservableCollection<CoreTask>)
+                        ?.FirstOrDefault(task => task.TaskID.Equals(item?.ID)) as MultipleChoiceTask;
+
+                    var border = (TasksListView.ContainerFromItem(task) as ListViewItem)?.ContentTemplateRoot as Border;
+
+                    var mainPanel = border?.Child as StackPanel;
+
+                    ListView? list = mainPanel?.Children
+                        .OfType<FrameworkElement>()
+                        .FirstOrDefault(item =>
+                            FilterByTag(item, Constants.ANSWERS_LIST_TEST_BUILDER_KEY)) as ListView;
+
+                    StackPanel? inputPanel = mainPanel?.Children
+                        .OfType<FrameworkElement>()
+                        .FirstOrDefault(item =>
+                            FilterByTag(item, Constants.ADD_ANSWER_PANEL_TEST_BUILDER_KEY)) as StackPanel;
+
+                    ComboBox? comboBox = mainPanel?.Children
+                        .OfType<FrameworkElement>()
+                        .FirstOrDefault(item =>
+                            FilterByTag(item, Constants.ADD_ANSWER_COMBO_BOX_TEST_BUILDER_KEY)) as ComboBox;
+
+                    if (task == null || item == null || list == null || comboBox == null || inputPanel == null)
+                    {
+                        return;
+                    }
+
+                    var listItems = list.ItemsSource as ExtendedObservableCollection<TestBuilderAnswersListViewItem>;
+                    var comboBoxItems = comboBox.ItemsSource as ExtendedObservableCollection<string>;
+
+                    comboBox.SelectedItem = null;
+
+                    if (listItems == null || comboBoxItems == null)
+                    {
+                        return;
+                    }
+
+                    listItems.Remove(item);
+                    comboBoxItems.Remove(item.Text);
+
+                    task.RemoveAnswerItem(item.Text);
+                    SetCurrentTest();
+
+                    if (listItems.Count >= 4)
+                    {
+                        inputPanel.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        inputPanel.Visibility = Visibility.Visible;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
+            }
+        }
+        /// <summary>
+        /// Event handler for the CorrectAnswerMultipleChoice ComboBox selection changed event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void CorrectAnswerMultipleChoiceSelectionChanged(object sender, SelectionChangedEventArgs args)
+        {
+            try
+            {
+                if (sender is ComboBox element)
+                {
+                    var task = ((element.Parent as FrameworkElement)
+                        ?.Parent as FrameworkElement)?.DataContext as MultipleChoiceTask;
+
+                    var selectedItem = element.SelectedItem as string;
+
+                    if (task == null || string.IsNullOrEmpty(selectedItem))
+                    {
+                        return;
+                    }
+
+                    if (task.Answers.Contains(selectedItem))
+                    {
+                        task.AddCorrectAnswer(selectedItem);
+                        SetCurrentTest();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
+            }
+        }
+        /// <summary>
+        /// Event handler for the AddAnswerCheckboxes Button click event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        public void AddAnswerCheckboxesClick(object sender, RoutedEventArgs args)
+        {
+            try
+            {
+                if (sender is Button element)
+                {
+                    var inputPanel = element.Parent as StackPanel;
+                    var mainPanel = inputPanel?.Parent as StackPanel;
+                    var task = (mainPanel?.Parent as Border)?.DataContext as CheckboxesTask;
+
+                    ListView? list = mainPanel?.Children
+                        .OfType<FrameworkElement>()
+                        .FirstOrDefault(item =>
+                            FilterByTag(item, Constants.ANSWERS_LIST_TEST_BUILDER_KEY)) as ListView;
+
+                    TextBox? input = inputPanel?.Children
+                        .OfType<FrameworkElement>()
+                        .FirstOrDefault(item =>
+                            FilterByTag(item, Constants.ADD_ANSWER_INPUT_TEST_BUILDER_KEY)) as TextBox;
+
+                    ListView? checkBoxesList = mainPanel?.Children
+                        .OfType<FrameworkElement>()
+                        .FirstOrDefault(item =>
+                            FilterByTag(item, Constants.CHACK_BOX_LIST_TEST_BUILDER_KEY)) as ListView;
+
+                    if (list != null && inputPanel != null && input != null && checkBoxesList != null && task != null)
+                    {
+                        if (string.IsNullOrEmpty(input.Text))
+                        {
+                            return;
+                        }
+
+                        var listItems = list.ItemsSource as ExtendedObservableCollection<TestBuilderCheckBoxesListViewItem>;
+                        var checkBoxesItems = checkBoxesList.ItemsSource as ExtendedObservableCollection<TestBuilderCheckBoxesListViewItem>;
+
+                        if (listItems == null || checkBoxesItems == null)
+                        {
+                            return;
+                        }
+
+                        foreach (var item in listItems)
+                        {
+                            if (input.Text.Equals(item.Text))
+                            {
+                                return;
+                            }
+                        }
+
+                        if (listItems.Count >= 4)
+                        {
+                            return;
+                        }
+
+                        listItems.Add(new TestBuilderCheckBoxesListViewItem(input.Text, task.TaskID));
+
+                        checkBoxesItems.Add(new TestBuilderCheckBoxesListViewItem(input.Text, task.TaskID));
+
+                        task.AddAnswerItem(input.Text);
+                        SetCurrentTest();
+
+                        input.Text = string.Empty;
+
+                        if (listItems.Count >= 4)
+                        {
+                            inputPanel.Visibility = Visibility.Collapsed;
+                        }
+                        else
+                        {
+                            inputPanel.Visibility = Visibility.Visible;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
+            }
+        }
+        /// <summary>
+        /// Event handler for the RemoveAnswerCheckBoxes MenuFlyoutItem click event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void RemoveAnswerCheckBoxesClick(object sender, RoutedEventArgs args)
+        {
+            try
+            {
+                if (sender is MenuFlyoutItem element)
+                {
+                    var item = element.DataContext as TestBuilderCheckBoxesListViewItem;
+
+                    var task = (TasksListView.ItemsSource as ExtendedObservableCollection<CoreTask>)
+                        ?.FirstOrDefault(task => task.TaskID.Equals(item?.ID)) as CheckboxesTask;
+
+                    var border = (TasksListView.ContainerFromItem(task) as ListViewItem)?.ContentTemplateRoot as Border;
+
+                    var mainPanel = border?.Child as StackPanel;
+
+                    ListView? list = mainPanel?.Children
+                        .OfType<FrameworkElement>()
+                        .FirstOrDefault(item =>
+                            FilterByTag(item, Constants.ANSWERS_LIST_TEST_BUILDER_KEY)) as ListView;
+
+                    StackPanel? inputPanel = mainPanel?.Children
+                        .OfType<FrameworkElement>()
+                        .FirstOrDefault(item =>
+                            FilterByTag(item, Constants.ADD_ANSWER_PANEL_TEST_BUILDER_KEY)) as StackPanel;
+
+                    ListView? checkBoxesList = mainPanel?.Children
+                        .OfType<FrameworkElement>()
+                        .FirstOrDefault(item =>
+                            FilterByTag(item, Constants.CHACK_BOX_LIST_TEST_BUILDER_KEY)) as ListView;
+
+                    if (task == null || item == null || list == null || checkBoxesList == null || inputPanel == null)
+                    {
+                        return;
+                    }
+
+                    var listItems = list.ItemsSource as ExtendedObservableCollection<TestBuilderCheckBoxesListViewItem>;
+                    var comboBoxItems = checkBoxesList.ItemsSource as ExtendedObservableCollection<TestBuilderCheckBoxesListViewItem>;
+
+                    if (listItems == null || comboBoxItems == null)
+                    {
+                        return;
+                    }
+
+                    var removeItem = comboBoxItems.FirstOrDefault(r => r.ID.Equals(item.ID));
+                    if (removeItem != null)
+                    {
+                        comboBoxItems.Remove(removeItem);
+                    }
+
+                    listItems.Remove(item);
+
+                    task.RemoveAnswersItem(item.Text);
+                    SetCurrentTest();
+
+                    if (listItems.Count >= 4)
+                    {
+                        inputPanel.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        inputPanel.Visibility = Visibility.Visible;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
+            }
+        }
+        /// <summary>
+        /// Event handler for the CheckBox check event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void CheckBoxCheck(object sender, RoutedEventArgs args)
+        {
+            if (sender is CheckBox element)
+            {
+                var taskID = (Guid)element.Tag;
+                var text = (element.Content as TextBlock)?.Text;
+
+                var task = TasksList
+                    .FirstOrDefault(item => item.TaskID.Equals(taskID)) as CheckboxesTask;
+
+                if (task != null && !string.IsNullOrEmpty(text))
+                {
+                    task.AddCorrectAnswerItem(text);
+                }
+            }
+        }
+        /// <summary>
+        /// Event handler for the CheckBox uncheck event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void CheckBoxUncheck(object sender, RoutedEventArgs args)
+        {
+            if (sender is CheckBox element)
+            {
+                var taskID = (Guid)element.Tag;
+                var text = (element.Content as TextBlock)?.Text;
+
+                var task = TasksList
+                    .FirstOrDefault(item => item.TaskID.Equals(taskID)) as CheckboxesTask;
+
+                if (task != null && !string.IsNullOrEmpty(text))
+                {
+                    task.RemoveCorrectAnswerItem(text);
+                }
             }
         }
         #endregion

@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:STest.App.Pages.Builder"
     xmlns:controls="using:STest.App.Controls"
-    xmlns:taskSelector="using:STest.App.Utilities"
+    xmlns:utilities="using:STest.App.Utilities"
     xmlns:testing="using:STLib.Core.Testing"
     xmlns:taskText="using:STLib.Tasks.Text"
     xmlns:taskTrueFalse="using:STLib.Tasks.TrueFalse"
@@ -155,10 +155,151 @@
                         <TextBlock 
                             Tag="MAX_GRADE"
                             Style="{StaticResource BodyTextBlockStyle}"
-                            Margin="0, 0, 15, 0"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             LineStackingStrategy="BlockLineHeight"
+                            Margin="0, 0, 15, 0"
+                        />
+                        <NumberBox
+                            Tag="MAX_GRADE_INPUT"
+                            Value="1"
+                            SpinButtonPlacementMode="Compact"
+                            Minimum="1"
+                            Maximum="100"
+                            SmallChange="1"
+                            LargeChange="10" 
+                            MinWidth="150"
+                            ValueChanged="TaskMaxGradeChanged"
+                        />
+                    </StackPanel>
+                    <StackPanel 
+                        Orientation="Horizontal"
+                        Tag="CONSIDER_IN_THE_ASSESSMENT_PANEL"
+                    >
+                        <TextBlock 
+                            Tag="CONSIDER_IN_THE_ASSESSMENT"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            LineStackingStrategy="BlockLineHeight"
+                            Margin="0, 0, 15, 0"
+                        />
+                        <ToggleSwitch 
+                            Tag="CONSIDER_IN_THE_ASSESSMENT_SWITCHER"
+                            IsOn="True"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Toggled="TaskConsiderToggled"
+                        />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+        <DataTemplate 
+            x:Key="TrueFalseTaskTemplate"
+            x:DataType="taskTrueFalse:TrueFalseTask"
+        >
+            <Border
+                Margin="0, 0, 0, 7.5"
+                Padding="15"
+                BorderThickness="1"
+                CornerRadius="{StaticResource OverlayCornerRadius}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"
+                Tag="{x:Bind TaskID}"
+            >
+                <StackPanel>
+                    <Grid Tag="HEADER_PANEL">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock 
+                            Grid.Column="0"
+                            Grid.Row="0"
+                            Tag="HEADER_NUMBER"
+                            Style="{StaticResource BodyStrongTextBlockStyle}"
+                            Foreground="{ThemeResource TextFillColorDisabledBrush}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Opacity="0.8"
+                        />
+                        <controls:ConfirmationButton
+                            Grid.Column="1"
+                            Grid.Row="0"
+                            Click="RemoveTaskClick"
+                            Tag="{x:Bind TaskID}" 
+                            ToolTipService.ToolTip="Close"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                        >
+                            <FontIcon 
+                                Glyph="&#xE711;" 
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                FontSize="16"
+                            />
+                        </controls:ConfirmationButton>
+                    </Grid>
+                    <RichEditBox 
+                        Tag="QUESTION"
+                        Width="500" 
+                        MinHeight="100"
+                        HorizontalAlignment="Center"
+                        Margin="0, 0, 0, 15"
+                        TextChanged="TaskQuestionChanged"
+                    />
+                    <TextBlock 
+                        Tag="CORRECT_ANSWER"
+                        Style="{StaticResource SubtitleTextBlockStyle}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Margin="0, 0, 0, 7.5"
+                    />
+                    <StackPanel 
+                        Tag="CORRECT_ANSWER_PANEL"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Margin="0, 0, 0, 15"
+                    >
+                        <RadioButton 
+                            Tag="CORRECT_ANSWER_RADIO_TRUE" 
+                            IsChecked="True" 
+                            MinWidth="10"
+                            Margin="0, 0, 30, 0"
+                            Checked="CorrectAnswerRadioButtonChecked"
+                        >
+                            <RadioButton.ContentTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" Style="{StaticResource BodyStrongTextBlockStyle}" />
+                                </DataTemplate>
+                            </RadioButton.ContentTemplate>
+                        </RadioButton>
+                        <RadioButton 
+                            Tag="CORRECT_ANSWER_RADIO_FALSE" 
+                            MinWidth="10"
+                            Checked="CorrectAnswerRadioButtonChecked"
+                        >
+                            <RadioButton.ContentTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" Style="{StaticResource BodyStrongTextBlockStyle}" />
+                                </DataTemplate>
+                            </RadioButton.ContentTemplate>
+                        </RadioButton>
+                    </StackPanel>
+                    <StackPanel 
+                        Orientation="Horizontal"
+                        Tag="MAX_GRADE_PANEL"
+                        Margin="0, 0, 0, 15"
+                    >
+                        <TextBlock 
+                            Tag="MAX_GRADE"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            LineStackingStrategy="BlockLineHeight"
+                            Margin="0, 0, 15, 0"
                         />
                         <NumberBox
                             Tag="MAX_GRADE_INPUT"
@@ -196,24 +337,376 @@
             </Border>
         </DataTemplate>
         <DataTemplate 
-            x:Key="TrueFalseTaskTemplate"
-            x:DataType="taskTrueFalse:TrueFalseTask"
-        >
-            <TextBlock Text="{x:Bind Name}" FontSize="18" Margin="5"/>
-        </DataTemplate>
-        <DataTemplate 
             x:Key="CheckboxesTaskTemplate"
             x:DataType="taskCheckboxes:CheckboxesTask"
         >
-            <TextBlock Text="{x:Bind Name}" FontSize="18" Margin="5"/>
+            <Border
+                Margin="0, 0, 0, 7.5"
+                Padding="15"
+                BorderThickness="1"
+                CornerRadius="{StaticResource OverlayCornerRadius}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"
+                Tag="{x:Bind TaskID}"
+            >
+                <StackPanel>
+                    <Grid Tag="HEADER_PANEL">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock 
+                            Grid.Column="0"
+                            Grid.Row="0"
+                            Tag="HEADER_NUMBER"
+                            Style="{StaticResource BodyStrongTextBlockStyle}"
+                            Foreground="{ThemeResource TextFillColorDisabledBrush}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Opacity="0.8"
+                        />
+                        <controls:ConfirmationButton
+                            Grid.Column="1"
+                            Grid.Row="0"
+                            Click="RemoveTaskClick"
+                            Tag="{x:Bind TaskID}" 
+                            ToolTipService.ToolTip="Close"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                        >
+                            <FontIcon 
+                                Glyph="&#xE711;" 
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                FontSize="16"
+                            />
+                        </controls:ConfirmationButton>
+                    </Grid>
+                    <RichEditBox 
+                        Tag="QUESTION"
+                        Width="500" 
+                        MinHeight="100"
+                        HorizontalAlignment="Center"
+                        Margin="0, 0, 0, 15"
+                        TextChanged="TaskQuestionChanged"
+                    />
+                    <ListView
+                        Tag="ANSWERS_LIST"
+                        ItemTemplate="{StaticResource CheckBoxesAnswersListViewTemplate}"
+                        SelectionMode="None"
+                        Margin="0, 0, 0, 15"
+                    />
+                    <StackPanel 
+                        Tag="ADD_ANSWER_PANEL"
+                        Orientation="Horizontal" 
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Spacing="15"
+                        Margin="0, 0, 0, 15"
+                        Visibility="Visible"
+                    >
+                        <TextBox
+                            Tag="ADD_ANSWER_INPUT"
+                            MinWidth="300"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            TextChanged="AnswerMultipleChoiceTextBoxTextChanged"
+                        />
+                        <controls:ConfirmationButton
+                            Tag="ADD_ANSWER_ADD_BUTTON"
+                            Padding="5"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            ToolTipService.ToolTip="Add"
+                            Click="AddAnswerCheckboxesClick"
+                            IsEnabled="False"
+                        >
+                            <FontIcon Glyph="&#xE710;" FontSize="16" />
+                        </controls:ConfirmationButton>
+                    </StackPanel>
+                    <ListView
+                        Tag="CHACK_BOX_LIST"
+                        ItemTemplate="{StaticResource CheckBoxesListViewTemplate}"
+                        SelectionMode="None"
+                        Margin="0, 0, 0, 15"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                    />
+                    <TextBlock 
+                        Tag="MAX_GRADE"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Margin="0, 0, 0, 15"
+                        Foreground="{ThemeResource SystemFillColorAttentionBrush}"
+                    />
+                    <StackPanel 
+                        Orientation="Horizontal"
+                        Tag="CONSIDER_IN_THE_ASSESSMENT_PANEL"
+                    >
+                        <TextBlock 
+                            Tag="CONSIDER_IN_THE_ASSESSMENT"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            Margin="0, 0, 15, 0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            LineStackingStrategy="BlockLineHeight"
+                        />
+                        <ToggleSwitch 
+                            Tag="CONSIDER_IN_THE_ASSESSMENT_SWITCHER"
+                            IsOn="True"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Toggled="TaskConsiderToggled"
+                        />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
         </DataTemplate>
         <DataTemplate 
             x:Key="MultipleChoiceTaskTemplate"
             x:DataType="taskMultipleChoice:MultipleChoiceTask"
         >
-            <TextBlock Text="{x:Bind Name}" FontSize="18" Margin="5"/>
+            <Border
+                Margin="0, 0, 0, 7.5"
+                Padding="15"
+                BorderThickness="1"
+                CornerRadius="{StaticResource OverlayCornerRadius}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"
+                Tag="{x:Bind TaskID}"
+            >
+                <StackPanel>
+                    <Grid Tag="HEADER_PANEL">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock 
+                            Grid.Column="0"
+                            Grid.Row="0"
+                            Tag="HEADER_NUMBER"
+                            Style="{StaticResource BodyStrongTextBlockStyle}"
+                            Foreground="{ThemeResource TextFillColorDisabledBrush}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Opacity="0.8"
+                        />
+                        <controls:ConfirmationButton
+                            Grid.Column="1"
+                            Grid.Row="0"
+                            Click="RemoveTaskClick"
+                            Tag="{x:Bind TaskID}" 
+                            ToolTipService.ToolTip="Close"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                        >
+                            <FontIcon 
+                                Glyph="&#xE711;" 
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                FontSize="16"
+                            />
+                        </controls:ConfirmationButton>
+                    </Grid>
+                    <RichEditBox 
+                        Tag="QUESTION"
+                        Width="500" 
+                        MinHeight="100"
+                        HorizontalAlignment="Center"
+                        Margin="0, 0, 0, 15"
+                        TextChanged="TaskQuestionChanged"
+                    />
+                    <ListView
+                        Tag="ANSWERS_LIST"
+                        ItemTemplate="{StaticResource AnswersListViewTemplate}"
+                        SelectionMode="None"
+                        Margin="0, 0, 0, 15"
+                    />
+                    <StackPanel 
+                        Tag="ADD_ANSWER_PANEL"
+                        Orientation="Horizontal" 
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Spacing="15"
+                        Margin="0, 0, 0, 15"
+                        Visibility="Visible"
+                    >
+                        <TextBox
+                            Tag="ADD_ANSWER_INPUT"
+                            MinWidth="300"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            TextChanged="AnswerMultipleChoiceTextBoxTextChanged"
+                        />
+                        <controls:ConfirmationButton
+                            Tag="ADD_ANSWER_ADD_BUTTON"
+                            Padding="5"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            ToolTipService.ToolTip="Add"
+                            Click="AddAnswerMultipleChoiceClick"
+                            IsEnabled="False"
+                        >
+                            <FontIcon Glyph="&#xE710;" FontSize="16" />
+                        </controls:ConfirmationButton>
+                    </StackPanel>
+                    <ComboBox
+                        Tag="ADD_ANSWER_COMBO_BOX"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Margin="0, 0, 0, 25"
+                        MinWidth="350"
+                        SelectionChanged="CorrectAnswerMultipleChoiceSelectionChanged"
+                    />
+                    <StackPanel 
+                        Orientation="Horizontal"
+                        Tag="MAX_GRADE_PANEL"
+                        Margin="0, 0, 0, 15"
+                    >
+                        <TextBlock 
+                            Tag="MAX_GRADE"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            LineStackingStrategy="BlockLineHeight"
+                            Margin="0, 0, 15, 0"
+                        />
+                        <NumberBox
+                            Tag="MAX_GRADE_INPUT"
+                            Value="1"
+                            SpinButtonPlacementMode="Compact"
+                            Minimum="1"
+                            Maximum="100"
+                            SmallChange="1"
+                            LargeChange="10" 
+                            MinWidth="150"
+                            ValueChanged="TaskMaxGradeChanged"
+                        />
+                    </StackPanel>
+                    <StackPanel 
+                        Orientation="Horizontal"
+                        Tag="CONSIDER_IN_THE_ASSESSMENT_PANEL"
+                    >
+                        <TextBlock 
+                            Tag="CONSIDER_IN_THE_ASSESSMENT"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            Margin="0, 0, 15, 0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            LineStackingStrategy="BlockLineHeight"
+                        />
+                        <ToggleSwitch 
+                            Tag="CONSIDER_IN_THE_ASSESSMENT_SWITCHER"
+                            IsOn="True"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Toggled="TaskConsiderToggled"
+                        />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
         </DataTemplate>
-        <taskSelector:TaskTemplateSelector 
+        <DataTemplate x:DataType="utilities:TestBuilderAnswersListViewItem" x:Key="AnswersListViewTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem  
+                            Text="&#xE74D;" 
+                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                            FontSize="16"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Tag="{x:Bind ID}"
+                            Click="RemoveAnswerMultipleChoiceClick"
+                        />
+                    </MenuFlyout>
+                </Grid.ContextFlyout>
+                <Border
+                    Grid.Column="0"
+                    Grid.Row="0"
+                    BorderThickness="1"
+                    BorderBrush="{StaticResource CardStrokeColorDefaultBrush}"
+                    CornerRadius="{StaticResource ControlCornerRadius}"
+                    Background="{StaticResource LayerOnAcrylicFillColorDefaultBrush}"
+                    Padding="5"
+                >
+                    <TextBlock
+                        Text="{x:Bind Text}"
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        TextWrapping="Wrap"
+                    />
+                </Border>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:DataType="utilities:TestBuilderCheckBoxesListViewItem" x:Key="CheckBoxesAnswersListViewTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem  
+                            Text="&#xE74D;" 
+                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                            FontSize="16"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Tag="{x:Bind ID}"
+                            Click="RemoveAnswerCheckBoxesClick"
+                        />
+                    </MenuFlyout>
+                </Grid.ContextFlyout>
+                <Border
+                    Grid.Column="0"
+                    Grid.Row="0"
+                    BorderThickness="1"
+                    BorderBrush="{StaticResource CardStrokeColorDefaultBrush}"
+                    CornerRadius="{StaticResource ControlCornerRadius}"
+                    Background="{StaticResource LayerOnAcrylicFillColorDefaultBrush}"
+                    Padding="5"
+                >
+                    <TextBlock
+                        Text="{x:Bind Text}"
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        TextWrapping="Wrap"
+                    />
+                </Border>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:DataType="utilities:TestBuilderCheckBoxesListViewItem" x:Key="CheckBoxesListViewTemplate">
+            <CheckBox 
+                Tag="{x:Bind ID}"
+                MinWidth="10"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Checked="CheckBoxCheck"
+                Unchecked="CheckBoxUncheck"
+                IsChecked="{x:Bind IsChecked}"
+            >
+                <TextBlock
+                    Text="{x:Bind Text}"
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    TextWrapping="Wrap"
+                />
+            </CheckBox>
+        </DataTemplate>
+        <utilities:TaskTemplateSelector 
             x:Key="TaskTemplateSelector"
             TextTaskTemplate="{StaticResource TextTaskTemplate}"
             TrueFalseTaskTemplate="{StaticResource TrueFalseTaskTemplate}"
@@ -361,6 +854,7 @@
                             TimeChanged="TestTestTimeChanged"
                         />
                         <!--Добавить добавление людей-->
+                        <!--Добавить визуализатор теста в новом окне-->
                         <Border 
                             Margin="15"
                             BorderBrush="{StaticResource CardStrokeColorDefaultBrush}"

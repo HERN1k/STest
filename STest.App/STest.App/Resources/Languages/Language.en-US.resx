@@ -249,13 +249,34 @@
   <data name="CONSIDER_IN_THE_ASSESSMENT_KEY" xml:space="preserve">
     <value>Consider in the assessment?</value>
   </data>
-  <data name="YAS_KEY" xml:space="preserve">
-    <value>Yas</value>
+  <data name="YES_KEY" xml:space="preserve">
+    <value>Yes</value>
   </data>
   <data name="NO_KEY" xml:space="preserve">
     <value>No</value>
   </data>
   <data name="ASSESSMENT_FOR_CORRECT_ANSWER_KEY" xml:space="preserve">
     <value>Assessment for correct answer:</value>
+  </data>
+  <data name="ARE_YOU_SURE_KEY" xml:space="preserve">
+    <value>Are you sure?</value>
+  </data>
+  <data name="CANCEL_KEY" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="DATA_WILL_NOT_BE_SAVED_KEY" xml:space="preserve">
+    <value>Data will not be saved!</value>
+  </data>
+  <data name="ANSWERS_KEY" xml:space="preserve">
+    <value>Answers</value>
+  </data>
+  <data name="THIS_SHOULD_BE_THE_ANSWER_KEY" xml:space="preserve">
+    <value>This should be the answer</value>
+  </data>
+  <data name="EACH_CORRECT_ANS_WORTH_ONE_POINT_IN_FINAL_ASSESSMENT_KEY" xml:space="preserve">
+    <value>Each correct answer is worth one point in the final assessment</value>
+  </data>
+  <data name="CORRECT_ANSWERS_KEY" xml:space="preserve">
+    <value>Correct answers</value>
   </data>
 </root>

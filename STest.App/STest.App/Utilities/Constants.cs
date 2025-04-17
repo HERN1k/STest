@@ -175,6 +175,18 @@ namespace STest.App.Utilities
         /// <summary>
         /// <see cref="Application"/> message <see cref="string"/>
         /// </summary>
+        public const string CORRECT_ANSWER_PANEL_TEST_BUILDER_KEY = "CORRECT_ANSWER_PANEL";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string CORRECT_ANSWER_RADIO_TRUE_TEST_BUILDER_KEY = "CORRECT_ANSWER_RADIO_TRUE";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string CORRECT_ANSWER_RADIO_FALSE_TEST_BUILDER_KEY = "CORRECT_ANSWER_RADIO_FALSE";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
         public const string MAX_GRADE_TEST_BUILDER_KEY = "MAX_GRADE";
         /// <summary>
         /// <see cref="Application"/> message <see cref="string"/>
@@ -196,6 +208,30 @@ namespace STest.App.Utilities
         /// <see cref="Application"/> message <see cref="string"/>
         /// </summary>
         public const string CONSIDER_IN_THE_ASSESSMENT_PANEL_TEST_BUILDER_KEY = "CONSIDER_IN_THE_ASSESSMENT_PANEL";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string ANSWERS_LIST_TEST_BUILDER_KEY = "ANSWERS_LIST";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string ADD_ANSWER_PANEL_TEST_BUILDER_KEY = "ADD_ANSWER_PANEL";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string ADD_ANSWER_INPUT_TEST_BUILDER_KEY = "ADD_ANSWER_INPUT";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string ADD_ANSWER_ADD_BUTTON_TEST_BUILDER_KEY = "ADD_ANSWER_ADD_BUTTON";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string ADD_ANSWER_COMBO_BOX_TEST_BUILDER_KEY = "ADD_ANSWER_COMBO_BOX";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string CHACK_BOX_LIST_TEST_BUILDER_KEY = "CHACK_BOX_LIST";
 
         /*
             Localization keys
@@ -323,6 +359,10 @@ namespace STest.App.Utilities
         /// <summary>
         /// <see cref="Localization"/> key <see cref="string"/>
         /// </summary>
+        public const string THIS_SHOULD_BE_THE_ANSWER_KEY = nameof(THIS_SHOULD_BE_THE_ANSWER_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
         public const string NAME_KEY = nameof(NAME_KEY);
         /// <summary>
         /// <see cref="Localization"/> key <see cref="string"/>
@@ -379,7 +419,7 @@ namespace STest.App.Utilities
         /// <summary>
         /// <see cref="Localization"/> key <see cref="string"/>
         /// </summary>
-        public const string YAS_KEY = nameof(YAS_KEY);
+        public const string YES_KEY = nameof(YES_KEY);
         /// <summary>
         /// <see cref="Localization"/> key <see cref="string"/>
         /// </summary>
@@ -387,7 +427,31 @@ namespace STest.App.Utilities
         /// <summary>
         /// <see cref="Localization"/> key <see cref="string"/>
         /// </summary>
-        public const string ASSESSMENT_FOR_CORRECT_ANSWER_KEY = nameof(ASSESSMENT_FOR_CORRECT_ANSWER_KEY); 
+        public const string ASSESSMENT_FOR_CORRECT_ANSWER_KEY = nameof(ASSESSMENT_FOR_CORRECT_ANSWER_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string ARE_YOU_SURE_KEY = nameof(ARE_YOU_SURE_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string CANCEL_KEY = nameof(CANCEL_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string DATA_WILL_NOT_BE_SAVED_KEY = nameof(DATA_WILL_NOT_BE_SAVED_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string ANSWERS_KEY = nameof(ANSWERS_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string EACH_CORRECT_ANS_WORTH_ONE_POINT_IN_FINAL_ASSESSMENT_KEY = nameof(EACH_CORRECT_ANS_WORTH_ONE_POINT_IN_FINAL_ASSESSMENT_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string CORRECT_ANSWERS_KEY = nameof(CORRECT_ANSWERS_KEY);
         
         /* 
             Local data
@@ -396,6 +460,10 @@ namespace STest.App.Utilities
         /// <see cref="LocalData"/> key <see cref="string"/>
         /// </summary>
         public const string PREFERRED_LANGUAGE_LOCAL_DATA = nameof(PREFERRED_LANGUAGE_LOCAL_DATA);
+        /// <summary>
+        /// <see cref="LocalData"/> key <see cref="string"/>
+        /// </summary>
+        public const string USER_ID_LOCAL_DATA = nameof(USER_ID_LOCAL_DATA);
         /// <summary>
         /// <see cref="LocalData"/> key <see cref="string"/>
         /// </summary>

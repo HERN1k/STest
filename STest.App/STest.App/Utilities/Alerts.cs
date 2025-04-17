@@ -9,6 +9,8 @@ using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using System.Linq;
+using STest.App.Pages.DialogContent;
+using STest.App.Services;
 
 namespace STest.App.Utilities
 {
@@ -24,6 +26,58 @@ namespace STest.App.Utilities
         {
             new WindowsSystemDispatcherQueueHelper()
                 .EnsureWindowsSystemDispatcherQueueController();
+        }
+
+        /// <summary>
+        /// Show a dialog to the user
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public static async Task<ContentDialogResult> ShowDialog(this Page page, ShowDialogArgs? args = null)
+        {
+            var dialog = new ContentDialog();
+            
+            dialog.XamlRoot = page.XamlRoot;
+            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            dialog.Content = new ContentDialogContent(args?.Message);
+
+            dialog.Title = args?.Title ?? nameof(args.Title);
+            dialog.PrimaryButtonText = args?.OkButtonText ?? nameof(args.OkButtonText);
+            dialog.CloseButtonText = args?.CancelButtonText ?? nameof(args.CancelButtonText);
+
+            dialog.DefaultButton = ContentDialogButton.Primary;
+            
+            return await dialog.ShowAsync();
+        }
+
+        /// <summary>
+        /// Show a dialog to the user and execute a function based on the result
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="page"></param>
+        /// <param name="func"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public static async Task<T> ShowDialog<T>(this Page page, Func<ContentDialogResult, T> func, ShowDialogArgs? args = null)
+        {
+            ArgumentNullException.ThrowIfNull(func, nameof(func));
+
+            var dialog = new ContentDialog();
+
+            dialog.XamlRoot = page.XamlRoot;
+            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            dialog.Content = new ContentDialogContent(args?.Message);
+
+            dialog.Title = args?.Title ?? nameof(args.Title);
+            dialog.PrimaryButtonText = args?.OkButtonText ?? nameof(args.OkButtonText);
+            dialog.CloseButtonText = args?.CancelButtonText ?? nameof(args.CancelButtonText);
+
+            dialog.DefaultButton = ContentDialogButton.Primary;
+
+            var result = await dialog.ShowAsync();
+
+            return func(result);
         }
 
         /// <summary>

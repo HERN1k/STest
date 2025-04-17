@@ -1,8 +1,6 @@
 using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Versioning;
-
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
@@ -12,10 +10,6 @@ using Microsoft.UI.Xaml.Navigation;
 using STest.App.Domain.Interfaces;
 using STest.App.Utilities;
 using STLib.Core.Testing;
-using STLib.Tasks.Checkboxes;
-using STLib.Tasks.MultipleChoice;
-using STLib.Tasks.Text;
-using STLib.Tasks.TrueFalse;
 
 namespace STest.App.Pages.Builder
 {
@@ -29,18 +23,18 @@ namespace STest.App.Pages.Builder
         public ExtendedObservableCollection<CoreTask> TasksList { get; set; }
 
         private readonly ILocalization m_localization;
+        private readonly ILocalData m_localData;
         private readonly IMemoryCache m_memoryCache;
         private readonly ILogger<BuilderPage> m_logger;
         private readonly Storyboard m_fadeInAnimation;
         private readonly Storyboard m_fadeOutAnimation;
         private Test? m_thisTest;
 
-        private Guid m_temp;
-
         public BuilderPage()
         {
             this.InitializeComponent();
             m_localization = ServiceHelper.GetService<ILocalization>();
+            m_localData = ServiceHelper.GetService<ILocalData>();
             m_memoryCache = ServiceHelper.GetMemoryCache();
             m_logger = ServiceHelper.GetLogger<BuilderPage>();
             m_fadeInAnimation = GetStoryboard("FadeInAnimation");
@@ -112,10 +106,16 @@ namespace STest.App.Pages.Builder
             TasksList.CollectionChanged -= TasksCollectionChanged;
         }
 
+        /// <summary> 
+        /// Sets the items in the test list.  
+        /// Displays a message if the list is empty or shows the "Create New Test" button otherwise.  
+        /// </summary>  
         private void SetTestListItems()
         {
             try
             {
+                // TODO: Get tests from server  
+
                 if (TestsList.Count == 0)
                 {
                     EmptyTestsListTitle.Text = m_localization.GetString(Constants.CREATE_NEW_TEST_KEY);
@@ -133,6 +133,10 @@ namespace STest.App.Pages.Builder
             }
         }
 
+        /// <summary>  
+        /// Reopens the current test if it exists in the memory cache.  
+        /// Adds the test to the list if the list is empty and opens the test builder.  
+        /// </summary>  
         private void ReopenTest()
         {
             var test = GetCurrentTest();
@@ -148,6 +152,11 @@ namespace STest.App.Pages.Builder
             }
         }
 
+        /// <summary>  
+        /// Retrieves the current test from the memory cache.  
+        /// Returns null if no test is found.  
+        /// </summary>  
+        /// <returns>The current test or null if not found.</returns>  
         private Test? GetCurrentTest()
         {
             if (m_memoryCache.TryGetValue<Test>(Constants.CURRENT_TEST_IN_BUILDER, out var test))
@@ -158,6 +167,10 @@ namespace STest.App.Pages.Builder
             return null;
         }
 
+        /// <summary>  
+        /// Sets the current test in the memory cache.  
+        /// Removes existing tasks and adds updated tasks from the task list.  
+        /// </summary>  
         private void SetCurrentTest()
         {
             if (m_thisTest != null)
@@ -170,6 +183,12 @@ namespace STest.App.Pages.Builder
             }
         }
 
+        /// <summary>  
+        /// Creates a header TextBlock with the specified localization key.  
+        /// The text is aligned to the left by default.  
+        /// </summary>  
+        /// <param name="localizationKey">The key for localized text.</param>  
+        /// <returns>A TextBlock with the localized text.</returns>  
         private TextBlock CreateHeader(string localizationKey)
         {
             return new TextBlock()
@@ -181,6 +200,12 @@ namespace STest.App.Pages.Builder
             };
         }
 
+        /// <summary>  
+        /// Creates a header TextBlock with the specified localization key and text alignment.  
+        /// </summary>  
+        /// <param name="localizationKey">The key for localized text.</param>  
+        /// <param name="alignment">The text alignment for the header.</param>  
+        /// <returns>A TextBlock with the localized text and specified alignment.</returns>  
         private TextBlock CreateHeader(string localizationKey, TextAlignment alignment)
         {
             return new TextBlock()
@@ -192,6 +217,14 @@ namespace STest.App.Pages.Builder
             };
         }
 
+        /// <summary>  
+        /// Retrieves a storyboard resource by its name.  
+        /// Throws an exception if the resource is not found or is not a storyboard.  
+        /// </summary>  
+        /// <param name="name">The name of the storyboard resource.</param>  
+        /// <returns>The storyboard resource.</returns>  
+        /// <exception cref="InvalidOperationException">Thrown if the storyboard is not found.</exception>  
+        /// <exception cref="InvalidCastException">Thrown if the resource is not a storyboard.</exception>  
         private Storyboard GetStoryboard(string name)
         {
             if (this.Resources.TryGetValue(name, out var storyboard))
@@ -205,13 +238,19 @@ namespace STest.App.Pages.Builder
             }
         }
 
+        /// <summary>  
+        /// Executes the specified storyboard animation on a UI element.  
+        /// Stops the storyboard if it is already running and sets the target element for each animation.  
+        /// </summary>  
+        /// <param name="storyboard">The storyboard to execute.</param>  
+        /// <param name="element">The UI element to animate.</param>  
         private void ExecuteAnimation(Storyboard storyboard, UIElement element)
         {
             if (storyboard == null || element == null)
             {
                 return;
             }
-            
+
             try
             {
                 storyboard.Stop();
@@ -229,6 +268,13 @@ namespace STest.App.Pages.Builder
             }
         }
 
+        /// <summary>  
+        /// Filters a FrameworkElement by its tag.  
+        /// Returns true if the element's tag matches the specified tag.  
+        /// </summary>  
+        /// <param name="element">The element to filter.</param>  
+        /// <param name="tag">The tag to match.</param>  
+        /// <returns>True if the tag matches; otherwise, false.</returns>  
         private static bool FilterByTag(FrameworkElement element, string tag)
         {
             if (element == null || string.IsNullOrEmpty(tag))
