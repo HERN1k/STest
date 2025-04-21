@@ -5,43 +5,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:STest.App"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:utilities="using:STest.App.Utilities"
     mc:Ignorable="d">
-    <Grid 
-        x:Name="MainGrid"
-        HorizontalAlignment="Stretch" 
-        VerticalAlignment="Stretch"
-    >
-        <Grid.RowDefinitions>
-            <RowDefinition Height="32" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
 
-        <Grid 
-            x:Name="AppTitleBar"
-            Grid.Column="0"
-            Grid.Row="0"
-            Height="32"
-            Margin="16,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="TitleColumn" Width="*"/>
-            </Grid.ColumnDefinitions>
-            
-            <TextBlock 
-                x:Name="TitleBarTextBlock"
-                Text="Name"
-                Grid.Column="0"
-                Grid.Row="0"
-                FontWeight="Medium"
-                FontSize="12"
-                CharacterSpacing="25"
-                VerticalAlignment="Center">
-            </TextBlock>
-        </Grid>
-
+    <ContentControl Template="{StaticResource WindowWrapper}">
         <NavigationView
             x:Name="NavigationView"
             Grid.Column="0"
@@ -90,5 +58,5 @@
                 VerticalAlignment="Stretch" 
             />
         </NavigationView>
-    </Grid>
+    </ContentControl>
 </Window>

@@ -14,121 +14,94 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-   
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="32" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.Resources>
-            <ControlTemplate 
-                x:Key="TaskTemplate" 
-                TargetType="ContentControl"
-            >
-                <StackPanel
-                    Margin="0, 5"
-                    Padding="15"
-                    Width="800"
-                    BorderThickness="1"
-                    CornerRadius="{StaticResource OverlayCornerRadius}"
-                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                    Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"
-                    Tag="{Binding TaskID}"    
-                >
-                    <TextBlock 
-                        Text="{Binding Question}"
-                        Style="{StaticResource BodyStrongTextBlockStyle}"
-                        HorizontalAlignment="Left"
-                        TextWrapping="Wrap"
-                        Margin="0, 0, 0, 15"
-                    />
-                    <TextBlock 
-                        Text="{Binding Name}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        HorizontalAlignment="Left"
-                        TextWrapping="Wrap"
-                        Margin="0, 0, 0, 15"
-                    />
-                    <ContentPresenter />
-                </StackPanel>
-            </ControlTemplate>
-            <DataTemplate 
-                x:Key="TextTaskTemplate"
-                x:DataType="taskText:TextTask"
-            >
-                <ContentControl Template="{StaticResource TaskTemplate}" DataContext="{Binding}">
-                    <TextBox
-                        HorizontalAlignment="Stretch"
-                        TextWrapping="Wrap"
-                        AcceptsReturn="True"
-                        PlaceholderText="{x:Bind utilities:MessageProvider.THIS_SHOULD_BE_THE_ANSWER_KEY}"
-                    />
-                </ContentControl>
-            </DataTemplate>
-            <DataTemplate 
-                x:Key="TrueFalseTaskTemplate"
-                x:DataType="taskTrueFalse:TrueFalseTask"
-            >
-                <ContentControl Template="{StaticResource TaskTemplate}" DataContext="{Binding}">
-                    <RadioButtons>
-                        <RadioButton Content="{x:Bind utilities:MessageProvider.YES}" />
-                        <RadioButton Content="{x:Bind utilities:MessageProvider.NO}" />
-                    </RadioButtons>
-                </ContentControl>
-            </DataTemplate>
-            <DataTemplate 
-                x:Key="CheckboxesTaskTemplate"
-                x:DataType="taskCheckboxes:CheckboxesTask"
-            >
-                <ContentControl Template="{StaticResource TaskTemplate}" DataContext="{Binding}">
-                    <StackPanel Loaded="CheckboxesTaskLoaded" />
-                </ContentControl>
-            </DataTemplate>
-            <DataTemplate 
-                x:Key="MultipleChoiceTaskTemplate"
-                x:DataType="taskMultipleChoice:MultipleChoiceTask"
-            >
-                <ContentControl Template="{StaticResource TaskTemplate}" DataContext="{Binding}">
-                    <RadioButtons Loaded="MultipleChoiceTaskLoaded" />
-                </ContentControl>
-            </DataTemplate>
-            <utilities:TaskTemplateSelector 
-                x:Key="TaskTemplateSelector"
-                TextTaskTemplate="{StaticResource TextTaskTemplate}"
-                TrueFalseTaskTemplate="{StaticResource TrueFalseTaskTemplate}"
-                CheckboxesTaskTemplate="{StaticResource CheckboxesTaskTemplate}"
-                MultipleChoiceTaskTemplate="{StaticResource MultipleChoiceTaskTemplate}"
-            />
-        </Grid.Resources>
-        <Grid 
-            Grid.Column="0"
-            Grid.Row="0"
-            Height="32"
-            Margin="16,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="TitleColumn" Width="*"/>
-            </Grid.ColumnDefinitions>
 
-            <TextBlock 
-                Text="{x:Bind utilities:MessageProvider.APP_DISPLAY_NAME_KEY}"
-                Grid.Column="0"
-                Grid.Row="0"
-                FontWeight="Medium"
-                FontSize="12"
-                CharacterSpacing="25"
-                VerticalAlignment="Center">
-            </TextBlock>
-        </Grid> 
-        
+    <ContentControl Template="{StaticResource WindowWrapper}">
         <ScrollViewer 
             Grid.Column="0"
             Grid.Row="1"
             VerticalScrollBarVisibility="Auto"
         >
+            <ScrollViewer.Resources>
+                <ControlTemplate 
+                    x:Key="TaskTemplate" 
+                    TargetType="ContentControl"
+                >
+                    <StackPanel
+                        Margin="0, 5"
+                        Padding="15"
+                        Width="800"
+                        BorderThickness="1"
+                        CornerRadius="{StaticResource OverlayCornerRadius}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"
+                        Tag="{Binding TaskID}"    
+                    >
+                        <TextBlock 
+                            Text="{Binding Question}"
+                            Style="{StaticResource BodyStrongTextBlockStyle}"
+                            HorizontalAlignment="Left"
+                            TextWrapping="Wrap"
+                            Margin="0, 0, 0, 15"
+                        />
+                        <TextBlock 
+                            Text="{Binding Name}"
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            HorizontalAlignment="Left"
+                            TextWrapping="Wrap"
+                            Margin="0, 0, 0, 15"
+                        />
+                        <ContentPresenter />
+                    </StackPanel>
+                </ControlTemplate>
+                <DataTemplate 
+                    x:Key="TextTaskTemplate"
+                    x:DataType="taskText:TextTask"
+                >
+                    <ContentControl Template="{StaticResource TaskTemplate}" DataContext="{Binding}">
+                        <TextBox
+                            HorizontalAlignment="Stretch"
+                            TextWrapping="Wrap"
+                            AcceptsReturn="True"
+                            PlaceholderText="{x:Bind utilities:MessageProvider.THIS_SHOULD_BE_THE_ANSWER_KEY}"
+                        />
+                    </ContentControl>
+                </DataTemplate>
+                <DataTemplate 
+                    x:Key="TrueFalseTaskTemplate"
+                    x:DataType="taskTrueFalse:TrueFalseTask"
+                >
+                    <ContentControl Template="{StaticResource TaskTemplate}" DataContext="{Binding}">
+                        <RadioButtons>
+                            <RadioButton Content="{x:Bind utilities:MessageProvider.YES}" />
+                            <RadioButton Content="{x:Bind utilities:MessageProvider.NO}" />
+                        </RadioButtons>
+                    </ContentControl>
+                </DataTemplate>
+                <DataTemplate 
+                    x:Key="CheckboxesTaskTemplate"
+                    x:DataType="taskCheckboxes:CheckboxesTask"
+                >
+                    <ContentControl Template="{StaticResource TaskTemplate}" DataContext="{Binding}">
+                        <StackPanel Loaded="CheckboxesTaskLoaded" />
+                    </ContentControl>
+                </DataTemplate>
+                <DataTemplate 
+                    x:Key="MultipleChoiceTaskTemplate"
+                    x:DataType="taskMultipleChoice:MultipleChoiceTask"
+                >
+                    <ContentControl Template="{StaticResource TaskTemplate}" DataContext="{Binding}">
+                        <RadioButtons Loaded="MultipleChoiceTaskLoaded" />
+                    </ContentControl>
+                </DataTemplate>
+                <utilities:TaskTemplateSelector 
+                    x:Key="TaskTemplateSelector"
+                    TextTaskTemplate="{StaticResource TextTaskTemplate}"
+                    TrueFalseTaskTemplate="{StaticResource TrueFalseTaskTemplate}"
+                    CheckboxesTaskTemplate="{StaticResource CheckboxesTaskTemplate}"
+                    MultipleChoiceTaskTemplate="{StaticResource MultipleChoiceTaskTemplate}"
+                />
+            </ScrollViewer.Resources>
             <StackPanel>
                 <TextBlock 
                     x:Name="TestName"
@@ -212,6 +185,7 @@
                 <controls:ConfirmationButton 
                     ToolTipService.ToolTip="Start"
                     Padding="10, 7.5"
+                    Margin="0, 0, 0, 15"
                     HorizontalAlignment="Center"
                 >
                     <StackPanel Orientation="Horizontal">
@@ -235,5 +209,5 @@
                 </controls:ConfirmationButton>
             </StackPanel>
         </ScrollViewer>
-    </Grid>
+    </ContentControl>
 </Window>

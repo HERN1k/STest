@@ -1,4 +1,6 @@
-﻿namespace STest.App.Domain.Interfaces
+﻿using Microsoft.UI.Xaml;
+
+namespace STest.App.Domain.Interfaces
 {
     /// <summary>
     /// OS Windows helper
@@ -19,5 +21,10 @@
         /// Check if the internet is available
         /// </summary>
         bool IsInternetAvailable();
+
+        /// <summary>
+        /// Configure title bar for the current window
+        /// </summary>
+        void ConfigureTitleBar(Window currentWindow);
     }
 }

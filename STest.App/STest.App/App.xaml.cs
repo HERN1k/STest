@@ -297,6 +297,12 @@ namespace STest.App
 
             try
             {
+                if (m_testPreviewWindow != null)
+                {
+                    m_testPreviewWindow.Close();
+                    m_testPreviewWindow = null;
+                }
+
                 m_testPreviewWindow = m_services!.GetService<TestPreviewWindow>();
 
                 m_testPreviewWindow?.Activate();

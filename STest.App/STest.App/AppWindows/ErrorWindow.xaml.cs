@@ -14,29 +14,11 @@ namespace STest.App.AppWindows
     /// </summary>
     public sealed partial class ErrorWindow : Window, IDisposable
     {
-        /// <summary>
-        /// <see cref="IWindowsHelper"/> instance
-        /// </summary>
         private readonly IWindowsHelper m_windowsHelper;
-        /// <summary>
-        /// <see cref="ILogger"/> instance
-        /// </summary>
         private readonly ILogger<ErrorWindow> m_logger;
-        /// <summary>
-        /// Button foreground color
-        /// </summary>
         private readonly Color m_buttonForegroundColor = Color.FromArgb(255, 255, 255, 255);
-        /// <summary>
-        /// Button background color
-        /// </summary>
         private readonly Color m_buttonBackgroundColor = Color.FromArgb(0, 255, 255, 255);
-        /// <summary>
-        /// Exception message
-        /// </summary>
         private string m_exceptionMessage = Constants.MESSAGE_KEY;
-        /// <summary>
-        /// Disposed value
-        /// </summary>
         private bool m_disposedValue;
 
         /// <summary>

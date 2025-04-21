@@ -13,6 +13,7 @@ using STLib.Core.Testing;
 using Microsoft.Extensions.Caching.Memory;
 using STLib.Tasks.Checkboxes;
 using STLib.Tasks.MultipleChoice;
+using STest.App.Services;
 
 namespace STest.App.AppWindows
 {
@@ -26,20 +27,23 @@ namespace STest.App.AppWindows
         private readonly ILocalization m_localization;
         private readonly IMemoryCache m_memoryCache;
         private readonly ILogger<TestPreviewWindow> m_logger;
+        private readonly IWindowsHelper m_windowsHelper;
         private readonly Test m_test;
         private WindowsSystemDispatcherQueueHelper? m_wsdqHelper;
         private DesktopAcrylicController? m_acrylicController;
         private SystemBackdropConfiguration? m_configurationSource;
         private bool m_disposedValue;
 
-        public TestPreviewWindow(ILocalization localization, IMemoryCache memoryCache, ILogger<TestPreviewWindow> logger)
+        public TestPreviewWindow(ILocalization localization, IMemoryCache memoryCache, ILogger<TestPreviewWindow> logger, IWindowsHelper windowsHelper)
         {
             this.InitializeComponent();
             m_localization = localization ?? throw new ArgumentNullException(nameof(localization));
             m_memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
             m_logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            m_windowsHelper = windowsHelper ?? throw new ArgumentNullException(nameof(windowsHelper));
             TasksList = new ExtendedObservableCollection<CoreTask>();
             m_test = GetCurrentTest();
+            m_windowsHelper.ConfigureTitleBar(this);
             SubscribeToEvents();
             Init();
             TrySetAcrylicBackdrop(useAcrylicThin: false);

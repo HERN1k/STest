@@ -6,13 +6,13 @@
     xmlns:local="using:STest.App.Pages.Account"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Background="Transparent">
+    xmlns:utilities="using:STest.App.Utilities"
+    mc:Ignorable="d">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel>
             <TextBlock 
-                x:Name="TitleText"
+                Text="{x:Bind utilities:MessageProvider.PROFILE_KEY}"
                 Style="{StaticResource TitleTextBlockStyle}"
                 Foreground="{ThemeResource AccentTextFillColorSecondaryBrush}"
                 HorizontalAlignment="Center"

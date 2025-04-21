@@ -8,8 +8,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:entities="using:STest.App.Domain.ListViewEntities" 
-    mc:Ignorable="d"
-    Background="Transparent">
+    xmlns:utilities="using:STest.App.Utilities"
+    mc:Ignorable="d">
     <Page.Resources>
         <DataTemplate 
             x:Key="ContactListViewTemplate" 
@@ -67,7 +67,7 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <TextBlock 
-                    x:Name="TitleText"
+                    Text="{x:Bind utilities:MessageProvider.SETTINGS_KEY}"
                     Style="{StaticResource TitleTextBlockStyle}"
                     Foreground="{ThemeResource AccentTextFillColorSecondaryBrush}"
                     HorizontalAlignment="Center"
@@ -95,7 +95,7 @@
                 </StackPanel>
             
                 <TextBlock 
-                    x:Name="VersionText"
+                    Text="{x:Bind Version}"
                     Style="{StaticResource CaptionTextBlockStyle}"
                     Foreground="{ThemeResource AccentTextFillColorSecondaryBrush}"
                     Opacity="0.5"
@@ -148,7 +148,7 @@
                             Margin="15, 15, 15, 0"
                         >
                             <ListView
-                                x:Name="DebugDashboardList"
+                                ItemsSource="{x:Bind DebugDashboardItems}"
                                 ItemTemplate="{StaticResource ContactListViewTemplate}"
                                 MaxHeight="300"
                                 HorizontalAlignment="Center"

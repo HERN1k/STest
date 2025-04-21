@@ -14,17 +14,8 @@ namespace STest.App.Pages.Account
     /// </summary>
     public sealed partial class AccountPage : Page
     {
-        /// <summary>
-        /// <see cref="ILocalization"/> instance
-        /// </summary>
         private readonly ILocalization m_localization;
-        /// <summary>
-        /// <see cref="ILocalData"/> instance
-        /// </summary>
         private readonly ILocalData m_localData;
-        /// <summary>
-        /// <see cref="ILogger"/> instance
-        /// </summary>
         private readonly ILogger<AccountPage> m_logger;
 
         /// <summary>
@@ -36,7 +27,7 @@ namespace STest.App.Pages.Account
             m_localization = ServiceHelper.GetService<ILocalization>();
             m_localData = ServiceHelper.GetService<ILocalData>();
             m_logger = ServiceHelper.GetLogger<AccountPage>();
-            DataContext = this;
+            this.DataContext = this;
         }
 
         #region OnNavigated
@@ -48,9 +39,8 @@ namespace STest.App.Pages.Account
             try
             {
                 base.OnNavigatedTo(e);
-
                 SubscribeToEvents();
-                TitleText.Text = T(Constants.PROFILE_KEY);
+
                 PersonPicture.DisplayName = m_localData.GetString(Constants.USER_NAME_LOCAL_DATA);
                 PersonName.Text = PersonPicture.DisplayName;
                 PersonRank.Text = T(m_localData.GetString(Constants.USER_RANK_LOCAL_DATA).ToStringLocalizationKey());

@@ -1,12 +1,10 @@
 using System;
-using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using WinRT;
 using STest.App.Utilities;
 using STest.App.Domain.Interfaces;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Composition;
-using Windows.UI;
 using Windows.Graphics;
 using Microsoft.Extensions.Logging;
 using STest.App.Domain.Enums;
@@ -18,44 +16,26 @@ namespace STest.App.AppWindows
     /// </summary>
     public sealed partial class LoginWindow : Window, IDisposable
     {
-        /// <summary>
-        /// <see cref="ILocalization"/> instance
-        /// </summary>
         private readonly ILocalization m_localization;
-        /// <summary>
-        /// <see cref="ILocalData"/> instance
-        /// </summary>
         private readonly ILocalData m_localData;
-        /// <summary>
-        /// <see cref="ILogger"/> instance
-        /// </summary>
         private readonly ILogger<LoginWindow> m_logger;
-        /// <summary>
-        /// The Windows system dispatcher queue helper
-        /// </summary>
+        private readonly IWindowsHelper m_windowsHelper;
         private WindowsSystemDispatcherQueueHelper? m_wsdqHelper;
-        /// <summary>
-        /// The acrylic controller
-        /// </summary>
         private DesktopAcrylicController? m_acrylicController;
-        /// <summary>
-        /// The configuration source
-        /// </summary>
         private SystemBackdropConfiguration? m_configurationSource;
-        /// <summary>
-        /// The value to indicate if the object has been disposed
-        /// </summary>
         private bool m_disposedValue;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public LoginWindow()
+        public LoginWindow(ILocalization localization, ILocalData localData, ILogger<LoginWindow> logger, IWindowsHelper windowsHelper)
         {
             this.InitializeComponent();
-            m_localization = ServiceHelper.GetService<ILocalization>();
-            m_localData = ServiceHelper.GetService<ILocalData>();
-            m_logger = ServiceHelper.GetLogger<LoginWindow>();
+            m_localization = localization ?? throw new ArgumentNullException(nameof(localization));
+            m_localData = localData ?? throw new ArgumentNullException(nameof(localData));
+            m_logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            m_windowsHelper = windowsHelper ?? throw new ArgumentNullException(nameof(windowsHelper));
+            m_windowsHelper.ConfigureTitleBar(this);
             SubscribeToEvents();
             Init();
             TrySetAcrylicBackdrop(useAcrylicThin: false);
@@ -103,28 +83,6 @@ namespace STest.App.AppWindows
         {
             try
             {
-                EmailTitle.Text = T(Constants.EMAIL_KEY);
-                PasswordTitle.Text = T(Constants.PASSWORD_KEY);
-                SendButton.Content = T(Constants.SEND_KEY);
-
-                this.Title = T(Constants.APP_DISPLAY_NAME_KEY);
-                TitleBarTextBlock.Text = this.Title;
-
-                if (!AppWindowTitleBar.IsCustomizationSupported())
-                {
-                    return;
-                }
-
-                if (ExtendsContentIntoTitleBar == true)
-                {
-                    this.AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
-                }
-
-                this.AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-                this.AppWindow.TitleBar.ButtonBackgroundColor = Color.FromArgb(0, 255, 255, 255);
-                this.AppWindow.TitleBar.InactiveBackgroundColor = this.AppWindow.TitleBar.ButtonBackgroundColor;
-                this.AppWindow.TitleBar.ButtonInactiveBackgroundColor = this.AppWindow.TitleBar.ButtonBackgroundColor;
-
                 this.AppWindow.Resize(new SizeInt32
                 {
                     Width = 600,
@@ -136,12 +94,6 @@ namespace STest.App.AppWindows
                 ex.Show(m_logger);
             }
         }
-
-        /// <summary>
-        /// Get the localized string by key
-        /// </summary>
-        /// <param name="key"></param>
-        private string T(string key) => m_localization.T(key);
 
         #region Acrylic Backdrop
         /// <summary>

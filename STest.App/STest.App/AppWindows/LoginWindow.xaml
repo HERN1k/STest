@@ -6,44 +6,10 @@
     xmlns:local="using:STest.App.AppWindows"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:utilities="using:STest.App.Utilities"
     mc:Ignorable="d">
 
-    <Grid 
-        x:Name="MainGrid"
-        HorizontalAlignment="Stretch" 
-        VerticalAlignment="Stretch"
->
-        <Grid.RowDefinitions>
-            <RowDefinition Height="32" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-
-        <Grid 
-            x:Name="AppTitleBar"
-            Grid.Column="0"
-            Grid.Row="0"
-            Height="32"
-            Margin="16,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="TitleColumn" Width="*"/>
-            </Grid.ColumnDefinitions>
-
-            <TextBlock 
-                x:Name="TitleBarTextBlock"
-                Text="Name"
-                Grid.Column="0"
-                Grid.Row="0"
-                FontFamily="{StaticResource Montserrat}"
-                FontWeight="Medium"
-                FontSize="12"
-                CharacterSpacing="25"
-                VerticalAlignment="Center" 
-            />
-        </Grid>
-
+    <ContentControl Template="{StaticResource WindowWrapper}">
         <StackPanel
             Grid.Column="0"
             Grid.Row="1"
@@ -51,8 +17,7 @@
             HorizontalAlignment="Center"
         >
             <TextBlock 
-                x:Name="EmailTitle"
-                FontFamily="{StaticResource Montserrat}"
+                Text="{x:Bind utilities:MessageProvider.EMAIL_KEY}"
                 VerticalAlignment="Center" 
                 HorizontalAlignment="Stretch"
                 TextAlignment="Center"
@@ -60,18 +25,14 @@
                 FontSize="18"
                 Margin="0,0,0,5"
             />
-            
             <TextBox 
                 x:Name="EmailInput"
-                FontFamily="{StaticResource Montserrat}"
                 VerticalAlignment="Center"
                 Width="300"
                 Margin="0,0,0,20"
             />
-
             <TextBlock 
-                x:Name="PasswordTitle"
-                FontFamily="{StaticResource Montserrat}"
+                Text="{x:Bind utilities:MessageProvider.PASSWORD_KEY}"
                 VerticalAlignment="Center" 
                 HorizontalAlignment="Stretch"
                 TextAlignment="Center"
@@ -79,22 +40,18 @@
                 FontSize="18"
                 Margin="0,0,0,5"
             />
-
             <PasswordBox 
                 x:Name="PasswordInput"
-                FontFamily="{StaticResource Montserrat}"
                 VerticalAlignment="Center"
                 Width="300"
                 Margin="0,0,0,20"
             />
-
             <Button 
-                x:Name="SendButton"
+                Content="{x:Bind utilities:MessageProvider.SEND_KEY}"
                 Style="{StaticResource AccentButtonStyle}"
-                FontFamily="{StaticResource Montserrat}"
                 VerticalAlignment="Center" 
                 HorizontalAlignment="Center"
                 Click="ButtonSendClick" />
         </StackPanel>
-    </Grid>
+    </ContentControl>
 </Window>

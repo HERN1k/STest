@@ -14,6 +14,9 @@ using STest.App.Pages.Account;
 using Microsoft.Extensions.Logging;
 using STest.App.Pages.Builder;
 using STest.App.Domain.Enums;
+using STest.App.Services;
+using NLog;
+using STest.App.AppWindows;
 
 namespace STest.App
 {
@@ -25,6 +28,7 @@ namespace STest.App
         private readonly ILocalization m_localization;
         private readonly ILogger<MainWindow> m_logger;
         private readonly ILocalData m_localData;
+        private readonly IWindowsHelper m_windowsHelper;
         private WindowsSystemDispatcherQueueHelper? m_wsdqHelper;
         private DesktopAcrylicController? m_acrylicController;
         private SystemBackdropConfiguration? m_configurationSource;
@@ -33,12 +37,14 @@ namespace STest.App
         /// <summary>
         /// Constructor
         /// </summary>
-        public MainWindow()
+        public MainWindow(ILocalization localization, ILocalData localData, ILogger<MainWindow> logger, IWindowsHelper windowsHelper)
         {
             this.InitializeComponent();
-            m_localization = ServiceHelper.GetService<ILocalization>();
-            m_logger = ServiceHelper.GetLogger<MainWindow>();
-            m_localData = ServiceHelper.GetService<ILocalData>();
+            m_localization = localization ?? throw new ArgumentNullException(nameof(localization));
+            m_localData = localData ?? throw new ArgumentNullException(nameof(localData));
+            m_logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            m_windowsHelper = windowsHelper ?? throw new ArgumentNullException(nameof(windowsHelper));
+            m_windowsHelper.ConfigureTitleBar(this);
             SubscribeToEvents();
             Init();
             TrySetAcrylicBackdrop(useAcrylicThin: false);
@@ -65,24 +71,6 @@ namespace STest.App
         {
             try
             {
-                this.Title = T(Constants.APP_DISPLAY_NAME_KEY);
-                TitleBarTextBlock.Text = this.Title;
-
-                if (!AppWindowTitleBar.IsCustomizationSupported())
-                {
-                    return;
-                }
-
-                if (ExtendsContentIntoTitleBar == true)
-                {
-                    this.AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
-                }
-
-                this.AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-                this.AppWindow.TitleBar.ButtonBackgroundColor = Color.FromArgb(0, 255, 255, 255);
-                this.AppWindow.TitleBar.InactiveBackgroundColor = this.AppWindow.TitleBar.ButtonBackgroundColor;
-                this.AppWindow.TitleBar.ButtonInactiveBackgroundColor = this.AppWindow.TitleBar.ButtonBackgroundColor;
-                
                 if (m_localData
                         .GetString(Constants.USER_RANK_LOCAL_DATA)
                         .ParseUserRank()
@@ -171,12 +159,6 @@ namespace STest.App
                 ex.Show(m_logger);
             }
         }
-
-        /// <summary>
-        /// Get the localized string by key
-        /// </summary>
-        /// <param name="key"></param>
-        private string T(string key) => m_localization.T(key);
 
         #region Acrylic Backdrop
         /// <summary>

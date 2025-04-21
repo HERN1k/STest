@@ -4,6 +4,9 @@ using Windows.Networking.Connectivity;
 using Windows.System.Profile;
 using STest.App.Utilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
+using Windows.UI;
 
 namespace STest.App.Services
 {
@@ -108,6 +111,38 @@ namespace STest.App.Services
 
             return connectionProfile != null &&
                    connectionProfile.GetNetworkConnectivityLevel() == NetworkConnectivityLevel.InternetAccess;
+        }
+
+        /// <summary>
+        /// Configure title bar for the current window
+        /// </summary>
+        public void ConfigureTitleBar(Window currentWindow)
+        {
+            try
+            {
+                ArgumentNullException.ThrowIfNull(currentWindow);
+
+                currentWindow.Title = MessageProvider.APP_DISPLAY_NAME_KEY;
+
+                if (!AppWindowTitleBar.IsCustomizationSupported())
+                {
+                    return;
+                }
+
+                if (currentWindow.ExtendsContentIntoTitleBar == true)
+                {
+                    currentWindow.AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
+                }
+
+                currentWindow.AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+                currentWindow.AppWindow.TitleBar.ButtonBackgroundColor = Color.FromArgb(0, 255, 255, 255);
+                currentWindow.AppWindow.TitleBar.InactiveBackgroundColor = currentWindow.AppWindow.TitleBar.ButtonBackgroundColor;
+                currentWindow.AppWindow.TitleBar.ButtonInactiveBackgroundColor = currentWindow.AppWindow.TitleBar.ButtonBackgroundColor;
+            }
+            catch (Exception ex)
+            {
+                ex.Show(m_logger);
+            }
         }
     }
 }

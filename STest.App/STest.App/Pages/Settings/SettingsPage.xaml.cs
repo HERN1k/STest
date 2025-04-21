@@ -20,17 +20,13 @@ namespace STest.App.Pages.Settings
     [SupportedOSPlatform("windows10.0.17763.0")]
     public sealed partial class SettingsPage : Page
     {
-        /// <summary>
-        /// <see cref="ILocalization"/> instance
-        /// </summary>
+#pragma warning disable CA1822 
+        public string Version => GetVersion();
+#pragma warning restore CA1822
+        public ExtendedObservableCollection<DebugDashboardItem> DebugDashboardItems { get; }
+
         private readonly ILocalization m_localization;
-        /// <summary>
-        /// <see cref="ILocalData"/> instance
-        /// </summary>
         private readonly ILocalData m_localData;
-        /// <summary>
-        /// <see cref="ILogger"/> instance
-        /// </summary>
         private readonly ILogger<SettingsPage> m_logger;
 
         /// <summary>
@@ -42,7 +38,8 @@ namespace STest.App.Pages.Settings
             m_localization = ServiceHelper.GetService<ILocalization>();
             m_localData = ServiceHelper.GetService<ILocalData>();
             m_logger = ServiceHelper.GetLogger<SettingsPage>();
-            DataContext = this;
+            DebugDashboardItems = new();
+            this.DataContext = this;
         }
 
         #region OnNavigated
@@ -56,10 +53,8 @@ namespace STest.App.Pages.Settings
                 base.OnNavigatedTo(e);
 
                 SubscribeToEvents();
-                TitleText.Text = T(Constants.SETTINGS_KEY);
                 SetLanguageDropDownTexts();
-                VersionText.Text = GetVersion();
-                DebugDashboardList.ItemsSource = GenerateDebugDashboardItems();
+                DebugDashboardItems.AddRange(GenerateDebugDashboardItems());
                 SetDebugDashboardText();
             }
             catch (Exception ex)
