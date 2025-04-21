@@ -3,11 +3,11 @@ using System.Globalization;
 using System;
 using STest.App.Domain.Interfaces;
 using STest.App.Utilities;
-using System.Diagnostics;
 using System.Threading;
 using Microsoft.Windows.Globalization;
 using System.Resources;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace STest.App.Services
 {
@@ -87,31 +87,34 @@ namespace STest.App.Services
             m_localData = localData ?? throw new ArgumentNullException(nameof(localData));
             m_logger = logger ?? throw new ArgumentNullException(nameof(logger));
             m_lockObj = new();
-            m_resourceManager = new("STest.App.Resources.Languages.Language", Assembly.GetExecutingAssembly());
+            m_resourceManager = new(Constants.RESOURCE_MANAGER_NAME, Assembly.GetExecutingAssembly());
             m_englishCulture = new("en-US");
             m_ukrainianCulture = new("uk-UA");
             m_currentCulture = GetPreferredLanguage();
+            Thread.CurrentThread.CurrentCulture = m_currentCulture;
+            Thread.CurrentThread.CurrentUICulture = m_currentCulture;
+            CultureInfo.CurrentCulture = m_currentCulture;
+            CultureInfo.CurrentUICulture = m_currentCulture;
             m_logger.LogInformation("Preferred language {Name}", m_currentCulture.EnglishName);
         }
 
         /// <summary>
         /// Get string by key
         /// </summary>
-        /// <exception cref="ArgumentNullException"></exception>
-        public string GetString(string key, CultureInfo? culture = null)
+        public string T(string key, CultureInfo? culture = null)
         {
             if (string.IsNullOrEmpty(key))
             {
-                return string.Empty;
+                return Constants.KEY_NOT_FOUND;
             }
-
+            
             try
             {
                 string? result = m_resourceManager.GetString(key, culture ?? CurrentCulture);
 
                 if (string.IsNullOrEmpty(result))
                 {
-                    return key;
+                    return Constants.KEY_NOT_FOUND;
                 }
 
                 return result;
@@ -120,7 +123,7 @@ namespace STest.App.Services
             {
                 m_logger.LogError(ex, "{Message}", ex.Message);
 
-                return key;
+                return Constants.KEY_NOT_FOUND;
             }
         }
 
@@ -182,7 +185,7 @@ namespace STest.App.Services
                             throw new TimeoutException(Constants.FAILED_TO_LOAD_RESOURCES_FOR_NEW_CULTURE);
                         }
                     }
-                    while (string.IsNullOrEmpty(GetString(Constants.APP_DISPLAY_NAME_KEY, culture)));
+                    while (string.IsNullOrEmpty(T(Constants.APP_DISPLAY_NAME_KEY, culture)));
 
                     CurrentCulture = culture;
                     m_localData.SetString(Constants.PREFERRED_LANGUAGE_LOCAL_DATA, culture.Name);

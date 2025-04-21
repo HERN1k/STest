@@ -32,8 +32,7 @@ namespace STest.App.Domain.Interfaces
         /// <summary>
         /// Get string by key
         /// </summary>
-        /// <exception cref="ArgumentNullException"></exception>
-        string GetString(string key, CultureInfo? culture = null);
+        string T(string key, CultureInfo? culture = null);
 
         /// <summary>
         /// Change culture

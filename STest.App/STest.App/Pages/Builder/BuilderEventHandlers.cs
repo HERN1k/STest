@@ -33,9 +33,9 @@ namespace STest.App.Pages.Builder
                 }
                 
                 var test = Test.Build(userID)
-                    .AddName(m_localization.GetString(Constants.THIS_SHOULD_BE_THE_NAME_KEY))
-                    .AddDescription(m_localization.GetString(Constants.THIS_SHOULD_BE_THE_DESCRIPTION_KEY))
-                    .AddInstructions(m_localization.GetString(Constants.THIS_SHOULD_BE_THE_INSTRUCTIONS_KEY))
+                    .AddName(T(Constants.THIS_SHOULD_BE_THE_NAME_KEY))
+                    .AddDescription(T(Constants.THIS_SHOULD_BE_THE_DESCRIPTION_KEY))
+                    .AddInstructions(T(Constants.THIS_SHOULD_BE_THE_INSTRUCTIONS_KEY))
                     .AddTestTime(TimeSpan.FromMinutes(45));
 
                 await Task.Delay(750);
@@ -67,10 +67,10 @@ namespace STest.App.Pages.Builder
                     var dialogResult = await this.ShowDialog(
                         func: r => r == ContentDialogResult.Primary,
                         args: new ShowDialogArgs(
-                            title: m_localization.GetString(Constants.ARE_YOU_SURE_KEY),
-                            message: m_localization.GetString(Constants.DATA_WILL_NOT_BE_SAVED_KEY),
-                            okButtonText: m_localization.GetString(Constants.YES_KEY),
-                            cancelButtonText: m_localization.GetString(Constants.CANCEL_KEY)
+                            title: T(Constants.ARE_YOU_SURE_KEY),
+                            message: T(Constants.DATA_WILL_NOT_BE_SAVED_KEY),
+                            okButtonText: T(Constants.YES_KEY),
+                            cancelButtonText: T(Constants.CANCEL_KEY)
                         )
                     );
 
@@ -89,9 +89,9 @@ namespace STest.App.Pages.Builder
                 TasksList.Clear();
 
                 var test = Test.Build(userID)
-                    .AddName(m_localization.GetString(Constants.THIS_SHOULD_BE_THE_NAME_KEY))
-                    .AddDescription(m_localization.GetString(Constants.THIS_SHOULD_BE_THE_DESCRIPTION_KEY))
-                    .AddInstructions(m_localization.GetString(Constants.THIS_SHOULD_BE_THE_INSTRUCTIONS_KEY))
+                    .AddName(T(Constants.THIS_SHOULD_BE_THE_NAME_KEY))
+                    .AddDescription(T(Constants.THIS_SHOULD_BE_THE_DESCRIPTION_KEY))
+                    .AddInstructions(T(Constants.THIS_SHOULD_BE_THE_INSTRUCTIONS_KEY))
                     .AddTestTime(TimeSpan.FromMinutes(45));
 
                 TestsList.Add(test);
@@ -121,6 +121,8 @@ namespace STest.App.Pages.Builder
                 ExecuteAnimation(m_fadeInAnimation, TestBuilderBorder);
                 TestBuilderBorder.Visibility = Visibility.Visible;
 
+                TestsBuilderTitle.Text = T(Constants.EDITOR_KEY);
+
                 TestsBuilderName.Header = CreateHeader(Constants.NAME_KEY);
                 TestsBuilderName.Text = m_thisTest.Name;
 
@@ -134,6 +136,20 @@ namespace STest.App.Pages.Builder
                 TestsBuilderTime.Header = CreateHeader(Constants.TEST_TIME_KEY);
                 TestsBuilderTime.Time = m_thisTest.TestTime;
 
+                AutoSuggestStudentFinder.Header = CreateHeader(Constants.STUDENTS_KEY);
+                AutoSuggestStudentFinder.PlaceholderText = T(Constants.ENTER_STUDENT_NAME_KEY);
+
+                PreviewButtonText.Text = T(Constants.PREVIEW_KEY);
+
+                SaveButtonText.Text = T(Constants.SAVE_KEY);
+                SendButtonText.Text = T(Constants.SEND_KEY);
+                AddNewTaskButtonText.Text = T(Constants.ADD_NEW_TASK_KEY);
+                TextTaskFlyout.Text = T(Constants.TEXT_KEY);
+                TrueFalseTaskFlyout.Text = T(Constants.TRUE_FALSE_KEY);
+                CheckboxesTaskFlyout.Text = T(Constants.CHECKBOXES_KEY);
+                MultipleChoiceTaskFlyout.Text = T(Constants.MULTIPLE_CHOICE_KEY);
+
+                StudentsList.AddRange(m_thisTest.Subjects.Select(id => new TestBuilderStudent(id, "Ása Loredana")));
                 TasksList.AddRange(m_thisTest.Tasks);
 
                 SetCurrentTest();
@@ -142,6 +158,17 @@ namespace STest.App.Pages.Builder
             {
                 ex.Show(this, m_logger);
             }
+        }
+        /// <summary>
+        /// Event handler for the TestBuilderCloseButton click event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void PreviewButtonClick(object sender, RoutedEventArgs args)
+        {
+            SetCurrentTest();
+
+            (Application.Current as App)?.ActivateTestPreviewWindow();
         }
         #endregion
 
@@ -1061,18 +1088,26 @@ namespace STest.App.Pages.Builder
         /// <param name="args"></param>
         private void CheckBoxCheck(object sender, RoutedEventArgs args)
         {
-            if (sender is CheckBox element)
+            try
             {
-                var taskID = (Guid)element.Tag;
-                var text = (element.Content as TextBlock)?.Text;
-
-                var task = TasksList
-                    .FirstOrDefault(item => item.TaskID.Equals(taskID)) as CheckboxesTask;
-
-                if (task != null && !string.IsNullOrEmpty(text))
+                if (sender is CheckBox element)
                 {
-                    task.AddCorrectAnswerItem(text);
+                    var taskID = (Guid)element.Tag;
+                    var text = (element.Content as TextBlock)?.Text;
+
+                    var task = TasksList
+                        .FirstOrDefault(item => item.TaskID.Equals(taskID)) as CheckboxesTask;
+
+                    if (task != null && !string.IsNullOrEmpty(text))
+                    {
+                        task.AddCorrectAnswerItem(text);
+                        SetCurrentTest();
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
             }
         }
         /// <summary>
@@ -1082,18 +1117,180 @@ namespace STest.App.Pages.Builder
         /// <param name="args"></param>
         private void CheckBoxUncheck(object sender, RoutedEventArgs args)
         {
-            if (sender is CheckBox element)
+            try
             {
-                var taskID = (Guid)element.Tag;
-                var text = (element.Content as TextBlock)?.Text;
-
-                var task = TasksList
-                    .FirstOrDefault(item => item.TaskID.Equals(taskID)) as CheckboxesTask;
-
-                if (task != null && !string.IsNullOrEmpty(text))
+                if (sender is CheckBox element)
                 {
-                    task.RemoveCorrectAnswerItem(text);
+                    var taskID = (Guid)element.Tag;
+                    var text = (element.Content as TextBlock)?.Text;
+
+                    var task = TasksList
+                        .FirstOrDefault(item => item.TaskID.Equals(taskID)) as CheckboxesTask;
+
+                    if (task != null && !string.IsNullOrEmpty(text))
+                    {
+                        task.RemoveCorrectAnswerItem(text);
+                        SetCurrentTest();
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
+            }
+        }
+        /// <summary>
+        /// Event handler for the AutoSuggestBox text changed event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void AutoSuggestBoxTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            var students = new List<string>() // Temp
+            {
+                "Angela Larson",
+                "Erica Madden",
+                "Mark Conner",
+                "Donald Gallegos",
+                "Demetrius Franklin"
+            };
+
+            try
+            {
+                if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+                {
+                    var suitableItems = new List<string>();
+                    var splitText = sender.Text.Split(" ");
+
+                    foreach (var student in students)
+                    {
+                        var found = splitText.All((key) =>
+                        {
+                            return student.Contains(key, StringComparison.CurrentCultureIgnoreCase);
+                        });
+
+                        if (found)
+                        {
+                            suitableItems.Add(student);
+                        }
+                    }
+
+                    if (suitableItems.Count == 0)
+                    {
+                        suitableItems.Add(T(Constants.STUDENT_NOT_FOUND_KEY));
+                    }
+
+                    sender.ItemsSource = suitableItems;
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
+            }
+        }
+        /// <summary>
+        /// Event handler for the AutoSuggestBox suggestion chosen event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void AutoSuggestBoxSuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        {
+            try
+            {
+                var student = args.SelectedItem.ToString();
+
+                if (string.IsNullOrEmpty(student) ||
+                    m_thisTest == null ||
+                    StudentsList.Any(s => s.DisplayName.Equals(student, StringComparison.CurrentCultureIgnoreCase)))
+                {
+                    return;
+                }
+
+                var studentEntity = new TestBuilderStudent(Guid.NewGuid(), student);
+
+                StudentsList.Add(studentEntity);
+
+                m_thisTest.AddSubject(studentEntity.ID);
+                SetCurrentTest();
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
+            }
+        }
+        /// <summary>
+        /// Event handler for the AutoSuggestBox query submitted event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void AutoSuggestBoxQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            try
+            {
+                string student = string.Empty;
+                if (args.ChosenSuggestion != null)
+                {
+                    var studentTemp = args.ChosenSuggestion.ToString();
+
+                    if (!string.IsNullOrEmpty(studentTemp))
+                    {
+                        student = studentTemp;
+                    }
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(args.QueryText))
+                    {
+                        student = args.QueryText;
+                    }
+                }
+
+                if (string.IsNullOrEmpty(student) ||
+                        m_thisTest == null ||
+                        StudentsList.Any(s => s.DisplayName.Equals(student, StringComparison.CurrentCultureIgnoreCase)))
+                {
+                    return;
+                }
+
+                var studentEntity = new TestBuilderStudent(Guid.NewGuid(), student);
+
+                StudentsList.Add(studentEntity);
+
+                m_thisTest.AddSubject(studentEntity.ID);
+                SetCurrentTest();
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
+            }
+        }
+        /// <summary>
+        /// Event handler for the RemoveStudent Button click event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        public void RemoveStudentClick(object sender, RoutedEventArgs args)
+        {
+            try
+            {
+                if (sender is MenuFlyoutItem element)
+                {
+                    var item = element.DataContext as TestBuilderStudent;
+
+                    if (item == null || m_thisTest == null)
+                    {
+                        return;
+                    }
+
+                    StudentsList.Remove(item);
+
+                    m_thisTest.RemoveSubject(item.ID);
+                    SetCurrentTest();
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
             }
         }
         #endregion

@@ -56,7 +56,7 @@ namespace STest.App.Pages.Settings
                 base.OnNavigatedTo(e);
 
                 SubscribeToEvents();
-                TitleText.Text = m_localization.GetString(Constants.SETTINGS_KEY);
+                TitleText.Text = T(Constants.SETTINGS_KEY);
                 SetLanguageDropDownTexts();
                 VersionText.Text = GetVersion();
                 DebugDashboardList.ItemsSource = GenerateDebugDashboardItems();
@@ -175,34 +175,33 @@ namespace STest.App.Pages.Settings
         /// </summary>
         private void SetLanguageDropDownTexts()
         {
-            LanguageText.Text = m_localization.GetString(Constants.APPLICATION_LANGUAGE_KEY);
+            LanguageText.Text = T(Constants.APPLICATION_LANGUAGE_KEY);
 
             LanguageDropDown.Content = m_localization.CurrentCulture.Name switch
             {
                 string name when name.Equals(
                     m_localization.EnglishCulture.Name,
                     StringComparison.InvariantCultureIgnoreCase
-                ) => m_localization.GetString(Constants.ENGLISH_KEY),
+                ) => T(Constants.ENGLISH_KEY),
 
                 string name when name.Equals(
                     m_localization.UkrainianCulture.Name,
                     StringComparison.InvariantCultureIgnoreCase
-                ) => m_localization.GetString(Constants.UKRAINIAN_KEY),
+                ) => T(Constants.UKRAINIAN_KEY),
 
-                _ => m_localization.GetString(Constants.ENGLISH_KEY)
+                _ => T(Constants.ENGLISH_KEY)
             };
 
             var menuItems = new List<MenuFlyoutItem>()
             {
                 new()
                 {
-                    Text = m_localization.GetString(Constants.ENGLISH_KEY),
+                    Text = T(Constants.ENGLISH_KEY),
                     Tag = m_localization.EnglishCulture.Name,
-
                 },
                 new()
                 {
-                    Text = m_localization.GetString(Constants.UKRAINIAN_KEY),
+                    Text = T(Constants.UKRAINIAN_KEY),
                     Tag = m_localization.UkrainianCulture.Name
                 }
             };
@@ -249,6 +248,12 @@ namespace STest.App.Pages.Settings
                 verticalOffset: DebugDashboardTextScrollViewer.ScrollableHeight,
                 zoomFactor: null);
         }
+
+        /// <summary>
+        /// Get the localized string by key
+        /// </summary>
+        /// <param name="key"></param>
+        private string T(string key) => m_localization.T(key);
 
         /// <summary>
         /// Log event handler

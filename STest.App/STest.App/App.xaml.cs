@@ -40,33 +40,13 @@ namespace STest.App
             set => throw new InvalidOperationException("Don't even think about it 😅");
         }
 
-        /// <summary>
-        /// <see cref="Utilities.RealTimeLogTarget"/> instance
-        /// </summary>
         private readonly InMemoryLoggerTarget m_loggerInMemoryTarget;
-        /// <summary>
-        /// <see cref="IServiceProvider"/> instance
-        /// </summary>
         private readonly IServiceProvider? m_services;
-        /// <summary>
-        /// <see cref="ILogger"/> instance
-        /// </summary>
         private readonly ILogger<App>? m_logger;
-        /// <summary>
-        /// <see cref="ILocalData"/> instance
-        /// </summary>
         private readonly ILocalData? m_localData;
-        /// <summary>
-        /// <see cref="MainWindow"/> instance
-        /// </summary>
         private MainWindow? m_window;
-        /// <summary>
-        /// <see cref="LoginWindow"/> instance
-        /// </summary>
         private LoginWindow? m_loginWindow;
-        /// <summary>
-        /// The value to indicate if the object has been disposed
-        /// </summary>
+        private TestPreviewWindow? m_testPreviewWindow;
         private bool m_disposedValue;
 
         /// <summary>
@@ -156,6 +136,7 @@ namespace STest.App
 
                 services.AddSingleton<MainWindow>();
                 services.AddSingleton<LoginWindow>();
+                services.AddTransient<TestPreviewWindow>();
 
                 return services.BuildServiceProvider();
             }
@@ -300,6 +281,35 @@ namespace STest.App
             }
             catch (Exception ex)
             {
+                ex.Show(m_logger);
+            }
+        }
+
+        /// <summary>
+        /// Activate the test preview window
+        /// </summary>
+        public void ActivateTestPreviewWindow()
+        {
+            if (m_services == null)
+            {
+                return;
+            }
+
+            try
+            {
+                m_testPreviewWindow = m_services!.GetService<TestPreviewWindow>();
+
+                m_testPreviewWindow?.Activate();
+                m_logger?.LogInformation("Window \"{Name}\" is activate", nameof(TestPreviewWindow));
+            }
+            catch (Exception ex)
+            {
+#if DEBUG
+                if (Debugger.IsAttached)
+                {
+                    Debugger.Break();
+                }
+#endif
                 ex.Show(m_logger);
             }
         }

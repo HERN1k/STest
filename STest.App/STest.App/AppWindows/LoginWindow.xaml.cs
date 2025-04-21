@@ -103,11 +103,11 @@ namespace STest.App.AppWindows
         {
             try
             {
-                EmailTitle.Text = m_localization.GetString(Constants.EMAIL_KEY);
-                PasswordTitle.Text = m_localization.GetString(Constants.PASSWORD_KEY);
-                SendButton.Content = m_localization.GetString(Constants.SEND_KEY);
+                EmailTitle.Text = T(Constants.EMAIL_KEY);
+                PasswordTitle.Text = T(Constants.PASSWORD_KEY);
+                SendButton.Content = T(Constants.SEND_KEY);
 
-                this.Title = m_localization.GetString(Constants.APP_DISPLAY_NAME_KEY);
+                this.Title = T(Constants.APP_DISPLAY_NAME_KEY);
                 TitleBarTextBlock.Text = this.Title;
 
                 if (!AppWindowTitleBar.IsCustomizationSupported())
@@ -136,6 +136,12 @@ namespace STest.App.AppWindows
                 ex.Show(m_logger);
             }
         }
+
+        /// <summary>
+        /// Get the localized string by key
+        /// </summary>
+        /// <param name="key"></param>
+        private string T(string key) => m_localization.T(key);
 
         #region Acrylic Backdrop
         /// <summary>

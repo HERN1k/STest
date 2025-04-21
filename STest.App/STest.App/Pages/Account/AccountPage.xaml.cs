@@ -50,11 +50,10 @@ namespace STest.App.Pages.Account
                 base.OnNavigatedTo(e);
 
                 SubscribeToEvents();
-                TitleText.Text = m_localization.GetString(Constants.PROFILE_KEY);
+                TitleText.Text = T(Constants.PROFILE_KEY);
                 PersonPicture.DisplayName = m_localData.GetString(Constants.USER_NAME_LOCAL_DATA);
                 PersonName.Text = PersonPicture.DisplayName;
-                PersonRank.Text = m_localization.GetString(
-                    m_localData.GetString(Constants.USER_RANK_LOCAL_DATA).ToStringLocalizationKey());
+                PersonRank.Text = T(m_localData.GetString(Constants.USER_RANK_LOCAL_DATA).ToStringLocalizationKey());
             }
             catch (Exception ex)
             {
@@ -95,5 +94,11 @@ namespace STest.App.Pages.Account
         {
 
         }
+
+        /// <summary>
+        /// Get the localized string by key
+        /// </summary>
+        /// <param name="key"></param>
+        private string T(string key) => m_localization.T(key);
     }
 }

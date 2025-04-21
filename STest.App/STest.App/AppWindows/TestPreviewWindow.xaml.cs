@@ -1,48 +1,48 @@
 using System;
+using WinRT;
+using Microsoft.Extensions.Logging;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using WinRT;
-using STest.App.Utilities;
-using STest.App.Domain.Interfaces;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Composition.SystemBackdrops;
-using Microsoft.UI.Composition;
+using STest.App.Domain.Interfaces;
+using STest.App.Utilities;
 using Windows.UI;
-using STest.App.Pages.Home;
-using STest.App.Pages.Settings;
-using STest.App.Pages.Account;
-using Microsoft.Extensions.Logging;
-using STest.App.Pages.Builder;
-using STest.App.Domain.Enums;
+using STLib.Core.Testing;
+using Microsoft.Extensions.Caching.Memory;
+using STLib.Tasks.Checkboxes;
+using STLib.Tasks.MultipleChoice;
 
-namespace STest.App
+namespace STest.App.AppWindows
 {
     /// <summary>
-    /// The main window of the application
+    /// The test preview window of the application
     /// </summary>
-    public sealed partial class MainWindow : Window, IDisposable
+    public sealed partial class TestPreviewWindow : Window, IDisposable
     {
+        public ExtendedObservableCollection<CoreTask> TasksList { get; set; }
+
         private readonly ILocalization m_localization;
-        private readonly ILogger<MainWindow> m_logger;
-        private readonly ILocalData m_localData;
+        private readonly IMemoryCache m_memoryCache;
+        private readonly ILogger<TestPreviewWindow> m_logger;
+        private readonly Test m_test;
         private WindowsSystemDispatcherQueueHelper? m_wsdqHelper;
         private DesktopAcrylicController? m_acrylicController;
         private SystemBackdropConfiguration? m_configurationSource;
         private bool m_disposedValue;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public MainWindow()
+        public TestPreviewWindow(ILocalization localization, IMemoryCache memoryCache, ILogger<TestPreviewWindow> logger)
         {
             this.InitializeComponent();
-            m_localization = ServiceHelper.GetService<ILocalization>();
-            m_logger = ServiceHelper.GetLogger<MainWindow>();
-            m_localData = ServiceHelper.GetService<ILocalData>();
+            m_localization = localization ?? throw new ArgumentNullException(nameof(localization));
+            m_memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
+            m_logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            TasksList = new ExtendedObservableCollection<CoreTask>();
+            m_test = GetCurrentTest();
             SubscribeToEvents();
             Init();
             TrySetAcrylicBackdrop(useAcrylicThin: false);
-            NavigateToDefaultPage();
         }
 
         /// <summary>
@@ -55,7 +55,6 @@ namespace STest.App
                 this.Activated += OnWindowActivated;
                 this.Closed += OnWindowClosed;
             }
-            NavigationView.SelectionChanged += NavigationSelectionChanged;
         }
 
         /// <summary>
@@ -66,7 +65,6 @@ namespace STest.App
             try
             {
                 this.Title = T(Constants.APP_DISPLAY_NAME_KEY);
-                TitleBarTextBlock.Text = this.Title;
 
                 if (!AppWindowTitleBar.IsCustomizationSupported())
                 {
@@ -82,14 +80,14 @@ namespace STest.App
                 this.AppWindow.TitleBar.ButtonBackgroundColor = Color.FromArgb(0, 255, 255, 255);
                 this.AppWindow.TitleBar.InactiveBackgroundColor = this.AppWindow.TitleBar.ButtonBackgroundColor;
                 this.AppWindow.TitleBar.ButtonInactiveBackgroundColor = this.AppWindow.TitleBar.ButtonBackgroundColor;
-                
-                if (m_localData
-                        .GetString(Constants.USER_RANK_LOCAL_DATA)
-                        .ParseUserRank()
-                        .Equals(UserRank.Teacher))
-                {
-                    BuilderLink.Visibility = Visibility.Visible;
-                }
+
+                TestName.Text = m_test.Name;
+                TestDescription.Text = m_test.Description;
+                TestInstructions.Text = string.Concat(T(Constants.INSTRUCTIONS_KEY), ": ", m_test.Instructions);
+                TestTimerHeader.Text = string.Concat(T(Constants.TIME_LEFT_KEY), ": ");
+                TestTimer.Text = m_test.TestTime.ToString(@"hh\:mm\:ss", m_localization.CurrentCulture);
+
+                TasksList.AddRange(m_test.SortedTasks);
             }
             catch (Exception ex)
             {
@@ -98,78 +96,94 @@ namespace STest.App
         }
 
         /// <summary>
-        /// Navigate to the default page
+        /// Event handler for the checkboxes task loaded
         /// </summary>
-        private void NavigateToDefaultPage()
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void CheckboxesTaskLoaded(object sender, RoutedEventArgs args)
         {
-            try
+            if (sender is StackPanel element)
             {
-                RootFrame.Navigate(typeof(HomePage));
-            }
-            catch (Exception ex)
-            {
-                ex.Show(m_logger);
-            }
-        }
-
-        /// <summary>
-        /// Navigate to a page
-        /// </summary>
-        public void NavigateTo(Type type)
-        {
-            try
-            {
-                if (!typeof(Page).IsAssignableFrom(type))
+                if (element.DataContext is not CheckboxesTask task)
                 {
                     return;
                 }
 
-                RootFrame.Navigate(type);
+                foreach (var item in task.Answers)
+                {
+                    element.Children.Add(new CheckBox() { Content = item });
+                }
+
+                if (element.Children.Count == 0)
+                {
+                    element.Children.Add(new CheckBox() { Content = Constants.NULL });
+                }
             }
-            catch (Exception ex)
-            {
-                ex.Show(m_logger);
-            }  
         }
 
         /// <summary>
-        /// The navigation selection changed event
+        /// Event handler for the multiple choice task loaded
         /// </summary>
-        private void NavigationSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void MultipleChoiceTaskLoaded(object sender, RoutedEventArgs args)
         {
-            try
+            if (sender is RadioButtons element)
             {
-                if (args.IsSettingsSelected)
+                if (element.DataContext is not MultipleChoiceTask task)
                 {
-                    RootFrame.Navigate(typeof(SettingsPage));
-
                     return;
                 }
 
-                var selectedItem = args.SelectedItem as NavigationViewItem;
-
-                if (selectedItem != null)
+                foreach (var item in task.Answers)
                 {
-                    var tag = selectedItem.Tag as string;
+                    element.Items.Add(new RadioButton() { Content = item });
+                }
 
-                    switch (tag)
+                if (element.Items.Count == 0)
+                {
+                    element.Items.Add(new RadioButton() { Content = Constants.NULL });
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get the current test from the memory cache
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        private Test GetCurrentTest()
+        {
+            try
+            {
+                if (m_memoryCache.TryGetValue<Test>(Constants.CURRENT_TEST_IN_BUILDER, out var test))
+                {
+                    if (test == null)
                     {
-                        case "Home":
-                            RootFrame.Navigate(typeof(HomePage));
-                            break;
-                        case "Account":
-                            RootFrame.Navigate(typeof(AccountPage));
-                            break;
-                        case "Builder":
-                            RootFrame.Navigate(typeof(BuilderPage)); // добавить логику и отображение
-                            break;
+                        throw new InvalidOperationException("Current test is null.");
                     }
+
+                    foreach (var task in test.Tasks)
+                    {
+                        task.SetName(task.Type switch
+                        {
+                            TaskType.Text => T(Constants.ENTER_CORRECT_ANSWER_IN_FIELD_BELOW_KEY),
+                            TaskType.TrueFalse => T(Constants.INDICATE_BELOW_WHETHER_YOU_AGREE_WITH_STATEMENT_ABOVE_KEY),
+                            TaskType.Checkboxes => T(Constants.CHOOSE_SEVERAL_CORRECT_ANSWERS_KEY),
+                            TaskType.MultipleChoice => T(Constants.CHOOSE_ONLY_ONE_CORRECT_ANSWER_KEY),
+                            _ => string.Concat(Constants.NULL, " :(")
+                        });
+                    }
+
+                    return test;
                 }
             }
             catch (Exception ex)
             {
                 ex.Show(m_logger);
             }
+
+            throw new InvalidOperationException("Current test is null.");
         }
 
         /// <summary>
@@ -303,7 +317,6 @@ namespace STest.App
                     }
                     this.Activated -= OnWindowActivated;
                     m_configurationSource = null;
-                    NavigationView.SelectionChanged -= NavigationSelectionChanged;
                 }
 
                 m_disposedValue = true;
@@ -313,7 +326,7 @@ namespace STest.App
         /// <summary>
         /// Finalizer
         /// </summary>
-        ~MainWindow()
+        ~TestPreviewWindow()
         {
             Dispose(disposing: false);
         }

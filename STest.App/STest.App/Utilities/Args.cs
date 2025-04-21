@@ -42,4 +42,16 @@ namespace STest.App.Utilities
             ID = id;
         }
     }
+
+    public sealed class TestBuilderStudent
+    {
+        public Guid ID { get; set; }
+        public string DisplayName { get; set; }
+
+        public TestBuilderStudent(Guid id, string displayName)
+        {
+            ID = id;
+            DisplayName = displayName;
+        }
+    }
 }

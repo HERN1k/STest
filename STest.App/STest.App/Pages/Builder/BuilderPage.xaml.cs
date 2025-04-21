@@ -20,6 +20,7 @@ namespace STest.App.Pages.Builder
     public sealed partial class BuilderPage : Page
     {
         public ExtendedObservableCollection<Test> TestsList { get; set; }
+        public ExtendedObservableCollection<TestBuilderStudent> StudentsList { get; set; }
         public ExtendedObservableCollection<CoreTask> TasksList { get; set; }
 
         private readonly ILocalization m_localization;
@@ -40,6 +41,7 @@ namespace STest.App.Pages.Builder
             m_fadeInAnimation = GetStoryboard("FadeInAnimation");
             m_fadeOutAnimation = GetStoryboard("FadeOutAnimation");
             TestsList = new ExtendedObservableCollection<Test>();
+            StudentsList = new ExtendedObservableCollection<TestBuilderStudent>();
             TasksList = new ExtendedObservableCollection<CoreTask>();
             this.DataContext = this;
         }
@@ -55,14 +57,6 @@ namespace STest.App.Pages.Builder
                 base.OnNavigatedTo(args);
 
                 SubscribeToEvents();
-                TestsBuilderTitle.Text = m_localization.GetString(Constants.EDITOR_KEY);
-                SaveButtonText.Text = m_localization.GetString(Constants.SAVE_KEY);
-                SendButtonText.Text = m_localization.GetString(Constants.SEND_KEY);
-                AddNewTaskButtonText.Text = m_localization.GetString(Constants.ADD_NEW_TASK_KEY);
-                TextTaskFlyout.Text = m_localization.GetString(Constants.TEXT_KEY);
-                TrueFalseTaskFlyout.Text = m_localization.GetString(Constants.TRUE_FALSE_KEY);
-                CheckboxesTaskFlyout.Text = m_localization.GetString(Constants.CHECKBOXES_KEY);
-                MultipleChoiceTaskFlyout.Text = m_localization.GetString(Constants.MULTIPLE_CHOICE_KEY);
                 ReopenTest();
                 SetTestListItems();
             }
@@ -106,6 +100,12 @@ namespace STest.App.Pages.Builder
             TasksList.CollectionChanged -= TasksCollectionChanged;
         }
 
+        /// <summary>
+        /// Get the localized string by key
+        /// </summary>
+        /// <param name="key"></param>
+        private string T(string key) => m_localization.T(key);
+
         /// <summary> 
         /// Sets the items in the test list.  
         /// Displays a message if the list is empty or shows the "Create New Test" button otherwise.  
@@ -118,8 +118,8 @@ namespace STest.App.Pages.Builder
 
                 if (TestsList.Count == 0)
                 {
-                    EmptyTestsListTitle.Text = m_localization.GetString(Constants.CREATE_NEW_TEST_KEY);
-                    EmptyTestsListDescription.Text = m_localization.GetString(Constants.LIST_OF_RECENT_TESTS_IS_EMPTY_KEY);
+                    EmptyTestsListTitle.Text = T(Constants.CREATE_NEW_TEST_KEY);
+                    EmptyTestsListDescription.Text = T(Constants.LIST_OF_RECENT_TESTS_IS_EMPTY_KEY);
                     EmptyTestsListButton.Visibility = Visibility.Visible;
                 }
                 else
@@ -193,7 +193,7 @@ namespace STest.App.Pages.Builder
         {
             return new TextBlock()
             {
-                Text = m_localization.GetString(localizationKey),
+                Text = T(localizationKey),
                 Style = (Style)Application.Current.Resources["SubtitleTextBlockStyle"],
                 Margin = new Thickness(2, 0, 0, 0),
                 TextAlignment = TextAlignment.Left
@@ -210,7 +210,7 @@ namespace STest.App.Pages.Builder
         {
             return new TextBlock()
             {
-                Text = m_localization.GetString(localizationKey),
+                Text = T(localizationKey),
                 Style = (Style)Application.Current.Resources["SubtitleTextBlockStyle"],
                 Margin = new Thickness(2, 0, 0, 0),
                 TextAlignment = alignment

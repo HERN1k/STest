@@ -257,12 +257,12 @@ namespace STest.App.Utilities
         /// <exception cref="NotSupportedException"></exception>
         public static void ShowAlertException(this Page page, Exception ex, ILocalization? localization = null)
         {
-            string title = localization?.GetString(Constants.ERROR_KEY) ?? Constants.ERROR_KEY;
+            string title = localization?.T(Constants.ERROR_KEY) ?? Constants.ERROR_KEY;
             
             var infoBar = new InfoBar()
             {
                 Title = title,
-                Message = ex.Message ?? localization?.GetString(Constants.MESSAGE_KEY) ?? Constants.MESSAGE_KEY,
+                Message = ex.Message ?? localization?.T(Constants.MESSAGE_KEY) ?? Constants.MESSAGE_KEY,
                 Severity = InfoBarSeverity.Error,
                 IsOpen = true
             };
@@ -296,12 +296,12 @@ namespace STest.App.Utilities
             bool isEnqueued = page.DispatcherQueue.TryEnqueue(async () =>
             {
                 StringBuilder sb = new();
-                string title = localization?.GetString(Constants.ERROR_KEY) ?? Constants.ERROR_KEY;
-                string cancel = localization?.GetString(Constants.OK_KEY) ?? Constants.OK_KEY;
-                sb.Append(localization?.GetString(Constants.MESSAGE_KEY) ?? Constants.MESSAGE_KEY);
+                string title = localization?.T(Constants.ERROR_KEY) ?? Constants.ERROR_KEY;
+                string cancel = localization?.T(Constants.OK_KEY) ?? Constants.OK_KEY;
+                sb.Append(localization?.T(Constants.MESSAGE_KEY) ?? Constants.MESSAGE_KEY);
                 sb.Append(":    ");
                 sb.Append(ex.Message);
-                sb.Append($"\n\n{localization?.GetString(Constants.STACK_TRACE_KEY) ?? Constants.STACK_TRACE_KEY}:\n");
+                sb.Append($"\n\n{localization?.T(Constants.STACK_TRACE_KEY) ?? Constants.STACK_TRACE_KEY}:\n");
                 sb.Append(ex.StackTrace);
 
                 var dialog = new ContentDialog

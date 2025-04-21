@@ -16,7 +16,9 @@
     mc:Ignorable="d"
     Background="Transparent">
     <Page.Resources>
-        <Storyboard x:Key="FadeInAnimation">
+        <Storyboard 
+            x:Key="FadeInAnimation"
+        >
             <DoubleAnimation 
                 Storyboard.TargetProperty="Opacity"       
                 From="0" 
@@ -24,7 +26,9 @@
                 Duration="0:0:0.5"
             />
         </Storyboard>
-        <Storyboard x:Key="FadeOutAnimation">
+        <Storyboard 
+            x:Key="FadeOutAnimation"
+        >
             <DoubleAnimation 
                 Storyboard.TargetProperty="Opacity"       
                 From="1" 
@@ -607,7 +611,10 @@
                 </StackPanel>
             </Border>
         </DataTemplate>
-        <DataTemplate x:DataType="utilities:TestBuilderAnswersListViewItem" x:Key="AnswersListViewTemplate">
+        <DataTemplate 
+            x:DataType="utilities:TestBuilderAnswersListViewItem" 
+            x:Key="AnswersListViewTemplate"
+        >
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -647,7 +654,10 @@
                 </Border>
             </Grid>
         </DataTemplate>
-        <DataTemplate x:DataType="utilities:TestBuilderCheckBoxesListViewItem" x:Key="CheckBoxesAnswersListViewTemplate">
+        <DataTemplate 
+            x:DataType="utilities:TestBuilderCheckBoxesListViewItem" 
+            x:Key="CheckBoxesAnswersListViewTemplate"
+        >
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -687,7 +697,10 @@
                 </Border>
             </Grid>
         </DataTemplate>
-        <DataTemplate x:DataType="utilities:TestBuilderCheckBoxesListViewItem" x:Key="CheckBoxesListViewTemplate">
+        <DataTemplate 
+            x:DataType="utilities:TestBuilderCheckBoxesListViewItem" 
+            x:Key="CheckBoxesListViewTemplate"
+        >
             <CheckBox 
                 Tag="{x:Bind ID}"
                 MinWidth="10"
@@ -705,6 +718,62 @@
                     TextWrapping="Wrap"
                 />
             </CheckBox>
+        </DataTemplate>
+        <DataTemplate 
+            x:DataType="utilities:TestBuilderStudent" 
+            x:Key="StudentsListViewTemplate"
+        >
+            <Grid
+                Width="400"
+                HorizontalAlignment="Left"
+                BorderThickness="1"
+                BorderBrush="{StaticResource CardStrokeColorDefaultBrush}"
+                CornerRadius="{StaticResource ControlCornerRadius}"
+                Background="{StaticResource LayerOnAcrylicFillColorDefaultBrush}"
+                Padding="10, 5, 10, 5"
+                Margin="0, 0, 0, 5"
+                ColumnSpacing="10"
+            >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem  
+                            Text="&#xE74D;" 
+                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                            FontSize="16"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Tag="{x:Bind ID}"
+                            Click="RemoveStudentClick"
+                        />
+                    </MenuFlyout>
+                </Grid.ContextFlyout>
+
+                <PersonPicture 
+                    Grid.Column="0"
+                    Grid.Row="0"
+                    Width="30"
+                    Height="30"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    DisplayName="{x:Bind DisplayName}"
+                />
+                <TextBlock
+                    Grid.Column="1"
+                    Grid.Row="0"
+                    Text="{x:Bind DisplayName}"
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    TextWrapping="NoWrap"
+                />
+            </Grid>
         </DataTemplate>
         <utilities:TaskTemplateSelector 
             x:Key="TaskTemplateSelector"
@@ -806,7 +875,6 @@
                     BorderBrush="{StaticResource CardStrokeColorDefaultBrush}"
                     BorderThickness="0, 0, 0, 1"
                 />
-                
                 <Border 
                     x:Name="TestBuilderBorder"
                     Margin="15, 0, 15, 15"
@@ -851,10 +919,63 @@
                             x:Name="TestsBuilderTime"
                             ClockIdentifier="24HourClock" 
                             HorizontalAlignment="Center"
+                            Margin="0, 0, 0, 20"
                             TimeChanged="TestTestTimeChanged"
                         />
-                        <!--Добавить добавление людей-->
-                        <!--Добавить визуализатор теста в новом окне-->
+                        <StackPanel 
+                            BorderThickness="1"
+                            BorderBrush="{StaticResource CardStrokeColorDefaultBrush}"
+                            CornerRadius="{StaticResource ControlCornerRadius}"
+                            HorizontalAlignment="Center"
+                            Padding="15"
+                            Margin="0, 0, 0, 20"
+                            Spacing="20"
+                        >
+                            <AutoSuggestBox 
+                                x:Name="AutoSuggestStudentFinder"
+                                Width="300"
+                                TextChanged="AutoSuggestBoxTextChanged"
+                                HorizontalAlignment="Center"
+                                QueryIcon="Find"
+                                QuerySubmitted="AutoSuggestBoxQuerySubmitted"
+                                SuggestionChosen="AutoSuggestBoxSuggestionChosen"
+                            />
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <ListView
+                                    ItemsSource="{x:Bind StudentsList}"
+                                    ItemTemplate="{StaticResource StudentsListViewTemplate}"
+                                    HorizontalAlignment="Center"
+                                    SelectionMode="None"
+                                    MaxHeight="300"
+                                />
+                            </ScrollViewer>
+                        </StackPanel>
+                        <controls:ConfirmationButton 
+                            ToolTipService.ToolTip="Preview"
+                            Padding="15,7.5"
+                            HorizontalAlignment="Center"
+                            Width="250"
+                            Click="PreviewButtonClick"
+                        >           
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon 
+                                    Glyph="&#xE8A1;" 
+                                    Margin="0, 0, 10, 0"
+                                    FontSize="18"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                />
+                                <TextBlock 
+                                    x:Name="PreviewButtonText"
+                                    FontWeight="Medium"
+                                    FontSize="14"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                    LineStackingStrategy="BlockLineHeight"
+                                    LineHeight="14"
+                                />
+                            </StackPanel>
+                        </controls:ConfirmationButton>
                         <Border 
                             Margin="15"
                             BorderBrush="{StaticResource CardStrokeColorDefaultBrush}"

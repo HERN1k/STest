@@ -438,7 +438,7 @@ namespace STest.App.Pages.Builder
             if (question != null)
             {
                 question.Header = CreateHeader(Constants.QUESTION_KEY, TextAlignment.Center);
-                question.PlaceholderText = m_localization.GetString(Constants.THIS_SHOULD_BE_THE_QUESTION_KEY);
+                question.PlaceholderText = T(Constants.THIS_SHOULD_BE_THE_QUESTION_KEY);
 
                 if (!string.IsNullOrEmpty(data))
                 {
@@ -469,7 +469,7 @@ namespace STest.App.Pages.Builder
             if (correctAnswer != null)
             {
                 correctAnswer.Header = CreateHeader(Constants.CORRECT_ANSWER_KEY, TextAlignment.Center);
-                correctAnswer.PlaceholderText = m_localization.GetString(Constants.THIS_SHOULD_BE_THE_CORRECT_ANSWER_KEY);
+                correctAnswer.PlaceholderText = T(Constants.THIS_SHOULD_BE_THE_CORRECT_ANSWER_KEY);
 
                 if (!string.IsNullOrEmpty(data))
                 {
@@ -506,7 +506,7 @@ namespace STest.App.Pages.Builder
 
                 if (maxGradeHeader != null)
                 {
-                    maxGradeHeader.Text = m_localization.GetString(Constants.ASSESSMENT_FOR_CORRECT_ANSWER_KEY);
+                    maxGradeHeader.Text = T(Constants.ASSESSMENT_FOR_CORRECT_ANSWER_KEY);
                 }
 
                 if (data != null && data > 0)
@@ -547,7 +547,7 @@ namespace STest.App.Pages.Builder
 
                 if (considerHeader != null)
                 {
-                    considerHeader.Text = m_localization.GetString(Constants.CONSIDER_IN_THE_ASSESSMENT_KEY);
+                    considerHeader.Text = T(Constants.CONSIDER_IN_THE_ASSESSMENT_KEY);
                 }
 
                 ToggleSwitch? consider = considerElements.FirstOrDefault(item =>
@@ -555,8 +555,8 @@ namespace STest.App.Pages.Builder
 
                 if (consider != null)
                 {
-                    consider.OffContent = m_localization.GetString(Constants.NO_KEY);
-                    consider.OnContent = m_localization.GetString(Constants.YES_KEY);
+                    consider.OffContent = T(Constants.NO_KEY);
+                    consider.OnContent = T(Constants.YES_KEY);
 
                     if (data != null)
                     {
@@ -585,7 +585,7 @@ namespace STest.App.Pages.Builder
 
             if (header != null)
             {
-                header.Text = string.Concat(m_localization.GetString(Constants.CORRECT_ANSWER_KEY), ":");
+                header.Text = string.Concat(T(Constants.CORRECT_ANSWER_KEY), ":");
             }
 
             StackPanel? radioButtonsPanel = elements.FirstOrDefault(item =>
@@ -605,13 +605,13 @@ namespace STest.App.Pages.Builder
 
                 if (trueButton != null)
                 {
-                    trueButton.Content = m_localization.GetString(Constants.YES_KEY);
+                    trueButton.Content = T(Constants.YES_KEY);
                     trueButton.GroupName = groupName;
                 }
 
                 if (falseButton != null)
                 {
-                    falseButton.Content = m_localization.GetString(Constants.NO_KEY);
+                    falseButton.Content = T(Constants.NO_KEY);
                     falseButton.GroupName = groupName;
                 }
 
@@ -678,7 +678,7 @@ namespace STest.App.Pages.Builder
 
                 if (input != null)
                 {
-                    input.PlaceholderText = m_localization.GetString(Constants.THIS_SHOULD_BE_THE_ANSWER_KEY);
+                    input.PlaceholderText = T(Constants.THIS_SHOULD_BE_THE_ANSWER_KEY);
                 }
             }
 
@@ -688,7 +688,7 @@ namespace STest.App.Pages.Builder
             if (comboBox != null)
             {
                 comboBox.Header = CreateHeader(Constants.CORRECT_ANSWER_KEY, TextAlignment.Center);
-                comboBox.PlaceholderText = m_localization.GetString(Constants.THIS_SHOULD_BE_THE_CORRECT_ANSWER_KEY);
+                comboBox.PlaceholderText = T(Constants.THIS_SHOULD_BE_THE_CORRECT_ANSWER_KEY);
                 comboBox.ItemsSource = new ExtendedObservableCollection<string>();
 
                 if (task != null)
@@ -749,7 +749,7 @@ namespace STest.App.Pages.Builder
 
                 if (input != null)
                 {
-                    input.PlaceholderText = m_localization.GetString(Constants.THIS_SHOULD_BE_THE_ANSWER_KEY);
+                    input.PlaceholderText = T(Constants.THIS_SHOULD_BE_THE_ANSWER_KEY);
                 }
             }
 
@@ -806,7 +806,7 @@ namespace STest.App.Pages.Builder
 
             if (element != null)
             {
-                element.Text = m_localization.GetString(Constants.EACH_CORRECT_ANS_WORTH_ONE_POINT_IN_FINAL_ASSESSMENT_KEY);
+                element.Text = T(Constants.EACH_CORRECT_ANS_WORTH_ONE_POINT_IN_FINAL_ASSESSMENT_KEY);
             }
         }
         #endregion

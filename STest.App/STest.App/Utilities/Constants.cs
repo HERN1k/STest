@@ -19,6 +19,10 @@ namespace STest.App.Utilities
         /// <summary>
         /// <see cref="Exception"/> message <see cref="string"/>
         /// </summary>
+        public const string WINDOW_RESOLUTION_ERROR_MESSAGE = "Failed to get window instance from dependency container";
+        /// <summary>
+        /// <see cref="Exception"/> message <see cref="string"/>
+        /// </summary>
         public const string MAIN_WINDOW_RESOLUTION_ERROR_MESSAGE = "Failed to get MainWindow instance from dependency container";
         /// <summary>
         /// <see cref="Exception"/> message <see cref="string"/>
@@ -107,6 +111,10 @@ namespace STest.App.Utilities
         /// <summary>
         /// <see cref="Application"/> message <see cref="string"/>
         /// </summary>
+        public const string RESOURCE_MANAGER_NAME = "STest.App.Resources.Languages.Language";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
         public const string CURRENT_CULTURE = "CurrentCulture";
         /// <summary>
         /// <see cref="Application"/> message <see cref="string"/>
@@ -148,6 +156,10 @@ namespace STest.App.Utilities
         /// <see cref="Application"/> message <see cref="string"/>
         /// </summary>
         public const string NULL = nameof(NULL);
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
+        public const string KEY_NOT_FOUND = "[KEY_NOT_FOUND]";
         /// <summary>
         /// <see cref="Application"/> message <see cref="string"/>
         /// </summary>
@@ -452,7 +464,51 @@ namespace STest.App.Utilities
         /// <see cref="Localization"/> key <see cref="string"/>
         /// </summary>
         public const string CORRECT_ANSWERS_KEY = nameof(CORRECT_ANSWERS_KEY);
-        
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string PREVIEW_KEY = nameof(PREVIEW_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string ENTER_STUDENT_NAME_KEY = nameof(ENTER_STUDENT_NAME_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string STUDENT_NOT_FOUND_KEY = nameof(STUDENT_NOT_FOUND_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string STUDENTS_KEY = nameof(STUDENTS_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string TIME_LEFT_KEY = nameof(TIME_LEFT_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string START_KEY = nameof(START_KEY);  
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string ENTER_CORRECT_ANSWER_IN_FIELD_BELOW_KEY = nameof(ENTER_CORRECT_ANSWER_IN_FIELD_BELOW_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string INDICATE_BELOW_WHETHER_YOU_AGREE_WITH_STATEMENT_ABOVE_KEY = nameof(INDICATE_BELOW_WHETHER_YOU_AGREE_WITH_STATEMENT_ABOVE_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string CHOOSE_SEVERAL_CORRECT_ANSWERS_KEY = nameof(CHOOSE_SEVERAL_CORRECT_ANSWERS_KEY);   
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string CHOOSE_ONLY_ONE_CORRECT_ANSWER_KEY = nameof(CHOOSE_ONLY_ONE_CORRECT_ANSWER_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string COMPLETE_KEY = nameof(COMPLETE_KEY);
+
         /* 
             Local data
          */

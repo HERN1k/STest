@@ -49,77 +49,6 @@ namespace STest.App.Pages.Home
                 base.OnNavigatedTo(e);
 
                 SubscribeToEvents();
-
-                //var list = new List<CoreTask>
-                //{
-                //    TextTask.Build()
-                //        .AddName("Name")
-                //        .AddQuestion("Question?")
-                //        .AddCorrectAnswer("Correct answer"),
-
-                //    TrueFalseTask.Build()
-                //        .AddName("Name")
-                //        .AddQuestion("Question?")
-                //        .AddCorrectAnswer("True"),
-
-                //    MultipleChoiceTask.Build()
-                //        .AddName("Name")
-                //        .AddQuestion("Question?")
-                //        .AddAnswerItem("Answer 1")
-                //        .AddAnswerItem("Answer 2")
-                //        .AddAnswerItem("Answer 3")
-                //        .AddAnswerItem("Answer 4")
-                //        .AddCorrectAnswer("Answer 2"),
-
-                //    CheckboxesTask.Build()
-                //        .AddName("Name")
-                //        .AddQuestion("Question?")
-                //        .AddAnswerItem("Answer 1")
-                //        .AddAnswerItem("Answer 2")
-                //        .AddAnswerItem("Answer 3")
-                //        .AddAnswerItem("Answer 4")
-                //        .AddCorrectAnswers(new List<string>() 
-                //        {
-                //            "Answer 2",
-                //            "Answer 4"
-                //        }),
-                //};
-
-                //var test = Test.Build(Guid.NewGuid())
-                //    .AddName("Test")
-                //    .AddDescription("Description")
-                //    .AddInstructions("Instructions")
-                //    .AddTestTime(TimeSpan.FromMinutes(30));
-                
-                //for (int i = 0; i < 50; i++)
-                //{
-                //    test.AddSubject(Guid.NewGuid());
-                //}
-
-                //for (int i = 0; i < 100; i++)
-                //{
-                //    test.AddTask(CheckboxesTask.Build()
-                //        .AddName("Name")
-                //        .AddQuestion("Question?")
-                //        .AddAnswerItem("Answer 1")
-                //        .AddAnswerItem("Answer 2")
-                //        .AddAnswerItem("Answer 3")
-                //        .AddAnswerItem("Answer 4")
-                //        .AddCorrectAnswers(new List<string>()
-                //        {
-                //            "Answer 2",
-                //            "Answer 4"
-                //        }));
-                //}
-
-                //test.OnDevSave();
-
-                //byte[] bytes = test.SerializeToByteArray();
-
-                //m_logger.LogInformation("{empty}", string.Empty);
-                //m_logger.LogInformation("Test serialized to byte array: {length}", bytes.Length);
-                //m_logger.LogInformation("{empty}", string.Empty);
-                //m_logger.LogInformation("{test}", Test.DeserializeFromByteArray(bytes));
             }
             catch (Exception ex)
             {
@@ -160,5 +89,11 @@ namespace STest.App.Pages.Home
         {
 
         }
+
+        /// <summary>
+        /// Get the localized string by key
+        /// </summary>
+        /// <param name="key"></param>
+        private string T(string key) => m_localization.T(key);
     }
 }

@@ -279,4 +279,37 @@
   <data name="CORRECT_ANSWERS_KEY" xml:space="preserve">
     <value>Correct answers</value>
   </data>
+  <data name="PREVIEW_KEY" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="ENTER_STUDENT_NAME_KEY" xml:space="preserve">
+    <value>Enter student name</value>
+  </data>
+  <data name="STUDENT_NOT_FOUND_KEY" xml:space="preserve">
+    <value>Student not found</value>
+  </data>
+  <data name="STUDENTS_KEY" xml:space="preserve">
+    <value>Students</value>
+  </data>
+  <data name="TIME_LEFT_KEY" xml:space="preserve">
+    <value>Time left</value>
+  </data>
+  <data name="START_KEY" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="CHOOSE_ONLY_ONE_CORRECT_ANSWER_KEY" xml:space="preserve">
+    <value>Choose only one correct answer.</value>
+  </data>
+  <data name="CHOOSE_SEVERAL_CORRECT_ANSWERS_KEY" xml:space="preserve">
+    <value>Choose several correct answers.</value>
+  </data>
+  <data name="INDICATE_BELOW_WHETHER_YOU_AGREE_WITH_STATEMENT_ABOVE_KEY" xml:space="preserve">
+    <value>Indicate below whether you agree with the statement above.</value>
+  </data>
+  <data name="ENTER_CORRECT_ANSWER_IN_FIELD_BELOW_KEY" xml:space="preserve">
+    <value>Enter the correct answer in the field below.</value>
+  </data>
+  <data name="COMPLETE_KEY" xml:space="preserve">
+    <value>Complete</value>
+  </data>
 </root>
