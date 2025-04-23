@@ -18,40 +18,16 @@ namespace STest.App.Utilities
         }
     }
 
-    public sealed class TestBuilderAnswersListViewItem
-    {
-        public string Text { get; set; }
-        public Guid ID { get; set; }
-
-        public TestBuilderAnswersListViewItem(string text, Guid id)
-        {
-            Text = text;
-            ID = id;
-        }
-    }
-
-    public sealed class TestBuilderCheckBoxesListViewItem
+    public sealed class BuilderListItem
     {
         public Guid ID { get; set; }
         public string Text { get; set; }
         public bool IsChecked { get; set; } = false;
 
-        public TestBuilderCheckBoxesListViewItem(string text, Guid id)
+        public BuilderListItem(string text, Guid id)
         {
             Text = text;
             ID = id;
-        }
-    }
-
-    public sealed class TestBuilderStudent
-    {
-        public Guid ID { get; set; }
-        public string DisplayName { get; set; }
-
-        public TestBuilderStudent(Guid id, string displayName)
-        {
-            ID = id;
-            DisplayName = displayName;
         }
     }
 }

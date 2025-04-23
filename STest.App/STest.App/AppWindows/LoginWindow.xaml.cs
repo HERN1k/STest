@@ -25,9 +25,6 @@ namespace STest.App.AppWindows
         private SystemBackdropConfiguration? m_configurationSource;
         private bool m_disposedValue;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
         public LoginWindow(ILocalization localization, ILocalData localData, ILogger<LoginWindow> logger, IWindowsHelper windowsHelper)
         {
             this.InitializeComponent();

@@ -1,10 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
+using System.Text.Json;
+using System.Threading.Tasks;
+
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using STest.App.Domain.Interfaces;
@@ -20,12 +25,11 @@ namespace STest.App.Pages.Builder
     public sealed partial class BuilderPage : Page
     {
         public ExtendedObservableCollection<Test> TestsList { get; set; }
-        public ExtendedObservableCollection<TestBuilderStudent> StudentsList { get; set; }
         public ExtendedObservableCollection<CoreTask> TasksList { get; set; }
 
         private readonly ILocalization m_localization;
         private readonly ILocalData m_localData;
-        private readonly IMemoryCache m_memoryCache;
+        private readonly ITestManager m_testManager;
         private readonly ILogger<BuilderPage> m_logger;
         private readonly Storyboard m_fadeInAnimation;
         private readonly Storyboard m_fadeOutAnimation;
@@ -36,29 +40,24 @@ namespace STest.App.Pages.Builder
             this.InitializeComponent();
             m_localization = ServiceHelper.GetService<ILocalization>();
             m_localData = ServiceHelper.GetService<ILocalData>();
-            m_memoryCache = ServiceHelper.GetMemoryCache();
+            m_testManager = ServiceHelper.GetService<ITestManager>();
             m_logger = ServiceHelper.GetLogger<BuilderPage>();
             m_fadeInAnimation = GetStoryboard("FadeInAnimation");
             m_fadeOutAnimation = GetStoryboard("FadeOutAnimation");
             TestsList = new ExtendedObservableCollection<Test>();
-            StudentsList = new ExtendedObservableCollection<TestBuilderStudent>();
             TasksList = new ExtendedObservableCollection<CoreTask>();
             this.DataContext = this;
         }
 
-        #region OnNavigated
-        /// <summary>
-        /// OnNavigatedTo
-        /// </summary>
-        protected override void OnNavigatedTo(NavigationEventArgs args)
+        /// <inheritdoc />
+        protected override async void OnNavigatedTo(NavigationEventArgs args)
         {
             try
             {
                 base.OnNavigatedTo(args);
 
-                SubscribeToEvents();
                 ReopenTest();
-                SetTestListItems();
+                await SetTestListItemsAsync();
             }
             catch (Exception ex)
             {
@@ -66,60 +65,183 @@ namespace STest.App.Pages.Builder
             }
         }
 
-        /// <summary>
-        /// OnNavigatingFrom
-        /// </summary>
+        /// <inheritdoc />
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs args)
         {
             try
             {
                 base.OnNavigatingFrom(args);
-
-                UnSubscribeToEvents();
             }
             catch (Exception ex)
             {
                 ex.Show(this, m_logger);
             }
         }
-        #endregion
-
-        /// <summary>
-        /// Subscribe to events
-        /// </summary>
-        private void SubscribeToEvents()
-        {
-            TasksList.CollectionChanged += TasksCollectionChanged;
-        }
-
-        /// <summary>
-        /// Un subscribe to events
-        /// </summary>
-        private void UnSubscribeToEvents()
-        {
-            TasksList.CollectionChanged -= TasksCollectionChanged;
-        }
-
+        
         /// <summary>
         /// Get the localized string by key
         /// </summary>
         /// <param name="key"></param>
         private string T(string key) => m_localization.T(key);
 
+        /// <summary>
+        /// Finds an element in a Grid by its row and column position.
+        /// </summary>
+        /// <param name="grid"></param>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
+        public static UIElement? FindElementByGridPosition(Grid? grid, int row, int column)
+        {
+            if (grid == null)
+            {
+                return null;
+            }
+
+            foreach (UIElement item in grid.Children)
+            {
+                if (item is not FrameworkElement element)
+                {
+                    continue;    
+                }
+
+                int elementRow = Grid.GetRow(element);
+                int elementColumn = Grid.GetColumn(element);
+
+                if (elementRow == row && elementColumn == column)
+                {
+                    return element;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Finds all neighbors of a specified type in the visual tree.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="child"></param>
+        public static IOrderedEnumerable<T> FindNeighbors<T>(FrameworkElement? child) where T : FrameworkElement
+        {
+            if (child == null)
+            {
+                return Enumerable.Empty<T>().OrderBy(_ => 0);
+            }
+
+            if (child.Parent is Panel parent)
+            {
+                return parent.Children.OfType<T>().OrderBy(parent.Children.IndexOf);
+            }
+            else
+            {
+                return Enumerable.Empty<T>().OrderBy(_ => 0);
+            }
+        }
+
+        /// <summary>
+        /// Finds an element in the visual tree by its tag.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="parent"></param>
+        /// <param name="tag"></param>
+        /// <returns></returns>
+        public static T? FindElementByTag<T>(DependencyObject? parent, object tag) where T : FrameworkElement
+        {
+            if (parent == null)
+            {
+                return null;
+            }
+
+            int childCount = VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < childCount; i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+
+                if (child is T element && Equals(element.Tag, tag))
+                {
+                    return element;
+                }
+
+                var result = FindElementByTag<T>(child, tag);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Finds a child element of a specified type in the visual tree.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="parent"></param>
+        public static T? FindChild<T>(DependencyObject? parent) where T : DependencyObject
+        {
+            if (parent == null)
+            {
+                return null;
+            }
+
+            int childCount = VisualTreeHelper.GetChildrenCount(parent);
+
+            for (int i = 0; i < childCount; i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+
+                if (child is T target)
+                {
+                    return target;
+                }
+
+                var result = FindChild<T>(child);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Retrieves the task from the data context.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dataContext"></param>
+        /// <returns></returns>
+        public T? GetTaskFromDataContext<T>(object? dataContext) where T : CoreTask
+        {
+            if (dataContext == null)
+            {
+                return null;
+            }
+
+            if (dataContext is not CoreTask task)
+            {
+                return null;
+            }
+
+            return TasksList.FirstOrDefault(t => t.TaskID.Equals(task.TaskID)) as T;
+        }
+
         /// <summary> 
         /// Sets the items in the test list.  
         /// Displays a message if the list is empty or shows the "Create New Test" button otherwise.  
         /// </summary>  
-        private void SetTestListItems()
+        private async Task SetTestListItemsAsync()
         {
             try
             {
-                // TODO: Get tests from server  
+                var tests = await m_testManager.GetBuilderTestsAsync();
+                var now = DateTime.Now;
+
+                TestsList.Clear();
+                TestsList.AddRange(tests.OrderBy(t => Math.Abs((t.Created - now).Ticks)));
 
                 if (TestsList.Count == 0)
                 {
-                    EmptyTestsListTitle.Text = T(Constants.CREATE_NEW_TEST_KEY);
-                    EmptyTestsListDescription.Text = T(Constants.LIST_OF_RECENT_TESTS_IS_EMPTY_KEY);
                     EmptyTestsListButton.Visibility = Visibility.Visible;
                 }
                 else
@@ -133,38 +255,55 @@ namespace STest.App.Pages.Builder
             }
         }
 
+        /// <summary>
+        /// Event handler for the TestBuilderCloseButton click event.
+        /// </summary>
+        /// <param name="testID"></param>
+        private void OpenTestBuilder(Guid testID)
+        {
+            try
+            {
+                m_thisTest = TestsList.FirstOrDefault(t => t.TestID == testID)
+                    ?? throw new ArgumentNullException(nameof(testID), $"Test not found.");
+
+                ExecuteAnimation(m_fadeInAnimation, TestBuilderBorder);
+                TestBuilderBorder.Visibility = Visibility.Visible;
+
+                TestsBuilderName.Text = m_thisTest.Name;
+                TestsBuilderDescription.Text = m_thisTest.Description;
+                TestsBuilderInstructions.Document.SetText(Microsoft.UI.Text.TextSetOptions.None, m_thisTest.Instructions);
+                TestsBuilderTime.Time = m_thisTest.TestTime;
+                TestCodeText.Text = m_thisTest.Code;
+                TestCodeButton.Tag = m_thisTest.Code;
+
+                TasksList.Clear();
+                TasksList.AddRange(m_thisTest.Tasks);
+
+                SetCurrentTest();
+            }
+            catch (Exception ex)
+            {
+                ex.Show(this, m_logger);
+            }
+        }
+
         /// <summary>  
         /// Reopens the current test if it exists in the memory cache.  
         /// Adds the test to the list if the list is empty and opens the test builder.  
         /// </summary>  
         private void ReopenTest()
         {
-            var test = GetCurrentTest();
+            var test = m_testManager.GetCurrentBuilderTest();
 
             if (test != null)
             {
-                if (TestsList.Count == 0)
+                if (!TestsList.Contains(test))
                 {
                     TestsList.Add(test);
                 }
 
                 OpenTestBuilder(test.TestID);
             }
-        }
-
-        /// <summary>  
-        /// Retrieves the current test from the memory cache.  
-        /// Returns null if no test is found.  
-        /// </summary>  
-        /// <returns>The current test or null if not found.</returns>  
-        private Test? GetCurrentTest()
-        {
-            if (m_memoryCache.TryGetValue<Test>(Constants.CURRENT_TEST_IN_BUILDER, out var test))
-            {
-                return test;
-            }
-
-            return null;
         }
 
         /// <summary>  
@@ -175,46 +314,15 @@ namespace STest.App.Pages.Builder
         {
             if (m_thisTest != null)
             {
-                m_thisTest.RemoveTasks(m_thisTest.Tasks.Select(task => task.TaskID));
+                m_thisTest.Tasks.Clear();
 
-                m_thisTest.AddTasks(TasksList);
+                foreach (var task in TasksList)
+                {
+                    m_thisTest.Tasks.Add(task);
+                }
 
-                m_memoryCache.Set<Test>(Constants.CURRENT_TEST_IN_BUILDER, m_thisTest, TimeSpan.FromMinutes(15));
+                m_testManager.SetCurrentBuilderTest(m_thisTest);
             }
-        }
-
-        /// <summary>  
-        /// Creates a header TextBlock with the specified localization key.  
-        /// The text is aligned to the left by default.  
-        /// </summary>  
-        /// <param name="localizationKey">The key for localized text.</param>  
-        /// <returns>A TextBlock with the localized text.</returns>  
-        private TextBlock CreateHeader(string localizationKey)
-        {
-            return new TextBlock()
-            {
-                Text = T(localizationKey),
-                Style = (Style)Application.Current.Resources["SubtitleTextBlockStyle"],
-                Margin = new Thickness(2, 0, 0, 0),
-                TextAlignment = TextAlignment.Left
-            };
-        }
-
-        /// <summary>  
-        /// Creates a header TextBlock with the specified localization key and text alignment.  
-        /// </summary>  
-        /// <param name="localizationKey">The key for localized text.</param>  
-        /// <param name="alignment">The text alignment for the header.</param>  
-        /// <returns>A TextBlock with the localized text and specified alignment.</returns>  
-        private TextBlock CreateHeader(string localizationKey, TextAlignment alignment)
-        {
-            return new TextBlock()
-            {
-                Text = T(localizationKey),
-                Style = (Style)Application.Current.Resources["SubtitleTextBlockStyle"],
-                Margin = new Thickness(2, 0, 0, 0),
-                TextAlignment = alignment
-            };
         }
 
         /// <summary>  
@@ -266,28 +374,6 @@ namespace STest.App.Pages.Builder
             {
                 ex.Show(this, m_logger);
             }
-        }
-
-        /// <summary>  
-        /// Filters a FrameworkElement by its tag.  
-        /// Returns true if the element's tag matches the specified tag.  
-        /// </summary>  
-        /// <param name="element">The element to filter.</param>  
-        /// <param name="tag">The tag to match.</param>  
-        /// <returns>True if the tag matches; otherwise, false.</returns>  
-        private static bool FilterByTag(FrameworkElement element, string tag)
-        {
-            if (element == null || string.IsNullOrEmpty(tag))
-            {
-                return false;
-            }
-
-            if (element.Tag is not string elementTag)
-            {
-                return false;
-            }
-
-            return elementTag.Equals(tag, StringComparison.InvariantCultureIgnoreCase);
         }
     }
 }

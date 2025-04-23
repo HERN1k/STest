@@ -2,7 +2,6 @@ using System;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-
 using STest.App.Domain.Enums;
 using STest.App.Domain.Interfaces;
 using STest.App.Utilities;
@@ -18,9 +17,6 @@ namespace STest.App.Pages.Account
         private readonly ILocalData m_localData;
         private readonly ILogger<AccountPage> m_logger;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
         public AccountPage()
         {
             this.InitializeComponent();
@@ -30,16 +26,12 @@ namespace STest.App.Pages.Account
             this.DataContext = this;
         }
 
-        #region OnNavigated
-        /// <summary>
-        /// OnNavigatedTo
-        /// </summary>
+        /// <inheritdoc />
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             try
             {
                 base.OnNavigatedTo(e);
-                SubscribeToEvents();
 
                 PersonPicture.DisplayName = m_localData.GetString(Constants.USER_NAME_LOCAL_DATA);
                 PersonName.Text = PersonPicture.DisplayName;
@@ -51,40 +43,19 @@ namespace STest.App.Pages.Account
             }
         }
 
-        /// <summary>
-        /// OnNavigatingFrom
-        /// </summary>
+        /// <inheritdoc />
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             try
             {
                 base.OnNavigatingFrom(e);
-
-                UnSubscribeToEvents();
             }
             catch (Exception ex)
             {
                 ex.Show(this, m_logger);
             }
         }
-        #endregion
-
-        /// <summary>
-        /// Subscribe to events
-        /// </summary>
-        private void SubscribeToEvents()
-        {
-
-        }
-
-        /// <summary>
-        /// Un subscribe to events
-        /// </summary>
-        private void UnSubscribeToEvents()
-        {
-
-        }
-
+        
         /// <summary>
         /// Get the localized string by key
         /// </summary>

@@ -29,9 +29,6 @@ namespace STest.App.Pages.Settings
         private readonly ILocalData m_localData;
         private readonly ILogger<SettingsPage> m_logger;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
         public SettingsPage()
         {
             this.InitializeComponent();
@@ -42,10 +39,7 @@ namespace STest.App.Pages.Settings
             this.DataContext = this;
         }
 
-        #region OnNavigated
-        /// <summary>
-        /// OnNavigatedTo
-        /// </summary>
+        /// <inheritdoc />
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             try
@@ -63,9 +57,7 @@ namespace STest.App.Pages.Settings
             }
         }
 
-        /// <summary>
-        /// OnNavigatingFrom
-        /// </summary>
+        /// <inheritdoc />
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             try
@@ -79,8 +71,7 @@ namespace STest.App.Pages.Settings
                 ex.Show(this, m_logger);
             }
         }
-        #endregion
-
+        
         /// <summary>
         /// Subscribe to events
         /// </summary>

@@ -13,8 +13,7 @@
     xmlns:taskMultipleChoice="using:STLib.Tasks.MultipleChoice"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Background="Transparent">
+    mc:Ignorable="d">
     <Page.Resources>
         <Storyboard 
             x:Key="FadeInAnimation"
@@ -44,10 +43,10 @@
                 Margin="0, 0, 8, 15"
                 Padding="15"
                 ToolTipService.ToolTip="{x:Bind Name}"
-                Tag="{x:Bind TestID}"
                 BorderThickness="1"
                 CornerRadius="{StaticResource OverlayCornerRadius}"
                 BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                Click="OpenTestButtonClick"
             >
                 <StackPanel>
                     <TextBlock 
@@ -89,9 +88,9 @@
                 </StackPanel>
             </controls:ConfirmationButton>
         </DataTemplate>
-        <DataTemplate 
-            x:Key="TextTaskTemplate"
-            x:DataType="taskText:TextTask"
+        <ControlTemplate 
+            x:Key="TaskTemplate" 
+            TargetType="ContentControl"
         >
             <Border
                 Margin="0, 0, 0, 7.5"
@@ -100,10 +99,12 @@
                 CornerRadius="{StaticResource OverlayCornerRadius}"
                 BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                 Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"
-                Tag="{x:Bind TaskID}"
             >
                 <StackPanel>
-                    <Grid Tag="HEADER_PANEL">
+                    <Grid Loaded="OnTaskHeaderLoaded">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
@@ -111,7 +112,6 @@
                         <TextBlock 
                             Grid.Column="0"
                             Grid.Row="0"
-                            Tag="HEADER_NUMBER"
                             Style="{StaticResource BodyStrongTextBlockStyle}"
                             Foreground="{ThemeResource TextFillColorDisabledBrush}"
                             HorizontalAlignment="Left"
@@ -122,7 +122,6 @@
                             Grid.Column="1"
                             Grid.Row="0"
                             Click="RemoveTaskClick"
-                            Tag="{x:Bind TaskID}" 
                             ToolTipService.ToolTip="Close"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
@@ -136,288 +135,161 @@
                         </controls:ConfirmationButton>
                     </Grid>
                     <RichEditBox 
-                        Tag="QUESTION"
                         Width="500" 
                         MinHeight="100"
                         HorizontalAlignment="Center"
                         Margin="0, 0, 0, 15"
                         TextChanged="TaskQuestionChanged"
+                        Loaded="TaskQuestionLoaded"
                     />
+                    <ContentPresenter />
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock 
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            LineStackingStrategy="BlockLineHeight"
+                            Margin="0, 0, 15, 0"
+                            Loaded="OnTaskConsiderTextLoaded"
+                        />      
+                        <ToggleSwitch 
+                            IsOn="True"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Toggled="TaskConsiderToggled"
+                            Loaded="TaskConsiderLoaded"
+                        />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </ControlTemplate>
+        <ControlTemplate 
+            x:Key="TaskMaxGradeTemplate" 
+            TargetType="ContentControl"
+        >
+            <StackPanel 
+                Orientation="Horizontal"
+                Margin="0, 0, 0, 15"
+            >
+                <TextBlock 
+                    Text="{x:Bind utilities:MessageProvider.ASSESSMENT_FOR_CORRECT_ANSWER_KEY}"
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    LineStackingStrategy="BlockLineHeight"
+                    Margin="0, 0, 15, 0"
+                />
+                <NumberBox
+                    Value="1"
+                    SpinButtonPlacementMode="Compact"
+                    Minimum="1"
+                    Maximum="100"
+                    SmallChange="1"
+                    LargeChange="10" 
+                    MinWidth="150"
+                    ValueChanged="TaskMaxGradeChanged"
+                    Loaded="TaskMaxGradeLoaded"
+                />
+            </StackPanel>
+        </ControlTemplate>
+        <DataTemplate 
+            x:Key="TextTaskTemplate"
+            x:DataType="taskText:TextTask"
+        >
+            <ContentControl Template="{StaticResource TaskTemplate}" DataContext="{Binding}">
+                <StackPanel>
                     <RichEditBox 
-                        Tag="CORRECT_ANSWER"
+                        Header="{x:Bind utilities:MessageProvider.ToHeaderCenter(utilities:MessageProvider.CORRECT_ANSWER_KEY)}"
+                        PlaceholderText="{x:Bind utilities:MessageProvider.THIS_SHOULD_BE_THE_CORRECT_ANSWER_KEY}"
                         Width="500" 
                         MinHeight="100"
                         HorizontalAlignment="Center"
                         Margin="0, 0, 0, 15"
                         TextChanged="TaskCorrectAnswerChanged"
+                        Loaded="TaskCorrectAnswerLoaded"
                     />
-                    <StackPanel 
-                        Orientation="Horizontal"
-                        Tag="MAX_GRADE_PANEL"
-                        Margin="0, 0, 0, 15"
-                    >
-                        <TextBlock 
-                            Tag="MAX_GRADE"
-                            Style="{StaticResource BodyTextBlockStyle}"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            LineStackingStrategy="BlockLineHeight"
-                            Margin="0, 0, 15, 0"
-                        />
-                        <NumberBox
-                            Tag="MAX_GRADE_INPUT"
-                            Value="1"
-                            SpinButtonPlacementMode="Compact"
-                            Minimum="1"
-                            Maximum="100"
-                            SmallChange="1"
-                            LargeChange="10" 
-                            MinWidth="150"
-                            ValueChanged="TaskMaxGradeChanged"
-                        />
-                    </StackPanel>
-                    <StackPanel 
-                        Orientation="Horizontal"
-                        Tag="CONSIDER_IN_THE_ASSESSMENT_PANEL"
-                    >
-                        <TextBlock 
-                            Tag="CONSIDER_IN_THE_ASSESSMENT"
-                            Style="{StaticResource BodyTextBlockStyle}"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            LineStackingStrategy="BlockLineHeight"
-                            Margin="0, 0, 15, 0"
-                        />
-                        <ToggleSwitch 
-                            Tag="CONSIDER_IN_THE_ASSESSMENT_SWITCHER"
-                            IsOn="True"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Toggled="TaskConsiderToggled"
-                        />
-                    </StackPanel>
+                    <ContentControl Template="{StaticResource TaskMaxGradeTemplate}" DataContext="{Binding}" />
                 </StackPanel>
-            </Border>
+            </ContentControl>
         </DataTemplate>
         <DataTemplate 
             x:Key="TrueFalseTaskTemplate"
             x:DataType="taskTrueFalse:TrueFalseTask"
         >
-            <Border
-                Margin="0, 0, 0, 7.5"
-                Padding="15"
-                BorderThickness="1"
-                CornerRadius="{StaticResource OverlayCornerRadius}"
-                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"
-                Tag="{x:Bind TaskID}"
-            >
+            <ContentControl Template="{StaticResource TaskTemplate}" DataContext="{Binding}">
                 <StackPanel>
-                    <Grid Tag="HEADER_PANEL">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock 
-                            Grid.Column="0"
-                            Grid.Row="0"
-                            Tag="HEADER_NUMBER"
-                            Style="{StaticResource BodyStrongTextBlockStyle}"
-                            Foreground="{ThemeResource TextFillColorDisabledBrush}"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
-                            Opacity="0.8"
-                        />
-                        <controls:ConfirmationButton
-                            Grid.Column="1"
-                            Grid.Row="0"
-                            Click="RemoveTaskClick"
-                            Tag="{x:Bind TaskID}" 
-                            ToolTipService.ToolTip="Close"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                        >
-                            <FontIcon 
-                                Glyph="&#xE711;" 
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center"
-                                FontSize="16"
-                            />
-                        </controls:ConfirmationButton>
-                    </Grid>
-                    <RichEditBox 
-                        Tag="QUESTION"
-                        Width="500" 
-                        MinHeight="100"
-                        HorizontalAlignment="Center"
-                        Margin="0, 0, 0, 15"
-                        TextChanged="TaskQuestionChanged"
-                    />
                     <TextBlock 
-                        Tag="CORRECT_ANSWER"
+                        Text="{x:Bind x:String.Concat(utilities:MessageProvider.CORRECT_ANSWER_KEY, utilities:Constants.COLON)}"
                         Style="{StaticResource SubtitleTextBlockStyle}"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Margin="0, 0, 0, 7.5"
                     />
                     <StackPanel 
-                        Tag="CORRECT_ANSWER_PANEL"
                         Orientation="Horizontal"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Margin="0, 0, 0, 15"
                     >
                         <RadioButton 
-                            Tag="CORRECT_ANSWER_RADIO_TRUE" 
                             IsChecked="True" 
                             MinWidth="10"
                             Margin="0, 0, 30, 0"
                             Checked="CorrectAnswerRadioButtonChecked"
+                            Loaded="CorrectAnswerRadioButtonLoaded"
                         >
-                            <RadioButton.ContentTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding}" Style="{StaticResource BodyStrongTextBlockStyle}" />
-                                </DataTemplate>
-                            </RadioButton.ContentTemplate>
+                            <TextBlock 
+                                Text="{x:Bind utilities:MessageProvider.YES}" 
+                                Style="{StaticResource BodyStrongTextBlockStyle}" 
+                            />
                         </RadioButton>
                         <RadioButton 
-                            Tag="CORRECT_ANSWER_RADIO_FALSE" 
                             MinWidth="10"
                             Checked="CorrectAnswerRadioButtonChecked"
+                            Loaded="CorrectAnswerRadioButtonLoaded"
                         >
-                            <RadioButton.ContentTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding}" Style="{StaticResource BodyStrongTextBlockStyle}" />
-                                </DataTemplate>
-                            </RadioButton.ContentTemplate>
+                            <TextBlock 
+                                Text="{x:Bind utilities:MessageProvider.NO}" 
+                                Style="{StaticResource BodyStrongTextBlockStyle}" 
+                            />
                         </RadioButton>
                     </StackPanel>
-                    <StackPanel 
-                        Orientation="Horizontal"
-                        Tag="MAX_GRADE_PANEL"
-                        Margin="0, 0, 0, 15"
-                    >
-                        <TextBlock 
-                            Tag="MAX_GRADE"
-                            Style="{StaticResource BodyTextBlockStyle}"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            LineStackingStrategy="BlockLineHeight"
-                            Margin="0, 0, 15, 0"
-                        />
-                        <NumberBox
-                            Tag="MAX_GRADE_INPUT"
-                            Value="1"
-                            SpinButtonPlacementMode="Compact"
-                            Minimum="1"
-                            Maximum="100"
-                            SmallChange="1"
-                            LargeChange="10" 
-                            MinWidth="150"
-                            ValueChanged="TaskMaxGradeChanged"
-                        />
-                    </StackPanel>
-                    <StackPanel 
-                        Orientation="Horizontal"
-                        Tag="CONSIDER_IN_THE_ASSESSMENT_PANEL"
-                    >
-                        <TextBlock 
-                            Tag="CONSIDER_IN_THE_ASSESSMENT"
-                            Style="{StaticResource BodyTextBlockStyle}"
-                            Margin="0, 0, 15, 0"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            LineStackingStrategy="BlockLineHeight"
-                        />
-                        <ToggleSwitch 
-                            Tag="CONSIDER_IN_THE_ASSESSMENT_SWITCHER"
-                            IsOn="True"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Toggled="TaskConsiderToggled"
-                        />
-                    </StackPanel>
+                    <ContentControl Template="{StaticResource TaskMaxGradeTemplate}" DataContext="{Binding}" />
                 </StackPanel>
-            </Border>
+            </ContentControl>
         </DataTemplate>
         <DataTemplate 
             x:Key="CheckboxesTaskTemplate"
             x:DataType="taskCheckboxes:CheckboxesTask"
         >
-            <Border
-                Margin="0, 0, 0, 7.5"
-                Padding="15"
-                BorderThickness="1"
-                CornerRadius="{StaticResource OverlayCornerRadius}"
-                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"
-                Tag="{x:Bind TaskID}"
-            >
+            <ContentControl Template="{StaticResource TaskTemplate}" DataContext="{Binding}">
                 <StackPanel>
-                    <Grid Tag="HEADER_PANEL">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock 
-                            Grid.Column="0"
-                            Grid.Row="0"
-                            Tag="HEADER_NUMBER"
-                            Style="{StaticResource BodyStrongTextBlockStyle}"
-                            Foreground="{ThemeResource TextFillColorDisabledBrush}"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
-                            Opacity="0.8"
-                        />
-                        <controls:ConfirmationButton
-                            Grid.Column="1"
-                            Grid.Row="0"
-                            Click="RemoveTaskClick"
-                            Tag="{x:Bind TaskID}" 
-                            ToolTipService.ToolTip="Close"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                        >
-                            <FontIcon 
-                                Glyph="&#xE711;" 
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center"
-                                FontSize="16"
-                            />
-                        </controls:ConfirmationButton>
-                    </Grid>
-                    <RichEditBox 
-                        Tag="QUESTION"
-                        Width="500" 
-                        MinHeight="100"
-                        HorizontalAlignment="Center"
-                        Margin="0, 0, 0, 15"
-                        TextChanged="TaskQuestionChanged"
-                    />
                     <ListView
-                        Tag="ANSWERS_LIST"
+                        Header="{x:Bind utilities:MessageProvider.ToHeaderCenter(utilities:MessageProvider.ANSWERS_KEY)}"
                         ItemTemplate="{StaticResource CheckBoxesAnswersListViewTemplate}"
                         SelectionMode="None"
                         Margin="0, 0, 0, 15"
+                        Loaded="AnswersListViewLoaded"
                     />
                     <StackPanel 
-                        Tag="ADD_ANSWER_PANEL"
                         Orientation="Horizontal" 
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Spacing="15"
                         Margin="0, 0, 0, 15"
                         Visibility="Visible"
+                        Loaded="AnswersInputStackLoaded"
                     >
                         <TextBox
-                            Tag="ADD_ANSWER_INPUT"
+                            Tag="{x:Bind TaskID}"
+                            PlaceholderText="{x:Bind utilities:MessageProvider.THIS_SHOULD_BE_THE_ANSWER_KEY}"
                             MinWidth="300"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            TextChanged="AnswerMultipleChoiceTextBoxTextChanged"
+                            TextChanged="AnswerTextBoxTextChanged"
                         />
                         <controls:ConfirmationButton
-                            Tag="ADD_ANSWER_ADD_BUTTON"
+                            Tag="{x:Bind TaskID}"
                             Padding="5"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
@@ -429,122 +301,57 @@
                         </controls:ConfirmationButton>
                     </StackPanel>
                     <ListView
-                        Tag="CHACK_BOX_LIST"
+                        Header="{x:Bind utilities:MessageProvider.ToHeaderCenter(utilities:MessageProvider.CORRECT_ANSWERS_KEY)}"
                         ItemTemplate="{StaticResource CheckBoxesListViewTemplate}"
                         SelectionMode="None"
                         Margin="0, 0, 0, 15"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
+                        Loaded="CheckboxesCorrectAnswersListViewLoaded"
                     />
                     <TextBlock 
-                        Tag="MAX_GRADE"
+                        Text="{x:Bind utilities:MessageProvider.EACH_CORRECT_ANS_WORTH_ONE_POINT_IN_FINAL_ASSESSMENT_KEY}"
                         Style="{StaticResource CaptionTextBlockStyle}"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Margin="0, 0, 0, 15"
                         Foreground="{ThemeResource SystemFillColorAttentionBrush}"
                     />
-                    <StackPanel 
-                        Orientation="Horizontal"
-                        Tag="CONSIDER_IN_THE_ASSESSMENT_PANEL"
-                    >
-                        <TextBlock 
-                            Tag="CONSIDER_IN_THE_ASSESSMENT"
-                            Style="{StaticResource BodyTextBlockStyle}"
-                            Margin="0, 0, 15, 0"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            LineStackingStrategy="BlockLineHeight"
-                        />
-                        <ToggleSwitch 
-                            Tag="CONSIDER_IN_THE_ASSESSMENT_SWITCHER"
-                            IsOn="True"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Toggled="TaskConsiderToggled"
-                        />
-                    </StackPanel>
                 </StackPanel>
-            </Border>
+            </ContentControl>
         </DataTemplate>
         <DataTemplate 
             x:Key="MultipleChoiceTaskTemplate"
             x:DataType="taskMultipleChoice:MultipleChoiceTask"
         >
-            <Border
-                Margin="0, 0, 0, 7.5"
-                Padding="15"
-                BorderThickness="1"
-                CornerRadius="{StaticResource OverlayCornerRadius}"
-                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"
-                Tag="{x:Bind TaskID}"
-            >
+            <ContentControl Template="{StaticResource TaskTemplate}" DataContext="{Binding}">
                 <StackPanel>
-                    <Grid Tag="HEADER_PANEL">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock 
-                            Grid.Column="0"
-                            Grid.Row="0"
-                            Tag="HEADER_NUMBER"
-                            Style="{StaticResource BodyStrongTextBlockStyle}"
-                            Foreground="{ThemeResource TextFillColorDisabledBrush}"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
-                            Opacity="0.8"
-                        />
-                        <controls:ConfirmationButton
-                            Grid.Column="1"
-                            Grid.Row="0"
-                            Click="RemoveTaskClick"
-                            Tag="{x:Bind TaskID}" 
-                            ToolTipService.ToolTip="Close"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                        >
-                            <FontIcon 
-                                Glyph="&#xE711;" 
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center"
-                                FontSize="16"
-                            />
-                        </controls:ConfirmationButton>
-                    </Grid>
-                    <RichEditBox 
-                        Tag="QUESTION"
-                        Width="500" 
-                        MinHeight="100"
-                        HorizontalAlignment="Center"
-                        Margin="0, 0, 0, 15"
-                        TextChanged="TaskQuestionChanged"
-                    />
                     <ListView
-                        Tag="ANSWERS_LIST"
+                        Header="{x:Bind utilities:MessageProvider.ToHeaderCenter(utilities:MessageProvider.ANSWERS_KEY)}"
                         ItemTemplate="{StaticResource AnswersListViewTemplate}"
                         SelectionMode="None"
                         Margin="0, 0, 0, 15"
+                        Loaded="MultipleChoiceAnswersListViewLoaded"
                     />
                     <StackPanel 
-                        Tag="ADD_ANSWER_PANEL"
                         Orientation="Horizontal" 
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Spacing="15"
                         Margin="0, 0, 0, 15"
                         Visibility="Visible"
+                        Loaded="AnswersInputStackLoaded"
                     >
                         <TextBox
-                            Tag="ADD_ANSWER_INPUT"
+                            Tag="{x:Bind TaskID}"
+                            PlaceholderText="{x:Bind utilities:MessageProvider.THIS_SHOULD_BE_THE_ANSWER_KEY}"
                             MinWidth="300"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            TextChanged="AnswerMultipleChoiceTextBoxTextChanged"
+                            TextChanged="AnswerTextBoxTextChanged"
                         />
                         <controls:ConfirmationButton
-                            Tag="ADD_ANSWER_ADD_BUTTON"
+                            Tag="{x:Bind TaskID}"
                             Padding="5"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
@@ -556,63 +363,20 @@
                         </controls:ConfirmationButton>
                     </StackPanel>
                     <ComboBox
-                        Tag="ADD_ANSWER_COMBO_BOX"
+                        Header="{x:Bind utilities:MessageProvider.ToHeaderCenter(utilities:MessageProvider.CORRECT_ANSWER_KEY)}"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Margin="0, 0, 0, 25"
                         MinWidth="350"
                         SelectionChanged="CorrectAnswerMultipleChoiceSelectionChanged"
+                        Loaded="MultipleChoiceCorrectAnswerLoaded"
                     />
-                    <StackPanel 
-                        Orientation="Horizontal"
-                        Tag="MAX_GRADE_PANEL"
-                        Margin="0, 0, 0, 15"
-                    >
-                        <TextBlock 
-                            Tag="MAX_GRADE"
-                            Style="{StaticResource BodyTextBlockStyle}"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            LineStackingStrategy="BlockLineHeight"
-                            Margin="0, 0, 15, 0"
-                        />
-                        <NumberBox
-                            Tag="MAX_GRADE_INPUT"
-                            Value="1"
-                            SpinButtonPlacementMode="Compact"
-                            Minimum="1"
-                            Maximum="100"
-                            SmallChange="1"
-                            LargeChange="10" 
-                            MinWidth="150"
-                            ValueChanged="TaskMaxGradeChanged"
-                        />
-                    </StackPanel>
-                    <StackPanel 
-                        Orientation="Horizontal"
-                        Tag="CONSIDER_IN_THE_ASSESSMENT_PANEL"
-                    >
-                        <TextBlock 
-                            Tag="CONSIDER_IN_THE_ASSESSMENT"
-                            Style="{StaticResource BodyTextBlockStyle}"
-                            Margin="0, 0, 15, 0"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            LineStackingStrategy="BlockLineHeight"
-                        />
-                        <ToggleSwitch 
-                            Tag="CONSIDER_IN_THE_ASSESSMENT_SWITCHER"
-                            IsOn="True"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Toggled="TaskConsiderToggled"
-                        />
-                    </StackPanel>
+                    <ContentControl Template="{StaticResource TaskMaxGradeTemplate}" DataContext="{Binding}" />
                 </StackPanel>
-            </Border>
+            </ContentControl>
         </DataTemplate>
         <DataTemplate 
-            x:DataType="utilities:TestBuilderAnswersListViewItem" 
+            x:DataType="utilities:BuilderListItem" 
             x:Key="AnswersListViewTemplate"
         >
             <Grid>
@@ -630,7 +394,6 @@
                             FontSize="16"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Tag="{x:Bind ID}"
                             Click="RemoveAnswerMultipleChoiceClick"
                         />
                     </MenuFlyout>
@@ -655,7 +418,7 @@
             </Grid>
         </DataTemplate>
         <DataTemplate 
-            x:DataType="utilities:TestBuilderCheckBoxesListViewItem" 
+            x:DataType="utilities:BuilderListItem" 
             x:Key="CheckBoxesAnswersListViewTemplate"
         >
             <Grid>
@@ -673,7 +436,6 @@
                             FontSize="16"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Tag="{x:Bind ID}"
                             Click="RemoveAnswerCheckBoxesClick"
                         />
                     </MenuFlyout>
@@ -698,11 +460,10 @@
             </Grid>
         </DataTemplate>
         <DataTemplate 
-            x:DataType="utilities:TestBuilderCheckBoxesListViewItem" 
+            x:DataType="utilities:BuilderListItem" 
             x:Key="CheckBoxesListViewTemplate"
         >
             <CheckBox 
-                Tag="{x:Bind ID}"
                 MinWidth="10"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
@@ -718,62 +479,6 @@
                     TextWrapping="Wrap"
                 />
             </CheckBox>
-        </DataTemplate>
-        <DataTemplate 
-            x:DataType="utilities:TestBuilderStudent" 
-            x:Key="StudentsListViewTemplate"
-        >
-            <Grid
-                Width="400"
-                HorizontalAlignment="Left"
-                BorderThickness="1"
-                BorderBrush="{StaticResource CardStrokeColorDefaultBrush}"
-                CornerRadius="{StaticResource ControlCornerRadius}"
-                Background="{StaticResource LayerOnAcrylicFillColorDefaultBrush}"
-                Padding="10, 5, 10, 5"
-                Margin="0, 0, 0, 5"
-                ColumnSpacing="10"
-            >
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="30" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <Grid.ContextFlyout>
-                    <MenuFlyout>
-                        <MenuFlyoutItem  
-                            Text="&#xE74D;" 
-                            FontFamily="{StaticResource SymbolThemeFontFamily}"
-                            FontSize="16"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Tag="{x:Bind ID}"
-                            Click="RemoveStudentClick"
-                        />
-                    </MenuFlyout>
-                </Grid.ContextFlyout>
-
-                <PersonPicture 
-                    Grid.Column="0"
-                    Grid.Row="0"
-                    Width="30"
-                    Height="30"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    DisplayName="{x:Bind DisplayName}"
-                />
-                <TextBlock
-                    Grid.Column="1"
-                    Grid.Row="0"
-                    Text="{x:Bind DisplayName}"
-                    Style="{StaticResource BodyTextBlockStyle}"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    TextWrapping="NoWrap"
-                />
-            </Grid>
         </DataTemplate>
         <utilities:TaskTemplateSelector 
             x:Key="TaskTemplateSelector"
@@ -843,13 +548,13 @@
                     >
                         <StackPanel>
                             <TextBlock 
-                                x:Name="EmptyTestsListTitle"
+                                Text="{x:Bind utilities:MessageProvider.CREATE_NEW_TEST_KEY}"
                                 Style="{StaticResource BodyStrongTextBlockStyle}"
                                 HorizontalAlignment="Left"
                                 Margin="0, 0, 0, 5"
                             />
                             <TextBlock 
-                                x:Name="EmptyTestsListDescription"
+                                Text="{x:Bind utilities:MessageProvider.LIST_OF_RECENT_TESTS_IS_EMPTY_KEY}"
                                 Style="{StaticResource BodyTextBlockStyle}"
                                 HorizontalAlignment="Left"
                                 Margin="0, 0, 0, 20"
@@ -888,13 +593,14 @@
                 >
                     <StackPanel>
                         <TextBlock 
-                            x:Name="TestsBuilderTitle"
+                            Text="{x:Bind utilities:MessageProvider.EDITOR_KEY}"
                             Style="{StaticResource TitleTextBlockStyle}"
                             Foreground="{ThemeResource AccentTextFillColorSecondaryBrush}"
                             HorizontalAlignment="Center"
                         />
                         <TextBox 
                             x:Name="TestsBuilderName"
+                            Header="{x:Bind utilities:MessageProvider.ToHeader(utilities:MessageProvider.NAME_KEY)}"
                             HorizontalAlignment="Center"
                             Margin="0, 0, 0, 20"
                             Width="500"
@@ -902,6 +608,7 @@
                         />
                         <TextBox 
                             x:Name="TestsBuilderDescription"
+                            Header="{x:Bind utilities:MessageProvider.ToHeader(utilities:MessageProvider.DESCRIPTION_KEY)}"
                             HorizontalAlignment="Center"
                             Margin="0, 0, 0, 20"
                             Width="500"
@@ -909,6 +616,7 @@
                         />
                         <RichEditBox 
                             x:Name="TestsBuilderInstructions"
+                            Header="{x:Bind utilities:MessageProvider.ToHeader(utilities:MessageProvider.INSTRUCTIONS_KEY)}"
                             Width="500" 
                             MinHeight="100"
                             HorizontalAlignment="Center"
@@ -917,39 +625,52 @@
                         />
                         <TimePicker 
                             x:Name="TestsBuilderTime"
+                            Header="{x:Bind utilities:MessageProvider.ToHeader(utilities:MessageProvider.TEST_TIME_KEY)}"
                             ClockIdentifier="24HourClock" 
                             HorizontalAlignment="Center"
                             Margin="0, 0, 0, 20"
                             TimeChanged="TestTestTimeChanged"
                         />
-                        <StackPanel 
-                            BorderThickness="1"
-                            BorderBrush="{StaticResource CardStrokeColorDefaultBrush}"
-                            CornerRadius="{StaticResource ControlCornerRadius}"
+                        <TextBlock 
+                            Text="{x:Bind utilities:MessageProvider.ACCESS_CODE_KEY}"
+                            Style="{StaticResource SubtitleTextBlockStyle}"
                             HorizontalAlignment="Center"
-                            Padding="15"
+                            Margin="0, 0, 0, 5"
+                        />
+                        <Border 
                             Margin="0, 0, 0, 20"
-                            Spacing="20"
+                            Padding="15, 5"
+                            BorderBrush="{StaticResource CardStrokeColorDefaultBrush}"
+                            CornerRadius="{StaticResource ControlCornerRadius}" 
+                            Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"
+                            BorderThickness="1"
+                            HorizontalAlignment="Center"
                         >
-                            <AutoSuggestBox 
-                                x:Name="AutoSuggestStudentFinder"
-                                Width="300"
-                                TextChanged="AutoSuggestBoxTextChanged"
-                                HorizontalAlignment="Center"
-                                QueryIcon="Find"
-                                QuerySubmitted="AutoSuggestBoxQuerySubmitted"
-                                SuggestionChosen="AutoSuggestBoxSuggestionChosen"
-                            />
-                            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                <ListView
-                                    ItemsSource="{x:Bind StudentsList}"
-                                    ItemTemplate="{StaticResource StudentsListViewTemplate}"
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock 
+                                    x:Name="TestCodeText"
+                                    Style="{StaticResource BodyStrongTextBlockStyle}"
+                                    VerticalAlignment="Center"
                                     HorizontalAlignment="Center"
-                                    SelectionMode="None"
-                                    MaxHeight="300"
+                                    Margin="0, 0, 15, 0"
+                                    FontSize="18"
                                 />
-                            </ScrollViewer>
-                        </StackPanel>
+                                <controls:ConfirmationButton
+                                    x:Name="TestCodeButton"
+                                    Click="CopyToClipboardButtonClick"
+                                    ToolTipService.ToolTip="Copy to clipboard"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                >
+                                    <FontIcon 
+                                        Glyph="&#xE8C8;" 
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        FontSize="16"
+                                    />
+                                </controls:ConfirmationButton>
+                            </StackPanel>
+                        </Border>
                         <controls:ConfirmationButton 
                             ToolTipService.ToolTip="Preview"
                             Padding="15,7.5"
@@ -966,7 +687,7 @@
                                     HorizontalAlignment="Center"
                                 />
                                 <TextBlock 
-                                    x:Name="PreviewButtonText"
+                                    Text="{x:Bind utilities:MessageProvider.PREVIEW_KEY}"
                                     FontWeight="Medium"
                                     FontSize="14"
                                     VerticalAlignment="Center"
@@ -1002,7 +723,7 @@
                                     HorizontalAlignment="Center"
                                 />
                                 <TextBlock 
-                                    x:Name="AddNewTaskButtonText"
+                                    Text="{x:Bind utilities:MessageProvider.ADD_NEW_TASK_KEY}"
                                     FontWeight="Medium"
                                     FontSize="14"
                                     VerticalAlignment="Center"
@@ -1014,22 +735,22 @@
                             <Button.Flyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem 
-                                        x:Name="TextTaskFlyout" 
+                                        Text="{x:Bind utilities:MessageProvider.TEXT_KEY}"
                                         Tag="Text" 
                                         Click="AddNewTaskClick"
                                     />
                                     <MenuFlyoutItem 
-                                        x:Name="TrueFalseTaskFlyout" 
+                                        Text="{x:Bind utilities:MessageProvider.TRUE_FALSE_KEY}"
                                         Tag="TrueFalse" 
                                         Click="AddNewTaskClick"
                                     />
                                     <MenuFlyoutItem 
-                                        x:Name="CheckboxesTaskFlyout" 
+                                        Text="{x:Bind utilities:MessageProvider.CHECKBOXES_KEY}"
                                         Tag="Checkboxes" 
                                         Click="AddNewTaskClick"
                                     />
                                     <MenuFlyoutItem 
-                                        x:Name="MultipleChoiceTaskFlyout" 
+                                        Text="{x:Bind utilities:MessageProvider.MULTIPLE_CHOICE_KEY}"
                                         Tag="MultipleChoice" 
                                         Click="AddNewTaskClick"
                                     />
@@ -1046,9 +767,11 @@
                             HorizontalAlignment="Center"
                         >
                             <controls:ConfirmationButton 
-                                Margin="0, 0, 7.5, 0"
+                                Margin="0, 0, 15, 0"
                                 ToolTipService.ToolTip="Save"
                                 Padding="15,7.5"
+                                HorizontalAlignment="Center"
+                                Click="SaveButtonClick"
                             >
                                 <StackPanel Orientation="Horizontal">
                                     <FontIcon 
@@ -1059,7 +782,7 @@
                                         HorizontalAlignment="Center"
                                     />
                                     <TextBlock 
-                                        x:Name="SaveButtonText"
+                                        Text="{x:Bind utilities:MessageProvider.SAVE_KEY}"
                                         FontWeight="Medium"
                                         FontSize="16"
                                         VerticalAlignment="Center"
@@ -1070,20 +793,21 @@
                                 </StackPanel>
                             </controls:ConfirmationButton>
                             <controls:ConfirmationButton 
-                                Margin="7.5, 0, 0, 0"
+                                ToolTipService.ToolTip="Remove"
                                 Padding="15,7.5"
-                                ToolTipService.ToolTip="Send"
+                                HorizontalAlignment="Center"
+                                Click="RemoveButtonClick"
                             >
                                 <StackPanel Orientation="Horizontal">
                                     <FontIcon 
-                                        Glyph="&#xE724;" 
+                                        Glyph="&#xE74D;" 
                                         Margin="0, 0, 10, 0"
-                                        FontSize="18"
+                                        FontSize="20"
                                         VerticalAlignment="Center"
                                         HorizontalAlignment="Center"
                                     />
                                     <TextBlock 
-                                        x:Name="SendButtonText"
+                                        Text="{x:Bind utilities:MessageProvider.REMOVE_KEY}"
                                         FontWeight="Medium"
                                         FontSize="16"
                                         VerticalAlignment="Center"

@@ -2,6 +2,8 @@
 using Microsoft.UI.Xaml;
 using STest.App.Services;
 
+using Windows.ApplicationModel.Appointments.AppointmentsProvider;
+
 namespace STest.App.Utilities
 {
     /// <summary>
@@ -163,87 +165,11 @@ namespace STest.App.Utilities
         /// <summary>
         /// <see cref="Application"/> message <see cref="string"/>
         /// </summary>
+        public const string COLON = ":";
+        /// <summary>
+        /// <see cref="Application"/> message <see cref="string"/>
+        /// </summary>
         public const string CURRENT_TEST_IN_BUILDER = nameof(CURRENT_TEST_IN_BUILDER);
-        /// <summary>
-        /// <see cref="Application"/> message <see cref="string"/>
-        /// </summary>
-        public const string HEADER_PANEL_TEST_BUILDER_KEY = "HEADER_PANEL";
-        /// <summary>
-        /// <see cref="Application"/> message <see cref="string"/>
-        /// </summary>
-        public const string HEADER_NUMBER_TEST_BUILDER_KEY = "HEADER_NUMBER";
-        /// <summary>
-        /// <see cref="Application"/> message <see cref="string"/>
-        /// </summary>
-        public const string HEADER_CLOSE_TEST_BUILDER_KEY = "HEADER_CLOSE";
-        /// <summary>
-        /// <see cref="Application"/> message <see cref="string"/>
-        /// </summary>
-        public const string QUESTION_TEST_BUILDER_KEY = "QUESTION";
-        /// <summary>
-        /// <see cref="Application"/> message <see cref="string"/>
-        /// </summary>
-        public const string CORRECT_ANSWER_TEST_BUILDER_KEY = "CORRECT_ANSWER";
-        /// <summary>
-        /// <see cref="Application"/> message <see cref="string"/>
-        /// </summary>
-        public const string CORRECT_ANSWER_PANEL_TEST_BUILDER_KEY = "CORRECT_ANSWER_PANEL";
-        /// <summary>
-        /// <see cref="Application"/> message <see cref="string"/>
-        /// </summary>
-        public const string CORRECT_ANSWER_RADIO_TRUE_TEST_BUILDER_KEY = "CORRECT_ANSWER_RADIO_TRUE";
-        /// <summary>
-        /// <see cref="Application"/> message <see cref="string"/>
-        /// </summary>
-        public const string CORRECT_ANSWER_RADIO_FALSE_TEST_BUILDER_KEY = "CORRECT_ANSWER_RADIO_FALSE";
-        /// <summary>
-        /// <see cref="Application"/> message <see cref="string"/>
-        /// </summary>
-        public const string MAX_GRADE_TEST_BUILDER_KEY = "MAX_GRADE";
-        /// <summary>
-        /// <see cref="Application"/> message <see cref="string"/>
-        /// </summary>
-        public const string MAX_GRADE_PANEL_TEST_BUILDER_KEY = "MAX_GRADE_PANEL";
-        /// <summary>
-        /// <see cref="Application"/> message <see cref="string"/>
-        /// </summary>
-        public const string MAX_GRADE_INPUT_TEST_BUILDER_KEY = "MAX_GRADE_INPUT";
-        /// <summary>
-        /// <see cref="Application"/> message <see cref="string"/>
-        /// </summary>
-        public const string CONSIDER_IN_THE_ASSESSMENT_TEST_BUILDER_KEY = "CONSIDER_IN_THE_ASSESSMENT";
-        /// <summary>
-        /// <see cref="Application"/> message <see cref="string"/>
-        /// </summary>
-        public const string CONSIDER_IN_THE_ASSESSMENT_SWITCHER_TEST_BUILDER_KEY = "CONSIDER_IN_THE_ASSESSMENT_SWITCHER";
-        /// <summary>
-        /// <see cref="Application"/> message <see cref="string"/>
-        /// </summary>
-        public const string CONSIDER_IN_THE_ASSESSMENT_PANEL_TEST_BUILDER_KEY = "CONSIDER_IN_THE_ASSESSMENT_PANEL";
-        /// <summary>
-        /// <see cref="Application"/> message <see cref="string"/>
-        /// </summary>
-        public const string ANSWERS_LIST_TEST_BUILDER_KEY = "ANSWERS_LIST";
-        /// <summary>
-        /// <see cref="Application"/> message <see cref="string"/>
-        /// </summary>
-        public const string ADD_ANSWER_PANEL_TEST_BUILDER_KEY = "ADD_ANSWER_PANEL";
-        /// <summary>
-        /// <see cref="Application"/> message <see cref="string"/>
-        /// </summary>
-        public const string ADD_ANSWER_INPUT_TEST_BUILDER_KEY = "ADD_ANSWER_INPUT";
-        /// <summary>
-        /// <see cref="Application"/> message <see cref="string"/>
-        /// </summary>
-        public const string ADD_ANSWER_ADD_BUTTON_TEST_BUILDER_KEY = "ADD_ANSWER_ADD_BUTTON";
-        /// <summary>
-        /// <see cref="Application"/> message <see cref="string"/>
-        /// </summary>
-        public const string ADD_ANSWER_COMBO_BOX_TEST_BUILDER_KEY = "ADD_ANSWER_COMBO_BOX";
-        /// <summary>
-        /// <see cref="Application"/> message <see cref="string"/>
-        /// </summary>
-        public const string CHACK_BOX_LIST_TEST_BUILDER_KEY = "CHACK_BOX_LIST";
 
         /*
             Localization keys
@@ -508,6 +434,22 @@ namespace STest.App.Utilities
         /// <see cref="Localization"/> key <see cref="string"/>
         /// </summary>
         public const string COMPLETE_KEY = nameof(COMPLETE_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string YOU_CAN_ALWAYS_CHANGE_THE_TEST_DATA_KEY = nameof(YOU_CAN_ALWAYS_CHANGE_THE_TEST_DATA_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string REMOVE_KEY = nameof(REMOVE_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string THIS_IS_IRREVERSIBLE_ACTION_KEY = nameof(THIS_IS_IRREVERSIBLE_ACTION_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string ACCESS_CODE_KEY = nameof(ACCESS_CODE_KEY);
 
         /* 
             Local data
@@ -532,5 +474,13 @@ namespace STest.App.Utilities
         /// <see cref="LocalData"/> key <see cref="string"/>
         /// </summary>
         public const string USER_NAME_LOCAL_DATA = nameof(USER_NAME_LOCAL_DATA);
+        /// <summary>
+        /// <see cref="LocalData"/> key <see cref="string"/>
+        /// </summary>
+        public const string BUILDER_TESTS_LOCAL_DATA = nameof(BUILDER_TESTS_LOCAL_DATA);
+        /// <summary>
+        /// <see cref="LocalData"/> key <see cref="string"/>
+        /// </summary>
+        public const string DEV_LIST_TEST_LOCAL_DATA = nameof(DEV_LIST_TEST_LOCAL_DATA);
     }
 }

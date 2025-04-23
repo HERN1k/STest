@@ -13,13 +13,16 @@ using STLib.Core.Testing;
 using Microsoft.Extensions.Caching.Memory;
 using STLib.Tasks.Checkboxes;
 using STLib.Tasks.MultipleChoice;
-using STest.App.Services;
+using System.Linq;
+using System.Collections.Generic;
+using System.Runtime.Versioning;
 
 namespace STest.App.AppWindows
 {
     /// <summary>
     /// The test preview window of the application
     /// </summary>
+    [SupportedOSPlatform("windows10.0.17763.0")]
     public sealed partial class TestPreviewWindow : Window, IDisposable
     {
         public ExtendedObservableCollection<CoreTask> TasksList { get; set; }
@@ -90,8 +93,6 @@ namespace STest.App.AppWindows
                 TestInstructions.Text = string.Concat(T(Constants.INSTRUCTIONS_KEY), ": ", m_test.Instructions);
                 TestTimerHeader.Text = string.Concat(T(Constants.TIME_LEFT_KEY), ": ");
                 TestTimer.Text = m_test.TestTime.ToString(@"hh\:mm\:ss", m_localization.CurrentCulture);
-
-                TasksList.AddRange(m_test.SortedTasks);
             }
             catch (Exception ex)
             {
@@ -167,6 +168,37 @@ namespace STest.App.AppWindows
                         throw new InvalidOperationException("Current test is null.");
                     }
 
+                    if (test.Tasks.Count == 0)
+                    {
+                        return test;
+                    }
+
+                    if (test.Tasks.Count == 1)
+                    {
+                        var task = test.Tasks.FirstOrDefault();
+
+                        if (task == null)
+                        {
+                            return test;
+                        }
+
+                        task.SetName(task.Type switch
+                        {
+                            TaskType.Text => T(Constants.ENTER_CORRECT_ANSWER_IN_FIELD_BELOW_KEY),
+                            TaskType.TrueFalse => T(Constants.INDICATE_BELOW_WHETHER_YOU_AGREE_WITH_STATEMENT_ABOVE_KEY),
+                            TaskType.Checkboxes => T(Constants.CHOOSE_SEVERAL_CORRECT_ANSWERS_KEY),
+                            TaskType.MultipleChoice => T(Constants.CHOOSE_ONLY_ONE_CORRECT_ANSWER_KEY),
+                            _ => string.Concat(Constants.NULL, " :(")
+                        });
+
+                        TasksList.Add(task);
+
+                        return test;
+                    }
+
+                    List<CoreTask> firstTasks = new();
+                    List<CoreTask> tasks = new();
+
                     foreach (var task in test.Tasks)
                     {
                         task.SetName(task.Type switch
@@ -177,7 +209,22 @@ namespace STest.App.AppWindows
                             TaskType.MultipleChoice => T(Constants.CHOOSE_ONLY_ONE_CORRECT_ANSWER_KEY),
                             _ => string.Concat(Constants.NULL, " :(")
                         });
+
+                        if (task.Consider)
+                        {
+                            tasks.Add(task);
+                        }
+                        else
+                        {
+                            firstTasks.Add(task);
+                        }
                     }
+
+                    CollectionsUtils.Shuffle(tasks);
+
+                    firstTasks.AddRange(tasks);
+
+                    TasksList.AddRange(firstTasks);
 
                     return test;
                 }

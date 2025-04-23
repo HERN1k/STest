@@ -312,4 +312,16 @@
   <data name="COMPLETE_KEY" xml:space="preserve">
     <value>Complete</value>
   </data>
+  <data name="YOU_CAN_ALWAYS_CHANGE_THE_TEST_DATA_KEY" xml:space="preserve">
+    <value>You can always change the test data.</value>
+  </data>
+  <data name="REMOVE_KEY" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="THIS_IS_IRREVERSIBLE_ACTION_KEY" xml:space="preserve">
+    <value>This is an irreversible action.</value>
+  </data>
+  <data name="ACCESS_CODE_KEY" xml:space="preserve">
+    <value>Access code</value>
+  </data>
 </root>

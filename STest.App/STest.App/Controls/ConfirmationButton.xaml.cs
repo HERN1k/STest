@@ -6,8 +6,14 @@ using Microsoft.UI.Xaml.Media.Animation;
 
 namespace STest.App.Controls
 {
+    /*
+        Inspired by the copy button code in the windows desktop app WinUI 3 Gallery
+
+        GitHub: https://github.com/microsoft/WinUI-Gallery
+    */
+
     [SupportedOSPlatform("windows10.0.17763.0")]
-    public sealed partial class ConfirmationButton : Button
+    public sealed partial class ConfirmationButton : Button 
     {
         public ConfirmationButton()
         {

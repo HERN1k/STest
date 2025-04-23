@@ -21,9 +21,6 @@ namespace STest.App.AppWindows
         private string m_exceptionMessage = Constants.MESSAGE_KEY;
         private bool m_disposedValue;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
         public ErrorWindow(string? message)
         {
             this.InitializeComponent();
@@ -46,19 +43,8 @@ namespace STest.App.AppWindows
                 }
 
                 MessageBox.Text = m_exceptionMessage;
-
-                if (m_windowsHelper.IsWindowsVersionAtLeast(10, 0, 19041))
-                {
-#pragma warning disable CA1416
-                    this.Title = "Critical Error";
-                    TitleBarTextBlock.Text = "Critical Error";
-#pragma warning restore
-                }
-                else
-                {
-                    this.Title = "Critical Error";
-                    TitleBarTextBlock.Text = "Critical Error";
-                }
+                this.Title = "Critical Error";
+                TitleBarTextBlock.Text = "Critical Error";
 
                 if (AppWindowTitleBar.IsCustomizationSupported())
                 {

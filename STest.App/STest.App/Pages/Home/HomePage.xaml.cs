@@ -15,9 +15,6 @@ namespace STest.App.Pages.Home
         private readonly ILocalization m_localization;
         private readonly ILogger<HomePage> m_logger;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
         public HomePage()
         {
             this.InitializeComponent();
@@ -26,17 +23,12 @@ namespace STest.App.Pages.Home
             this.DataContext = this;
         }
 
-        #region OnNavigated
-        /// <summary>
-        /// OnNavigatedTo
-        /// </summary>
+        /// <inheritdoc />
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             try
             {
                 base.OnNavigatedTo(e);
-
-                SubscribeToEvents();
             }
             catch (Exception ex)
             {
@@ -44,38 +36,17 @@ namespace STest.App.Pages.Home
             }
         }
 
-        /// <summary>
-        /// OnNavigatingFrom
-        /// </summary>
+        /// <inheritdoc />
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             try
             {
                 base.OnNavigatingFrom(e);
-
-                UnSubscribeToEvents();
             }
             catch (Exception ex)
             {
                 ex.Show(this, m_logger);
             }
-        }
-        #endregion
-
-        /// <summary>
-        /// Subscribe to events
-        /// </summary>
-        private void SubscribeToEvents()
-        {
-
-        }
-
-        /// <summary>
-        /// Un subscribe to events
-        /// </summary>
-        private void UnSubscribeToEvents()
-        {
-
         }
     }
 }

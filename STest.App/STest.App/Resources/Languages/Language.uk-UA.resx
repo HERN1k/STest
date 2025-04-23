@@ -312,4 +312,16 @@
   <data name="COMPLETE_KEY" xml:space="preserve">
     <value>Завершити</value>
   </data>
+  <data name="YOU_CAN_ALWAYS_CHANGE_THE_TEST_DATA_KEY" xml:space="preserve">
+    <value>Ви завжди зможете змінити дані тесту.</value>
+  </data>
+  <data name="REMOVE_KEY" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="THIS_IS_IRREVERSIBLE_ACTION_KEY" xml:space="preserve">
+    <value>Це незворотна дія.</value>
+  </data>
+  <data name="ACCESS_CODE_KEY" xml:space="preserve">
+    <value>Код доступу</value>
+  </data>
 </root>

@@ -1,12 +1,13 @@
 ﻿using System;
 using STest.App.Domain.Interfaces;
 using Windows.Networking.Connectivity;
-using Windows.System.Profile;
 using STest.App.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Windows.UI;
+using System.Management;
+using System.Linq;
 
 namespace STest.App.Services
 {
@@ -15,57 +16,19 @@ namespace STest.App.Services
     /// </summary>
     public sealed class WindowsHelper : IWindowsHelper
     {
-        /// <summary>
-        /// Logger
-        /// </summary>
-        private readonly ILogger<WindowsHelper> m_logger;
-        /// <summary>
-        /// Windows version number
-        /// </summary>
-        private readonly ulong m_versionNumber;
-        /// <summary>
-        /// Windows version major
-        /// </summary>
-        private readonly ulong m_major;
-        /// <summary>
-        /// Windows version minor
-        /// </summary>
-        private readonly ulong m_minor;
-        /// <summary>
-        /// Windows version build
-        /// </summary>
-        private readonly ulong m_build;
-        /// <summary>
-        /// Windows version revision
-        /// </summary>
-        private readonly ulong m_revision;
+        public string SystemName => m_systemName;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <exception cref="InvalidOperationException"></exception>
+        private readonly ILogger<WindowsHelper> m_logger;
+        private readonly string m_systemName;
+
         public WindowsHelper(ILogger<WindowsHelper> logger)
         {
             try
             {
                 m_logger = logger ?? throw new ArgumentNullException(nameof(logger));
+                m_systemName = GetSystemName();
 
-                string version = AnalyticsInfo.VersionInfo.DeviceFamilyVersion;
-
-                m_logger.LogInformation("Windows version {version}", version);
-
-                if (ulong.TryParse(version, out ulong versionNumber))
-                {
-                    m_versionNumber = versionNumber;
-                    m_major = (versionNumber & 0xFFFF000000000000L) >> 48;
-                    m_minor = (versionNumber & 0x0000FFFF00000000L) >> 32;
-                    m_build = (versionNumber & 0x00000000FFFF0000L) >> 16;
-                    m_revision = (versionNumber & 0x000000000000FFFFL);
-                }
-                else
-                {
-                    throw new InvalidOperationException(Constants.FAILED_TO_RETRIEVE_THE_WINDOWS_VERSION);
-                }
+                m_logger.LogInformation("{system}", m_systemName);
             }
             catch (Exception ex)
             {
@@ -73,33 +36,6 @@ namespace STest.App.Services
 
                 throw;
             }
-        }
-
-        /// <summary>
-        /// Check if the current OS is Windows 11 or higher
-        /// </summary>
-        /// <returns></returns>
-        public bool IsWindows11OrHigher() => m_major >= 10 && m_build >= 22000;
-
-        /// <summary>
-        /// Check if the current OS is Windows 10 or higher
-        /// </summary>
-        public bool IsWindowsVersionAtLeast(int major, int minor, int build)
-        {
-            if (m_major > (ulong)major)
-            {
-                return true;
-            }
-            if (m_major == (ulong)major && m_minor > (ulong)minor)
-            {
-                return true;
-            }
-            if (m_major == (ulong)major && m_minor == (ulong)minor && m_build >= (ulong)build)
-            {
-                return true;
-            }
-
-            return false;
         }
 
         /// <summary>
@@ -143,6 +79,33 @@ namespace STest.App.Services
             {
                 ex.Show(m_logger);
             }
+        }
+
+        /// <summary>
+        /// Get the system name
+        /// </summary>
+        private static string GetSystemName()
+        {
+            using var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_OperatingSystem");
+            string systemName = string.Empty;
+
+            foreach (var os in searcher.Get())
+            {
+                systemName = string.Concat(
+                    os.GetPropertyValue("Caption").ToString() ?? Constants.NULL,    // Example: Microsoft Windows 11 Pro
+                    " ",
+                    os.GetPropertyValue("Version").ToString() ?? Constants.NULL     // Example: 10.0.22000
+                );
+            }
+
+            var lines = systemName.Split(' ').ToList();
+
+            if (lines.Count > 0)
+            {
+                lines.RemoveAt(0);  // Remove the first element ("Microsoft")
+            }
+
+            return string.Join(' ', lines) ?? Constants.NULL;
         }
     }
 }

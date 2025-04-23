@@ -133,6 +133,7 @@ namespace STest.App
                 services.AddSingleton<IWindowsHelper, WindowsHelper>();
                 services.AddSingleton<ILocalization, Localization>();
                 services.AddSingleton<ILocalData, LocalData>();
+                services.AddSingleton<ITestManager, TestManager>();
 
                 services.AddSingleton<MainWindow>();
                 services.AddSingleton<LoginWindow>();

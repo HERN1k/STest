@@ -9,8 +9,6 @@ using System.Collections.Concurrent;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using System.Collections.Frozen;
-using System.Linq;
-using System.Collections;
 
 namespace STest.App.Services
 {
@@ -19,33 +17,12 @@ namespace STest.App.Services
     /// </summary>
     public sealed class LocalData : ILocalData
     {
-        /// <summary>
-        /// Logger
-        /// </summary>
         private readonly ILogger<LocalData> m_logger;
-        /// <summary>
-        /// Path to the local data file
-        /// </summary>
         private readonly string m_path;
-        /// <summary>
-        /// Values
-        /// </summary>
         private readonly ConcurrentDictionary<string, string> m_values;
-        /// <summary>
-        /// Zero data
-        /// </summary>
         private readonly byte[] m_zeroData;
-        /// <summary>
-        /// Lock
-        /// </summary>
         private readonly object m_lock;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="logger"></param>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="IOException"></exception>
         public LocalData(ILogger<LocalData> logger)
         {
             m_logger = logger ?? throw new ArgumentNullException(nameof(logger));

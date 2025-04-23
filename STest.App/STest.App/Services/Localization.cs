@@ -45,43 +45,15 @@ namespace STest.App.Services
         /// </summary>
         public event EventHandler<CultureChangedEventArgs>? CultureChanged;
 
-        /// <summary>
-        /// Local data
-        /// </summary>
         private readonly ILocalData m_localData;
-        /// <summary>
-        /// Logger
-        /// </summary>
         private readonly ILogger<Localization> m_logger;
-        /// <summary>
-        /// Lock object
-        /// </summary>
         private readonly object m_lockObj;
-        /// <summary>
-        /// Resource manager
-        /// </summary>
         private readonly ResourceManager m_resourceManager;
-        /// <summary>
-        /// English culture
-        /// </summary>
         private readonly CultureInfo m_englishCulture;
-        /// <summary>
-        /// Ukrainian culture
-        /// </summary>
         private readonly CultureInfo m_ukrainianCulture;
-        /// <summary>
-        /// Current culture
-        /// </summary>
         private CultureInfo m_currentCulture;
-        /// <summary>
-        /// Disposed value
-        /// </summary>
         private bool m_disposedValue;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <exception cref="ArgumentNullException"></exception>
         public Localization(ILocalData localData, ILogger<Localization> logger)
         {
             m_localData = localData ?? throw new ArgumentNullException(nameof(localData));

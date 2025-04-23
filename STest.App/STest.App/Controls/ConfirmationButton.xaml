@@ -1,10 +1,14 @@
+<!--
+    Inspired by the copy button code in the windows desktop app WinUI 3 Gallery
+
+    GitHub: https://github.com/microsoft/WinUI-Gallery
+-->
+    
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:STest.App.Controls">
-
     <Style BasedOn="{StaticResource DefaultConfirmationButtonStyle}" TargetType="local:ConfirmationButton" />
-
     <Style x:Key="DefaultConfirmationButtonStyle" TargetType="local:ConfirmationButton">
         <Setter Property="Background" Value="{ThemeResource ButtonBackground}" />
         <Setter Property="BackgroundSizing" Value="InnerBorderEdge" />
