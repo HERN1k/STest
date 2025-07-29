@@ -1,28 +1,10 @@
 ﻿using System;
 using STest.App.Utilities;
 using STest.App.Services;
+using STLib.Core.Enums;
 
 namespace STest.App.Domain.Enums
 {
-    /// <summary>
-    /// Represents the user rank of the application.
-    /// </summary>
-    public enum UserRank
-    {
-        /// <summary>
-        /// Represents a student
-        /// </summary>
-        Student = 0,
-        /// <summary>
-        /// Represents a teacher
-        /// </summary>
-        Teacher = 2,
-        /// <summary>
-        /// Represents a admin
-        /// </summary>
-        Admin = 4
-    }
-
     public static class UserRankExtensions
     {
         private static readonly string m_studentString = UserRank.Student.ToString();

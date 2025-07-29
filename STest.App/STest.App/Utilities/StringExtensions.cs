@@ -1,12 +1,10 @@
 ﻿using System;
-
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI;
 using NLog;
-
-using STest.App.Domain.Enums;
+using STLib.Core.Enums;
 
 namespace STest.App.Utilities
 {
@@ -15,6 +13,14 @@ namespace STest.App.Utilities
     /// </summary>
     public static class StringExtensions
     {
+        /// <summary>
+        /// Returns the specified value if it is not null or empty; otherwise, returns the provided default value.
+        /// </summary>
+        public static string ValueOrDefault(string? value, string defaultValue = "")
+        {
+            return string.IsNullOrWhiteSpace(value) ? defaultValue : value;
+        }
+
         /// <summary>
         /// Converts the first character of the string to uppercase.
         /// </summary>

@@ -324,4 +324,49 @@
   <data name="ACCESS_CODE_KEY" xml:space="preserve">
     <value>Код доступу</value>
   </data>
+  <data name="THE_LIST_IS_EMPTY_KEY" xml:space="preserve">
+    <value>Список  порожній</value>
+  </data>
+  <data name="PICK_A_DATE_KEY" xml:space="preserve">
+    <value>Виберіть дату</value>
+  </data>
+  <data name="ANSWERS_FROM_KEY" xml:space="preserve">
+    <value>Відповіді від</value>
+  </data>
+  <data name="ANSWERS_TO_KEY" xml:space="preserve">
+    <value>Відповіді до</value>
+  </data>
+  <data name="CHOOSE_A_STUDENT_KEY" xml:space="preserve">
+    <value>Виберіть студента</value>
+  </data>
+  <data name="LOAD_KEY" xml:space="preserve">
+    <value>Завантажити</value>
+  </data>
+  <data name="TEST_NAME_KEY" xml:space="preserve">
+    <value>Назва тесту</value>
+  </data>
+  <data name="STUDENT_NAME_KEY" xml:space="preserve">
+    <value>Ім'я студента</value>
+  </data>
+  <data name="TEST_COMPLETED_ON_TIME_KEY" xml:space="preserve">
+    <value>Тест завершено вчасно</value>
+  </data>
+  <data name="END_TIME_KEY" xml:space="preserve">
+    <value>Час завершення</value>
+  </data>
+  <data name="GRADE_KEY" xml:space="preserve">
+    <value>Оцінка</value>
+  </data>
+  <data name="ATTENTION_KEY" xml:space="preserve">
+    <value>Увага</value>
+  </data>
+  <data name="PASSAGE_TIME_KEY" xml:space="preserve">
+    <value>Час проходження</value>
+  </data>
+  <data name="TOTAL_POINTS_KEY" xml:space="preserve">
+    <value>Всього балів:</value>
+  </data>
+  <data name="NO_ANSWER_KEY" xml:space="preserve">
+    <value>Без відповіді</value>
+  </data>
 </root>

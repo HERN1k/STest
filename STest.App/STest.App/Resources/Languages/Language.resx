@@ -324,4 +324,49 @@
   <data name="ACCESS_CODE_KEY" xml:space="preserve">
     <value>Access code</value>
   </data>
+  <data name="THE_LIST_IS_EMPTY_KEY" xml:space="preserve">
+    <value>The list is empty</value>
+  </data>
+  <data name="PICK_A_DATE_KEY" xml:space="preserve">
+    <value>Pick a date</value>
+  </data>
+  <data name="ANSWERS_FROM_KEY" xml:space="preserve">
+    <value>Answers from</value>
+  </data>
+  <data name="ANSWERS_TO_KEY" xml:space="preserve">
+    <value>Answers to</value>
+  </data>
+  <data name="CHOOSE_A_STUDENT_KEY" xml:space="preserve">
+    <value>Choose a student</value>
+  </data>
+  <data name="LOAD_KEY" xml:space="preserve">
+    <value>Load</value>
+  </data>
+  <data name="TEST_NAME_KEY" xml:space="preserve">
+    <value>Test name</value>
+  </data>
+  <data name="STUDENT_NAME_KEY" xml:space="preserve">
+    <value>Student name</value>
+  </data>
+  <data name="TEST_COMPLETED_ON_TIME_KEY" xml:space="preserve">
+    <value>Test completed on time</value>
+  </data>
+  <data name="END_TIME_KEY" xml:space="preserve">
+    <value>End time</value>
+  </data>
+  <data name="GRADE_KEY" xml:space="preserve">
+    <value>Grade</value>
+  </data>
+  <data name="ATTENTION_KEY" xml:space="preserve">
+    <value>Attention</value>
+  </data>
+  <data name="PASSAGE_TIME_KEY" xml:space="preserve">
+    <value>Passage time</value>
+  </data>
+  <data name="TOTAL_POINTS_KEY" xml:space="preserve">
+    <value>Total points:</value>
+  </data>
+  <data name="NO_ANSWER_KEY" xml:space="preserve">
+    <value>No answer</value>
+  </data>
 </root>

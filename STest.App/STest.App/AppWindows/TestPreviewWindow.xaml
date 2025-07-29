@@ -183,10 +183,11 @@
                     BorderThickness="0, 0, 0, 1"
                 />
                 <controls:ConfirmationButton 
-                    ToolTipService.ToolTip="Start"
+                    ToolTipService.ToolTip="Complete"
                     Padding="10, 7.5"
                     Margin="0, 0, 0, 15"
                     HorizontalAlignment="Center"
+                    Click="CompleteButtonClick"
                 >
                     <StackPanel Orientation="Horizontal">
                         <FontIcon 

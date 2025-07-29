@@ -8,6 +8,7 @@ using Microsoft.UI.Composition;
 using Windows.Graphics;
 using Microsoft.Extensions.Logging;
 using STest.App.Domain.Enums;
+using STLib.Core.Enums;
 
 namespace STest.App.AppWindows
 {

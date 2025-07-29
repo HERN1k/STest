@@ -1,5 +1,4 @@
 using System;
-using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using WinRT;
 using STest.App.Utilities;
@@ -7,16 +6,14 @@ using STest.App.Domain.Interfaces;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Composition;
-using Windows.UI;
 using STest.App.Pages.Home;
 using STest.App.Pages.Settings;
 using STest.App.Pages.Account;
 using Microsoft.Extensions.Logging;
 using STest.App.Pages.Builder;
 using STest.App.Domain.Enums;
-using STest.App.Services;
-using NLog;
-using STest.App.AppWindows;
+using STest.App.Pages.Assessments;
+using STLib.Core.Enums;
 
 namespace STest.App
 {
@@ -71,12 +68,15 @@ namespace STest.App
         {
             try
             {
-                if (m_localData
-                        .GetString(Constants.USER_RANK_LOCAL_DATA)
-                        .ParseUserRank()
-                        .Equals(UserRank.Teacher))
+                if (m_localData.GetString(Constants.USER_RANK_LOCAL_DATA).ParseUserRank().Equals(UserRank.Teacher))
                 {
                     BuilderLink.Visibility = Visibility.Visible;
+                    AssessmentsLink.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    BuilderLink.Visibility = Visibility.Collapsed;
+                    AssessmentsLink.Visibility = Visibility.Collapsed;
                 }
             }
             catch (Exception ex)
@@ -148,8 +148,11 @@ namespace STest.App
                         case "Account":
                             RootFrame.Navigate(typeof(AccountPage));
                             break;
+                        case "Assessments":
+                            RootFrame.Navigate(typeof(AssessmentsPage));
+                            break;
                         case "Builder":
-                            RootFrame.Navigate(typeof(BuilderPage)); // добавить логику и отображение
+                            RootFrame.Navigate(typeof(BuilderPage));
                             break;
                     }
                 }

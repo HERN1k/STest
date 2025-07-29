@@ -9,7 +9,6 @@ using STest.App.Utilities;
 using STLib.Core.Testing;
 using STest.App.Pages.Builder;
 using System.Linq;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace STest.App.Services
 {
@@ -26,8 +25,6 @@ namespace STest.App.Services
             m_memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
             m_logger = logger ?? throw new ArgumentNullException(nameof(logger));
             m_userID = GetUserID();
-
-            m_logger.LogInformation("User ID: {userID}", m_userID);
         }
 
         /// <summary>

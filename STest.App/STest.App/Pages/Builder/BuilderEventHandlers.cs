@@ -150,7 +150,7 @@ namespace STest.App.Pages.Builder
 
                 await SetTestListItemsAsync();
 
-                ExecuteAnimation(m_fadeOutAnimation, TestBuilderBorder);
+                m_uiUtilities.ExecuteAnimation(m_fadeOutAnimation, TestBuilderBorder);
                 await Task.Delay(500);
                 TestBuilderBorder.Visibility = Visibility.Collapsed;
             }
@@ -202,7 +202,7 @@ namespace STest.App.Pages.Builder
 
                 await SetTestListItemsAsync();
 
-                ExecuteAnimation(m_fadeOutAnimation, TestBuilderBorder);
+                m_uiUtilities.ExecuteAnimation(m_fadeOutAnimation, TestBuilderBorder);
                 await Task.Delay(500);
                 TestBuilderBorder.Visibility = Visibility.Collapsed;
             }
@@ -308,7 +308,7 @@ namespace STest.App.Pages.Builder
 
                     var index = TasksList.IndexOf(task) + 1;
 
-                    TextBlock? textNumber = FindElementByGridPosition(element, 0, 0) as TextBlock;
+                    TextBlock? textNumber = m_uiUtilities.FindElementByGridPosition(element, 0, 0) as TextBlock;
 
                     if (textNumber == null)
                     {
@@ -357,7 +357,7 @@ namespace STest.App.Pages.Builder
                     SetCurrentTest();
 
                     var border = ((element.Parent as FrameworkElement)?.Parent as FrameworkElement)?.Parent as Border;
-                    var maxGradeInput = FindElementByTag<NumberBox>(border, task.TaskID.ToString());
+                    var maxGradeInput = m_uiUtilities.FindElementByTag<NumberBox>(border, task.TaskID.ToString());
 
                     if (maxGradeInput == null)
                     {
@@ -743,7 +743,7 @@ namespace STest.App.Pages.Builder
             {
                 if (sender is TextBox element)
                 {
-                    Button? button = FindNeighbors<Button>(element).ElementAtOrDefault(0);
+                    Button? button = m_uiUtilities.FindNeighbors<Button>(element).ElementAtOrDefault(0);
 
                     if (button == null)
                     {
@@ -776,8 +776,8 @@ namespace STest.App.Pages.Builder
             {
                 if (sender is Button element)
                 {
-                    TextBox? input = FindNeighbors<TextBox>(element).ElementAtOrDefault(0);
-                    List<ListView> listViews = FindNeighbors<ListView>(element.Parent as Panel).ToList();
+                    TextBox? input = m_uiUtilities.FindNeighbors<TextBox>(element).ElementAtOrDefault(0);
+                    List<ListView> listViews = m_uiUtilities.FindNeighbors<ListView>(element.Parent as Panel).ToList();
                     ExtendedObservableCollection<BuilderListItem>? listItems = listViews.ElementAtOrDefault(0)?.ItemsSource as ExtendedObservableCollection<BuilderListItem>;
                     ExtendedObservableCollection<BuilderListItem>? checkBoxesItems = listViews.ElementAtOrDefault(1)?.ItemsSource as ExtendedObservableCollection<BuilderListItem>;
                     CheckboxesTask? task = GetTaskFromDataContext<CheckboxesTask>(element.DataContext);
@@ -837,9 +837,9 @@ namespace STest.App.Pages.Builder
             {
                 if (sender is Button element)
                 {
-                    TextBox? input = FindNeighbors<TextBox>(element).ElementAtOrDefault(0);
-                    ExtendedObservableCollection<BuilderListItem>? listItems = FindNeighbors<ListView>(element.Parent as Panel).ElementAtOrDefault(0)?.ItemsSource as ExtendedObservableCollection<BuilderListItem>;
-                    ExtendedObservableCollection<string>? comboBoxItems = FindNeighbors<ComboBox>(element.Parent as Panel).ElementAtOrDefault(0)?.ItemsSource as ExtendedObservableCollection<string>;
+                    TextBox? input = m_uiUtilities.FindNeighbors<TextBox>(element).ElementAtOrDefault(0);
+                    ExtendedObservableCollection<BuilderListItem>? listItems = m_uiUtilities.FindNeighbors<ListView>(element.Parent as Panel).ElementAtOrDefault(0)?.ItemsSource as ExtendedObservableCollection<BuilderListItem>;
+                    ExtendedObservableCollection<string>? comboBoxItems = m_uiUtilities.FindNeighbors<ComboBox>(element.Parent as Panel).ElementAtOrDefault(0)?.ItemsSource as ExtendedObservableCollection<string>;
                     MultipleChoiceTask? task = GetTaskFromDataContext<MultipleChoiceTask>(element.DataContext);
 
                     if (input == null || listItems == null || comboBoxItems == null || task == null || string.IsNullOrEmpty(input.Text))
@@ -1151,11 +1151,11 @@ namespace STest.App.Pages.Builder
 
                             сontrol?.ApplyTemplate();
 
-                            var elements = FindChild<Border>(сontrol)?.Child as StackPanel;
+                            var elements = m_uiUtilities.FindChild<Border>(сontrol)?.Child as StackPanel;
 
                             var header = elements?.Children.OfType<Grid>().ElementAtOrDefault(0);
 
-                            var textNumber = FindElementByGridPosition(header, 0, 0) as TextBlock;
+                            var textNumber = m_uiUtilities.FindElementByGridPosition(header, 0, 0) as TextBlock;
 
                             if (textNumber != null)
                             {
@@ -1349,7 +1349,7 @@ namespace STest.App.Pages.Builder
 
                     сontrol?.ApplyTemplate();
 
-                    var elements = FindChild<Border>(сontrol)?.Child as StackPanel;
+                    var elements = m_uiUtilities.FindChild<Border>(сontrol)?.Child as StackPanel;
 
                     var contentPresenter = elements?.Children.OfType<ContentPresenter>().ElementAtOrDefault(0);
 
@@ -1414,7 +1414,7 @@ namespace STest.App.Pages.Builder
 
                     сontrol?.ApplyTemplate();
 
-                    var elements = FindChild<Border>(сontrol)?.Child as StackPanel;
+                    var elements = m_uiUtilities.FindChild<Border>(сontrol)?.Child as StackPanel;
 
                     var contentPresenter = elements?.Children.OfType<ContentPresenter>().ElementAtOrDefault(0);
 

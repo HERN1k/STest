@@ -14,6 +14,7 @@
     <None Remove="AppWindows\ErrorWindow.xaml" />
     <None Remove="AppWindows\LoginWindow.xaml" />
     <None Remove="AppWindows\TestPreviewWindow.xaml" />
+    <None Remove="Pages\Assessments\AssessmentsPage.xaml" />
     <None Remove="Pages\Builder\BuilderPage.xaml" />
     <None Remove="Pages\DialogContent\ContentDialogContent.xaml" />
     <None Remove="Pages\Home\HomePage.xaml" />
@@ -103,6 +104,12 @@
 
   <ItemGroup>
     <Page Update="Pages\DialogContent\ContentDialogContent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Pages\Assessments\AssessmentsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

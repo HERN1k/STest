@@ -134,6 +134,7 @@ namespace STest.App
                 services.AddSingleton<ILocalization, Localization>();
                 services.AddSingleton<ILocalData, LocalData>();
                 services.AddSingleton<ITestManager, TestManager>();
+                services.AddSingleton<IXamlUIUtilities, XamlUIUtilities>();
 
                 services.AddSingleton<MainWindow>();
                 services.AddSingleton<LoginWindow>();

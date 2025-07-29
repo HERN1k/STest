@@ -41,6 +41,18 @@
                         <FontIcon Glyph="&#xED0E;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem 
+                    x:Name="AssessmentsLink"
+                    Content="Assessments" 
+                    Tag="Assessments" 
+                    IsSelected="False" 
+                    Background="Transparent" 
+                    Visibility="Collapsed"
+                >
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xED15;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
             </NavigationView.MenuItems>
 
             <NavigationView.FooterMenuItems>

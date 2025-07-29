@@ -44,9 +44,30 @@ namespace STest.App.Utilities
         public static string EACH_CORRECT_ANS_WORTH_ONE_POINT_IN_FINAL_ASSESSMENT_KEY => T(Constants.EACH_CORRECT_ANS_WORTH_ONE_POINT_IN_FINAL_ASSESSMENT_KEY);
         public static string REMOVE_KEY => T(Constants.REMOVE_KEY);
         public static string ACCESS_CODE_KEY => T(Constants.ACCESS_CODE_KEY);
+        public static string THE_LIST_IS_EMPTY_KEY => T(Constants.THE_LIST_IS_EMPTY_KEY); 
+        public static string PICK_A_DATE_KEY => T(Constants.PICK_A_DATE_KEY); 
+        public static string ANSWERS_FROM_KEY => T(Constants.ANSWERS_FROM_KEY);
+        public static string ANSWERS_TO_KEY => T(Constants.ANSWERS_TO_KEY);
+        public static string STUDENT_KEY => T(Constants.STUDENT_KEY);
+        public static string CHOOSE_A_STUDENT_KEY => T(Constants.CHOOSE_A_STUDENT_KEY);
+        public static string LOAD_KEY => T(Constants.LOAD_KEY);
+        public static string TEST_NAME_KEY => T(Constants.TEST_NAME_KEY);
+        public static string STUDENT_NAME_KEY => T(Constants.STUDENT_NAME_KEY);
+        public static string TEST_COMPLETED_ON_TIME_KEY => T(Constants.TEST_COMPLETED_ON_TIME_KEY);
+        public static string END_TIME_KEY => T(Constants.END_TIME_KEY);
+        public static string GRADE_KEY => T(Constants.GRADE_KEY); 
+        public static string ATTENTION_KEY => T(Constants.ATTENTION_KEY);
+        public static string PASSAGE_TIME_KEY => T(Constants.PASSAGE_TIME_KEY);
+        public static string TOTAL_POINTS_KEY => T(Constants.TOTAL_POINTS_KEY);
+        public static string NO_ANSWER_KEY => T(Constants.NO_ANSWER_KEY);
 
         private static readonly ResourceManager m_resourceManager;
-        
+
+        public static string ConcatStrs(int str1, bool str2)
+        {
+            return string.Concat(str1.ToString(), ":", str2.ToString());
+        }
+
         static MessageProvider()
         {
             m_resourceManager = new(Constants.RESOURCE_MANAGER_NAME, Assembly.GetExecutingAssembly());

@@ -450,6 +450,66 @@ namespace STest.App.Utilities
         /// <see cref="Localization"/> key <see cref="string"/>
         /// </summary>
         public const string ACCESS_CODE_KEY = nameof(ACCESS_CODE_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string THE_LIST_IS_EMPTY_KEY = nameof(THE_LIST_IS_EMPTY_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string PICK_A_DATE_KEY = nameof(PICK_A_DATE_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string ANSWERS_FROM_KEY = nameof(ANSWERS_FROM_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string ANSWERS_TO_KEY = nameof(ANSWERS_TO_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string CHOOSE_A_STUDENT_KEY = nameof(CHOOSE_A_STUDENT_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string LOAD_KEY = nameof(LOAD_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string TEST_NAME_KEY = nameof(TEST_NAME_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string STUDENT_NAME_KEY = nameof(STUDENT_NAME_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string TEST_COMPLETED_ON_TIME_KEY = nameof(TEST_COMPLETED_ON_TIME_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string END_TIME_KEY = nameof(END_TIME_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string GRADE_KEY = nameof(GRADE_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string ATTENTION_KEY = nameof(ATTENTION_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string PASSAGE_TIME_KEY = nameof(PASSAGE_TIME_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string TOTAL_POINTS_KEY = nameof(TOTAL_POINTS_KEY);
+        /// <summary>
+        /// <see cref="Localization"/> key <see cref="string"/>
+        /// </summary>
+        public const string NO_ANSWER_KEY = nameof(NO_ANSWER_KEY);
 
         /* 
             Local data
@@ -482,5 +542,9 @@ namespace STest.App.Utilities
         /// <see cref="LocalData"/> key <see cref="string"/>
         /// </summary>
         public const string DEV_LIST_TEST_LOCAL_DATA = nameof(DEV_LIST_TEST_LOCAL_DATA);
+        /// <summary>
+        /// <see cref="LocalData"/> key <see cref="string"/>
+        /// </summary>
+        public const string DEV_PASSED_TEST = nameof(DEV_PASSED_TEST);
     }
 }

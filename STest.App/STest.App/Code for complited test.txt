@@ -1,0 +1,128 @@
+﻿var test = Test.Build(teacherID)
+    .AddName("Test name")
+    .AddDescription("Test description")
+    .AddInstructions("Test instructions")
+    .AddTestTime(TimeSpan.FromMinutes(60));
+
+var q0 = TextTask.Build()
+    .AddQuestion("Name?")
+    .AddCorrectAnswer("Empty")
+    .AddConsider(false);
+
+var q1 = TextTask.Build()
+    .AddQuestion("Base question?")
+    .AddCorrectAnswer("Hello!");
+var q2 = TextTask.Build()
+    .AddQuestion("Base question?")
+    .AddCorrectAnswer("Hello!");
+
+var q3 = TrueFalseTask.Build()
+    .AddQuestion("Base question?")
+    .AddCorrectAnswer(true.ToString());
+var q4 = TrueFalseTask.Build()
+    .AddQuestion("Base question?")
+    .AddCorrectAnswer(true.ToString());
+
+var q5 = CheckboxesTask.Build()
+    .AddQuestion("Base question?")
+    .AddAnswerItem("Hello!")
+    .AddAnswerItem("World!")
+    .AddAnswerItem("Error_1")
+    .AddAnswerItem("Error_2")
+    .AddCorrectAnswers(new List<string> { "Hello!", "World!" });
+var q6 = CheckboxesTask.Build()
+    .AddQuestion("Base question?")
+    .AddAnswerItem("Hello!")
+    .AddAnswerItem("World!")
+    .AddAnswerItem("Error_1")
+    .AddAnswerItem("Error_2")
+    .AddCorrectAnswers(new List<string> { "Hello!", "World!" });
+
+var q7 = MultipleChoiceTask.Build()
+    .AddQuestion("Base question?")
+    .AddAnswerItem("Hello!")
+    .AddAnswerItem("World!")
+    .AddAnswerItem("Error_1")
+    .AddAnswerItem("Error_2")
+    .AddCorrectAnswer("Hello!");
+var q8 = MultipleChoiceTask.Build()
+    .AddQuestion("Base question?")
+    .AddAnswerItem("Hello!")
+    .AddAnswerItem("World!")
+    .AddAnswerItem("Error_1")
+    .AddAnswerItem("Error_2")
+    .AddCorrectAnswer("Hello!");
+
+test.AddTask(q0);
+test.AddTask(q1);
+test.AddTask(q2);
+test.AddTask(q3);
+test.AddTask(q4);
+test.AddTask(q5);
+test.AddTask(q6);
+test.AddTask(q7);
+test.AddTask(q8);
+
+test.OnDevSave();
+
+await Task.Delay(1000);
+
+test.OnStart(m_currentStudent.ID);
+
+var textTask = test.Tasks
+    .Where(t => t is TextTask)
+    .ToList();
+if (textTask.Count > 1)
+{
+    (textTask[0] as TextTask)?.SetAnswer("Vlad Hirnyk");
+    (textTask[1] as TextTask)?.SetAnswer("Hello!");
+    (textTask[2] as TextTask)?.SetAnswer("Error");
+}
+
+var trueFalseTask = test.Tasks
+    .Where(t => t is TrueFalseTask)
+    .ToList();
+if (trueFalseTask.Count > 1)
+{
+    (trueFalseTask[0] as TrueFalseTask)?.SetAnswer(true.ToString());
+    (trueFalseTask[1] as TrueFalseTask)?.SetAnswer(false.ToString());
+}
+
+var checkboxesTask = test.Tasks
+    .Where(t => t is CheckboxesTask)
+    .ToList();
+if (checkboxesTask.Count > 1)
+{
+    (checkboxesTask[0] as CheckboxesTask)?.SetUserAnswers(new List<string> { "Hello!", "World!" });
+    (checkboxesTask[1] as CheckboxesTask)?.SetUserAnswers(new List<string> { "Error_1", "Error_2" });
+}
+
+var multipleChoiceTask = test.Tasks
+    .Where(t => t is MultipleChoiceTask)
+    .ToList();
+if (multipleChoiceTask.Count > 1)
+{
+    (multipleChoiceTask[0] as MultipleChoiceTask)?.SetAnswer("Hello!");
+    (multipleChoiceTask[1] as MultipleChoiceTask)?.SetAnswer("Error_1");
+}
+
+await Task.Delay(1000);
+
+test.AddAttention(
+    new Attention(
+        "This is an attention message.",
+        AttentionType.Warning
+    ),
+    m_currentStudent.ID
+);
+test.AddAttention(
+    new Attention(
+        "This is an attention message.",
+        AttentionType.Critical
+    ),
+    m_currentStudent.ID
+);
+
+test.OnSave(m_currentStudent.ID);
+
+m_logger.LogWarning("{x}", m_testManager.Serialize(test));

@@ -31,19 +31,21 @@ namespace STest.App.AppWindows
         private readonly IMemoryCache m_memoryCache;
         private readonly ILogger<TestPreviewWindow> m_logger;
         private readonly IWindowsHelper m_windowsHelper;
+        private readonly ITestManager m_testManager;
         private readonly Test m_test;
         private WindowsSystemDispatcherQueueHelper? m_wsdqHelper;
         private DesktopAcrylicController? m_acrylicController;
         private SystemBackdropConfiguration? m_configurationSource;
         private bool m_disposedValue;
 
-        public TestPreviewWindow(ILocalization localization, IMemoryCache memoryCache, ILogger<TestPreviewWindow> logger, IWindowsHelper windowsHelper)
+        public TestPreviewWindow(ILocalization localization, IMemoryCache memoryCache, ILogger<TestPreviewWindow> logger, IWindowsHelper windowsHelper, ITestManager testManager)
         {
             this.InitializeComponent();
             m_localization = localization ?? throw new ArgumentNullException(nameof(localization));
             m_memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
             m_logger = logger ?? throw new ArgumentNullException(nameof(logger));
             m_windowsHelper = windowsHelper ?? throw new ArgumentNullException(nameof(windowsHelper));
+            m_testManager = testManager ?? throw new ArgumentNullException(nameof(testManager));
             TasksList = new ExtendedObservableCollection<CoreTask>();
             m_test = GetCurrentTest();
             m_windowsHelper.ConfigureTitleBar(this);
@@ -235,6 +237,15 @@ namespace STest.App.AppWindows
             }
 
             throw new InvalidOperationException("Current test is null.");
+        }
+
+        /// <summary>
+        /// CompleteButtonClick
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CompleteButtonClick(object sender, RoutedEventArgs args)
+        {
         }
 
         /// <summary>
